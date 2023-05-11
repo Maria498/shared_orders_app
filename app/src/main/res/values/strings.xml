@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">super_app</string>
+    <string name="enter_your_e_mail">enter your e-mail</string>
+    <string name="enter_a_password">enter a password</string>
+    <string name="back">Back</string>
+    <string name="sign_in">Sign In</string>
+    <string name="home_address">Home address</string>
+    <string name="recently_address">Recently used</string>
+    <string name="namal">Namal str. 6</string>
+    <string name="herzel">Herzel stl. 3</string>
+    <string name="have_no_account">Have no account?</string>
+    <string name="log_in">Log in</string>
+    <string name="addresses">Addresses:</string>
+    <string name="explore_by_category">Explore by Category</string>
+    <string name="meat">Meat</string>
+    <string name="veggie">Veggie</string>
+    <string name="no"> </string>
+
+
+</resources>
