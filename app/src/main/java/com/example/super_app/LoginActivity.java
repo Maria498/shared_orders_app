@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,19 +14,28 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.entity.User;
+
+import java.util.ArrayList;
+
 public class LoginActivity extends AppCompatActivity {
 
-    Button backBtn;
-    Button signInBtn;
-    Button logInBtn;
-    EditText email;
-    EditText password;
+    private Button backBtn;
+    private Button signInBtn;
+    private Button logInBtn;
+    private EditText email;
+    private EditText password;
+    private DatabaseHelper db;
+    private Context context;
+    private ArrayList<User> usersFromDB;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        context = getApplicationContext();
 
         signInBtn = findViewById(R.id.signInBtn);
         backBtn = findViewById(R.id.backBtn);
@@ -35,8 +45,61 @@ public class LoginActivity extends AppCompatActivity {
 
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-        logInBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        db = new DatabaseHelper(context);
+        //db.deleteAllUsers();
+        Log.d("db.getAllUsers()", String.valueOf(db.getAllUsers()));
         signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
+
+        logInBtn.setOnClickListener((new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                db = new DatabaseHelper(context);
+                //db.deleteAllUsers();
+                loginUser();
+
+            }
+        }));
+
+    }
+
+    public void loginUser(){
+        String userEmail = email.getText().toString();
+        String userPassword = password.getText().toString();
+        //todo shared references for loin button.
+        if(userEmail.isEmpty()){
+            email.setError("Email is required");
+            email.requestFocus();
+            return; // Stop further processing
+        }
+        if(userPassword.isEmpty()){
+            password.setError("Password is required");
+            password.requestFocus();
+            return;// Stop further processing
+        }
+
+
+        long userId = db.getUserIdByEmail(userEmail);
+        if(userId > -1){
+            String passwordByEmail = db.getPasswordByEmail(userEmail);
+            if(passwordByEmail.equals(userPassword)){
+                Toast.makeText(getApplicationContext(), "login:success", Toast.LENGTH_SHORT).show();
+                Log.d("login:success","login:success");
+                moveToActivity(MainActivity.class);
+            }
+            else {
+                Toast.makeText(getApplicationContext(), "login:failed - passwords do not match", Toast.LENGTH_SHORT).show();
+            }
+        }
+        else {
+            Toast.makeText(getApplicationContext(), "login:failed - user not fount, please sig in", Toast.LENGTH_SHORT).show();
+            moveToActivity(SigninActivity.class);
+        }
+
+
+
+
+
 
     }
 

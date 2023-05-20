@@ -2,16 +2,14 @@ package com.example.super_app.db;
 
 
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 
-
-import androidx.annotation.RequiresApi;
 
 import com.example.super_app.db.entity.User;
 
@@ -48,8 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     // Insert Data into Database
 
-    public long insertUser(String name, String email){
-        User currentUser = new User(name, email);
+    public long insertUser(String name, String email,String password){
+        User currentUser = new User(name, email, password);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -71,7 +69,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    //todo - insert only distinct email values
+
 
 
     // Getting Contact from DataBase
@@ -82,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{
                         User.COLUMN_ID,
                         User.COLUMN_NAME,
-                        User.COLUMN_EMAIL},
+                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD},
                 User.COLUMN_ID + "=?",
                 new String[]{
                         String.valueOf(id)
@@ -98,6 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         User contact = new User(
                 cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)),
                 cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)),
+                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(User.COLUMN_ID))
         );
 
@@ -165,6 +164,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
     }
+
+
+
+    @SuppressLint("Range")
+    public long getUserIdByEmail(String userEmail) {
+        long userId = -1;
+
+        // Define the query to search for users by email
+        String query = "SELECT " + User.COLUMN_ID +
+                " FROM " + User.TABLE_NAME +
+                " WHERE " + User.COLUMN_EMAIL + " = ?";
+
+        // Execute the query
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+
+        if (cursor.moveToFirst()) {
+            // Extract the user ID from the cursor
+            userId = cursor.getLong(cursor.getColumnIndex(User.COLUMN_ID));
+        }
+
+        // Close the cursor
+        cursor.close();
+
+        return userId;
+    }
+
+
+    @SuppressLint("Range")
+    public String getPasswordByEmail(String userEmail) {
+        String password = null;
+
+        // Define the query to search for users by email
+        String query = "SELECT " + User.COLUMN_PASSWORD +
+                " FROM " + User.TABLE_NAME +
+                " WHERE " + User.COLUMN_EMAIL + " = ?";
+
+        // Execute the query
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
+
+        if (cursor.moveToFirst()) {
+            // Extract the password from the cursor
+            password = cursor.getString(cursor.getColumnIndex(User.COLUMN_PASSWORD));
+        }
+
+        // Close the cursor
+        cursor.close();
+
+        return password;
+    }
+
 
 
 

@@ -44,14 +44,15 @@ public class SigninActivity  extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
+        db = new DatabaseHelper(context);
+        Log.d("db.getAllUsers()", String.valueOf(db.getAllUsers()));
+
 
         signInBtn.setOnClickListener((new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 db = new DatabaseHelper(context);
-                //db.deleteAllUsers();
-
                 addUserToDB();
             }
         }));
@@ -62,20 +63,35 @@ public class SigninActivity  extends AppCompatActivity {
         String userEmail = email.getText().toString();
         String userPassword = password.getText().toString();
         String userName1 = userName.getText().toString();
-        User currentUser = new User(userName1, userEmail);
-        currentUser.setPassword(userPassword);
+        if(userName1.isEmpty()) {
+            userName.setError("User name is required");
+            userName.requestFocus();
+            return;// Stop further processing
+        }
+        if(userEmail.isEmpty()){
+            email.setError("Email is required");
+            email.requestFocus();
+            return; // Stop further processing
+        }
+        if(userPassword.isEmpty()){
+            password.setError("Password is required");
+            password.requestFocus();
+            return;// Stop further processing
+        }
+
+
 
         long currentId;
         Log.d("usersFromDB", String.valueOf(db.getAllUsers()));
 
         try{
-            currentId = db.insertUser(userName1, userEmail);
+            currentId = db.insertUser(userName1, userEmail, userPassword);
             if(currentId >=0){
                 Log.d("currentId", String.valueOf(currentId));
                 Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();
                 User currentUserFromDB = db.getUser(currentId);
                 Log.d("currentUserFromDB", " " + currentUserFromDB + "");
-                signInBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+                moveToActivity(MainActivity.class);
             }
             else {
                 Toast.makeText(getApplicationContext(), "Email already exists!", Toast.LENGTH_SHORT).show();
