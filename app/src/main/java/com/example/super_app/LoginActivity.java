@@ -36,9 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
         logInBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
-
-
-
+        signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
 
     }
 
