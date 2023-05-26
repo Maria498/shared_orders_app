@@ -1,12 +1,9 @@
 package com.example.super_app;
 
-import static android.content.ContentValues.TAG;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,59 +11,63 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
-public class LoginActivity extends AppCompatActivity {
+public class SigninActivity  extends AppCompatActivity {
 
     private Button backBtn;
     private Button signInBtn;
-    private Button logInBtn;
+    private EditText userName;
     private EditText email;
     private EditText password;
-    private DatabaseHelper db;
     private Context context;
     private ArrayList<User> usersFromDB;
+    private DatabaseHelper db;
 
 
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_signin);
         context = getApplicationContext();
 
         signInBtn = findViewById(R.id.signInBtn);
         backBtn = findViewById(R.id.backBtn);
-        logInBtn = findViewById(R.id.logInBtn);
+        userName = findViewById(R.id.userName);
         email = findViewById(R.id.userEmail);
-        password = findViewById(R.id.editTextTextPassword3);
-
+        password = findViewById(R.id.editTextTextPassword);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
         db = new DatabaseHelper(context);
-        //db.deleteAllUsers();
         Log.d("db.getAllUsers()", String.valueOf(db.getAllUsers()));
-        signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
 
-        logInBtn.setOnClickListener((new View.OnClickListener() {
+
+        signInBtn.setOnClickListener((new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 db = new DatabaseHelper(context);
-                //db.deleteAllUsers();
-                loginUser();
-
+                addUserToDB();
             }
         }));
 
     }
 
-    public void loginUser(){
+    private void addUserToDB(){
         String userEmail = email.getText().toString();
         String userPassword = password.getText().toString();
-        //todo shared references for loin button.
+        String userName1 = userName.getText().toString();
+        if(userName1.isEmpty()) {
+            userName.setError("User name is required");
+            userName.requestFocus();
+            return;// Stop further processing
+        }
         if(userEmail.isEmpty()){
             email.setError("Email is required");
             email.requestFocus();
@@ -79,26 +80,28 @@ public class LoginActivity extends AppCompatActivity {
         }
 
 
-        long userId = db.getUserIdByEmail(userEmail);
-        if(userId > -1){
-            String passwordByEmail = db.getPasswordByEmail(userEmail);
-            if(passwordByEmail.equals(userPassword)){
-                Toast.makeText(getApplicationContext(), "login:success", Toast.LENGTH_SHORT).show();
-                Log.d("login:success","login:success");
+
+        long currentId;
+        Log.d("usersFromDB", String.valueOf(db.getAllUsers()));
+
+        try{
+            currentId = db.insertUser(userName1, userEmail, userPassword);
+            if(currentId >=0){
+                Log.d("currentId", String.valueOf(currentId));
+                Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();
+                User currentUserFromDB = db.getUser(currentId);
+                Log.d("currentUserFromDB", " " + currentUserFromDB + "");
                 moveToActivity(MainActivity.class);
             }
             else {
-                Toast.makeText(getApplicationContext(), "login:failed - passwords do not match", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "Email already exists!", Toast.LENGTH_SHORT).show();
             }
+
+        } catch (SQLiteConstraintException e) {
+            Toast.makeText(getApplicationContext(), "Email already exists!", Toast.LENGTH_SHORT).show();
+            Log.e("SQLiteException", e.getMessage());
+            e.printStackTrace();
         }
-        else {
-            Toast.makeText(getApplicationContext(), "login:failed - user not fount, please sig in", Toast.LENGTH_SHORT).show();
-            moveToActivity(SigninActivity.class);
-        }
-
-
-
-
 
 
     }
@@ -110,6 +113,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(i);
 
     }
-
-
 }
