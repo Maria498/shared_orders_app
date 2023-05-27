@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private void moveToActivity (Class<?> cls) {
 
         Intent i = new Intent(getApplicationContext(),  cls);
-        i.putExtra("msg", "Data collector");
+        i.putExtra("msg", "msg");
         startActivity(i);
 
     }

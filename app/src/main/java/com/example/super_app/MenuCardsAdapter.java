@@ -35,20 +35,22 @@ public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewH
         holder.cardTitle.setText(model.getCardTitle());
         holder.cardText.setText(model.getCardText());
         holder.cardImage.setImageResource(model.getCardImage());
-        holder.itemView.setOnClickListener(v -> moveToActivity(position));
+        holder.itemView.setOnClickListener(v -> moveToActivity(holder));
 
     }
 
     //  switching activities according to indexes in array of cards adapter
-    private void moveToActivity (int position) {
+    private void moveToActivity (VewHolder holder) {
+        String choice = holder.cardTitle.getText().toString();
+        Intent i;
+        if(choice.equals("Meat")){
+            i = new Intent(context, ProductCategoryActivity.class);
+            i.putExtra("msg", "meat");
+        }
+        else{
+            i = new Intent(context, MainActivity.class);
+        }
 
-        Intent i = new Intent(context, MainActivity.class);;
-        if (position == 1) {
-            i = new Intent(context, MainActivity.class);
-        }
-        else if (position == 2) {
-            i = new Intent(context, MainActivity.class);
-        }
         context.startActivity(i);
     }
 
