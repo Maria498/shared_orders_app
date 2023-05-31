@@ -37,6 +37,9 @@
         <activity
             android:name=".SigninActivity"
             android:exported="false" />
+        <activity
+            android:name=".UserProfileActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
         DisplaySavedText();
 
+
     }
 
     private void moveToActivity (Class<?> cls) {
@@ -72,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         if(userName != null){
             Log.d("i am onResume()", "i am onResume()");
             DisplayAndSaveUserName(userName);
+
         }
     }
     @SuppressLint("LongLogTag")
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         String defaultText = sharedPref.getString("userName", "Log In");
         //logInBtn.setEnabled(true);
         logInBtn.setText(defaultText);
+        logInBtn.setOnClickListener(v -> moveToActivity(UserProfileActivity.class));
     }
 
 
