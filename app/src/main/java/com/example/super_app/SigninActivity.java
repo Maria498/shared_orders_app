@@ -25,6 +25,7 @@ public class SigninActivity  extends AppCompatActivity {
     private Button backBtn;
     private Button signInBtn;
     private EditText userName;
+    private EditText userAddress;
     private EditText email;
     private EditText password;
     private Context context;
@@ -42,6 +43,7 @@ public class SigninActivity  extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         email = findViewById(R.id.userEmail);
         password = findViewById(R.id.editTextTextPassword);
+        userAddress = findViewById(R.id.address);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
         db = new DatabaseHelper(context);
@@ -63,9 +65,15 @@ public class SigninActivity  extends AppCompatActivity {
         String userEmail = email.getText().toString();
         String userPassword = password.getText().toString();
         String userName1 = userName.getText().toString();
+        String userAdd = userAddress.getText().toString();
         if(userName1.isEmpty()) {
             userName.setError("User name is required");
             userName.requestFocus();
+            return;// Stop further processing
+        }
+        if(userAdd.isEmpty()) {
+            userAddress.setError("User name is required");
+            userAddress.requestFocus();
             return;// Stop further processing
         }
         if(userEmail.isEmpty()){
@@ -85,7 +93,7 @@ public class SigninActivity  extends AppCompatActivity {
         Log.d("usersFromDB", String.valueOf(db.getAllUsers()));
 
         try{
-            currentId = db.insertUser(userName1, userEmail, userPassword);
+            currentId = db.insertUser(userName1, userEmail, userPassword, userAdd);
             if(currentId >=0){
                 Log.d("currentId", String.valueOf(currentId));
                 Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();

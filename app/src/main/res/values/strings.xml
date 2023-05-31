@@ -2,6 +2,7 @@
     <string name="app_name">super_app</string>
     <string name="enter_your_e_mail">enter your e-mail</string>
     <string name="enter_a_password">enter a password</string>
+    <string name="enter_your_address">enter your address</string>
     <string name="back">Back</string>
     <string name="sign_in">Sign In</string>
     <string name="home_address">Home address</string>
@@ -18,8 +19,9 @@
     <string name="signIn">Sign In</string>
     <string name="enter_your_name">enter your name</string>
     <string name="OrderHistory">Order History</string>
-    <string name="EditProfile">Edit Profile</string>
-    <string name="UpdateUserProfile">Update User Profile</string>
+    <string name="coinBag">Your coins!</string>
+    <string name="UpdateUserProfile">Update Your Profile</string>
+
 
 
 

@@ -51,7 +51,7 @@
         android:id="@+id/userName"
         android:layout_width="300dp"
         android:layout_height="60dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/input_bg"
         android:drawableLeft="@drawable/baseline_person_24"
         android:drawablePadding="7dp"
@@ -60,12 +60,29 @@
         android:paddingLeft="20dp"
         android:paddingEnd="20dp"
         android:textColor="#99000000"
-        app:layout_constraintBottom_toTopOf="@+id/userEmail"
+
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+    <EditText
+        android:id="@+id/address"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="88dp"
+        android:background="@drawable/input_bg"
+        android:drawableLeft="@drawable/baseline_person_24"
+        android:drawablePadding="7dp"
+        android:hint="@string/enter_your_address"
+        android:inputType="textPersonName"
+        android:paddingLeft="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="#99000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
         android:id="@+id/editTextTextPassword"

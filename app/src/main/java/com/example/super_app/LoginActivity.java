@@ -85,7 +85,12 @@ public class LoginActivity extends AppCompatActivity {
             if(passwordByEmail.equals(userPassword)){
                 Toast.makeText(getApplicationContext(), "login:success", Toast.LENGTH_SHORT).show();
                 Log.d("login:success","login:success");
-                moveToActivity(MainActivity.class);
+                Intent i = new Intent(getApplicationContext(),  MainActivity.class);
+                String userName =db.getUserNameById((int) userId);
+                i.putExtra("USER_NAME", userName);
+                startActivity(i);
+
+                //moveToActivity(MainActivity.class);
             }
             else {
                 Toast.makeText(getApplicationContext(), "login:failed - passwords do not match", Toast.LENGTH_SHORT).show();

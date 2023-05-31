@@ -45,9 +45,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
     // Insert Data into Database
-
-    public long insertUser(String name, String email,String password){
-        User currentUser = new User(name, email, password);
+    //-------------------USER-----------------------
+    //todo - change next ite to firebase auth
+    public long insertUser(String name, String email,String password, String address){
+        User currentUser = new User(name, email, password, address);
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
 
@@ -55,6 +56,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(User.COLUMN_NAME, name);
         values.put(User.COLUMN_EMAIL, email);
         values.put(User.COLUMN_PASSWORD,currentUser.getPassword());
+        values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
+
         try {
             long id = db.insert(User.TABLE_NAME, null, values);
             db.close();
@@ -63,10 +66,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             db.close();
             return -1;
         }
-
-
-
-
     }
 
 
@@ -80,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{
                         User.COLUMN_ID,
                         User.COLUMN_NAME,
-                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD},
+                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD, User.COLUMN_ADDRESS},
                 User.COLUMN_ID + "=?",
                 new String[]{
                         String.valueOf(id)
@@ -97,6 +96,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)),
                 cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)),
                 cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)),
+                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)),
                 cursor.getInt(cursor.getColumnIndexOrThrow(User.COLUMN_ID))
         );
 
@@ -105,7 +105,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     }
 
-    // Getting all Contacts
+    //todo - change to firebase auth
     public ArrayList<User> getAllUsers(){
         ArrayList<User> users = new ArrayList<>();
 
@@ -123,6 +123,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(User.COLUMN_ID)));
                 user.setName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
                 user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
+                user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
+                user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
 
                 users.add(user);
 
@@ -215,6 +217,35 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return password;
     }
+
+    @SuppressLint("Range")
+    public String getUserNameById(int userId) {
+        String userName = null;
+
+        // Define the query to search for a user by ID
+        String query = "SELECT " + User.COLUMN_NAME +
+                " FROM " + User.TABLE_NAME +
+                " WHERE " + User.COLUMN_ID + " = ?";
+
+        // Execute the query
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
+
+        if (cursor.moveToFirst()) {
+            // Extract the user name from the cursor
+            userName = cursor.getString(cursor.getColumnIndex(User.COLUMN_NAME));
+        }
+
+        // Close the cursor
+        cursor.close();
+
+        return userName;
+    }
+
+    //-------------------USER-----------------------
+
+
+
 
 
 
