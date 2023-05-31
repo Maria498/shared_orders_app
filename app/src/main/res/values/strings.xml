@@ -17,6 +17,10 @@
     <string name="no"> </string>
     <string name="signIn">Sign In</string>
     <string name="enter_your_name">enter your name</string>
+    <string name="OrderHistory">Order History</string>
+    <string name="EditProfile">Edit Profile</string>
+    <string name="UpdateUserProfile">Update User Profile</string>
+
 
 
 </resources>
