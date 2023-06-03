@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewAddresses.setAdapter(adapter);
 
         cardsListCath = new ArrayList<>();
-        cardsListCath.add(new MenuModel(R.string.meat, R.string.no, R.drawable.meat));
+        cardsListCath.add(new MenuModel(R.string.fruits, R.string.no, R.drawable.fruit));
         cardsListCath.add(new MenuModel(R.string.veggie, R.string.no, R.drawable.veggi));
+        cardsListCath.add(new MenuModel(R.string.meat, R.string.no, R.drawable.meat));
         adapter = new MenuCardsAdapter(this, cardsListCath);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(layoutManager1);
