@@ -10,18 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.entity.Product;
-
-import java.util.List;
+import java.util.ArrayList;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     private Context context;
-    private List<Product> productList;
+    private ArrayList<ProductModel> productList;
+    private OnItemClickListener onItemClickListener;
 
-    public ProductAdapter(Context context, List<Product> productList) {
+    public ProductAdapter(Context context, ArrayList<ProductModel> productList) {
         this.context = context;
         this.productList = productList;
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
     }
 
     @NonNull
@@ -31,14 +34,18 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         return new ViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Product product = productList.get(position);
-        holder.productName.setText(product.getName());
-        holder.productPrice.setText(String.valueOf(product.getPrice()));
-        holder.productDiscount.setText(String.valueOf(product.getDiscount())+"%");
-        holder.productImageView.setImageResource(product.getImageResId());
+        ProductModel product = productList.get(position);
+        holder.productName.setText(product.getProductName());
+        holder.productPrice.setText(String.valueOf(product.getProductPrice()));
+        holder.productImage.setImageResource(product.getProductImage());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(product);
+            }
+        });
     }
 
     @Override
@@ -47,17 +54,19 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public ImageView productImage;
         public TextView productName;
         public TextView productPrice;
-        public TextView productDiscount;
-        public ImageView productImageView;
 
-        public ViewHolder(View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            productImage = itemView.findViewById(R.id.productImage);
             productName = itemView.findViewById(R.id.productName);
             productPrice = itemView.findViewById(R.id.productPrice);
-            productDiscount = itemView.findViewById(R.id.productDiscount);
-            productImageView = itemView.findViewById(R.id.productImageView);
         }
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(ProductModel product);
     }
 }
