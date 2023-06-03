@@ -8,29 +8,33 @@ public class User {
     public static final String COLUMN_NAME = "user_name";
     public static final String COLUMN_EMAIL ="user_email";
     public static final String COLUMN_PASSWORD ="user_password";
+    public static final String COLUMN_ADDRESS ="user_address";
 
     // var
     private String name;
     private String email;
     private int id;
     private String password;
+    private String address;
 
     public User() {
 
     }
 
-    public User(String name, String email,String password, int id) {
+    public User(String name, String email,String password,String address, int id) {
         this.name = name;
         this.email = email;
         this.id = id;
         this.password = password;
+        this.address = address;
 
     }
 
-    public User(String name, String email, String password) {
+    public User(String name, String email,String password,String address) {
         this.name = name;
         this.email = email;
         this.password = password;
+        this.address = address;
     }
 
 
@@ -66,13 +70,21 @@ public class User {
     public void setId(int id) {
         this.id = id;
     }
+    public String getAddress() {return address;}
+
+    public void setAddress(String address) {this.address = address;}
 
     //SQL QUERY - Creating table
 
     public static final String CREATE_TABLE =
             "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_ID +
                     " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME +
-                    " TEXT, " + COLUMN_EMAIL + " TEXT UNIQUE, " + COLUMN_PASSWORD + " TEXT" + ")";
+                    " TEXT, " + COLUMN_EMAIL + " TEXT UNIQUE, " + COLUMN_PASSWORD +
+                    " TEXT, " + COLUMN_ADDRESS + " TEXT" + ")";
+
+
+
+
 
     @Override
     public String toString() {
@@ -81,6 +93,7 @@ public class User {
                 ", email='" + email + '\'' +
                 ", id=" + id +
                 ", password='" + password + '\'' +
+                ", address='" + address + '\'' +
                 '}';
     }
 }

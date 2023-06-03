@@ -1,7 +1,11 @@
 package com.example.super_app;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,13 +17,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
 
-    Button logInBtn;
+    private Button logInBtn;
 
-    RecyclerView recyclerViewAddresses;
-    RecyclerView recyclerViewCategories;
-    MenuCardsAdapter adapter;
-    ArrayList<MenuModel> cardsList;
-    ArrayList<MenuModel> cardsListCath;
+    private RecyclerView recyclerViewAddresses;
+    private RecyclerView recyclerViewCategories;
+    private MenuCardsAdapter adapter;
+    private ArrayList<MenuModel> cardsList;
+    private ArrayList<MenuModel> cardsListCath;
 
 
 
@@ -48,21 +52,55 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewCategories.setAdapter(adapter);
 
         logInBtn = findViewById(R.id.logInBtn);
-        logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));;
+        logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
+        DisplaySavedText();
+
 
     }
 
     private void moveToActivity (Class<?> cls) {
-
         Intent i = new Intent(getApplicationContext(),  cls);
-        i.putExtra("msg", "Data collector");
+        i.putExtra("msg", "msg");
         startActivity(i);
-
     }
 
-    private void updateRecycled (Class<?> cls) {
+    private void updateRecycled (Class<?> cls) {}
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        String userName = intent.getStringExtra("USER_NAME");
+        if(userName != null){
+            Log.d("i am onResume()", "i am onResume()");
+            DisplayAndSaveUserName(userName);
+
+        }
+    }
+    @SuppressLint("LongLogTag")
+    private void DisplayAndSaveUserName(String userName) {
+        //Display the text
+        logInBtn.setText("Hey, "+userName);
+
+        //-------store data--------
+        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        //write data to shared perf
+        SharedPreferences.Editor editor =sharedPref.edit();
+        editor.putString("userName","Hey, "+ userName);
+        editor.commit();
+        Log.d("i am DisplayAndSaveUserName(String userName)", "i am DisplayAndSaveUserName(String userName)");
+        //-------store data--------
+        //String storedUserName = sharedPref.getString(getString(R.string.log_in), null);
+    }
+
+    private void DisplaySavedText() {
+        //Reading values from shared preference
+        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String defaultText = sharedPref.getString("userName", "Log In");
+        //logInBtn.setEnabled(true);
+        logInBtn.setText(defaultText);
+        logInBtn.setOnClickListener(v -> moveToActivity(UserProfileActivity.class));
+    }
 
 
     }
-}
