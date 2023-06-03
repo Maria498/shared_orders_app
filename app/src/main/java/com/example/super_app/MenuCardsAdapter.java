@@ -39,15 +39,20 @@ public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewH
 
     }
 
-    //  switching activities according to indexes in array of cards adapter
+    //  switching activities according to picked category
     private void moveToActivity (MenuModel model) {
-        //todo provide here string intent message to arrange relevant list (fruits/veggies.. in ProductsActivity)
         Intent i = new Intent(context, MainActivity.class);;
         if (model.getCardTitle() == R.string.fruits) {
             i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Fruits");
         }
         else if (model.getCardTitle() == R.string.veggie) {
             i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Veggies");
+        }
+        else if (model.getCardTitle() == R.string.meat) {
+            i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Meat");
         }
         context.startActivity(i);
     }
