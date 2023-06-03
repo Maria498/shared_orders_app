@@ -18,6 +18,10 @@
     <string name="signIn">Sign In</string>
     <string name="enter_your_name">enter your name</string>
     <string name="fruits">Fruits</string>
+    <string name="enter_your_address">enter your address</string>
+    <string name="UpdateUserProfile">Update user profile</string>
+    <string name="OrderHistory">Order History</string>
+    <string name="coinBag">Coin Bag</string>
 
 
 </resources>
