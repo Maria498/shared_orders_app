@@ -2,21 +2,21 @@ package com.example.super_app;
 
 public class MenuModel {
 
-    private int cardTitle;
-    private int cardText;
+    private String cardTitle;
+    private String cardText;
     private int cardImage;
 
-    public MenuModel(int cardTitle, int cardText, int cardImage) {
+    public MenuModel(String cardTitle, String cardText, int cardImage) {
         this.cardTitle = cardTitle;
         this.cardText = cardText;
         this.cardImage = cardImage;
     }
 
-    public void setCardTitle(int cardTitle) {
+    public void setCardTitle(String cardTitle) {
         this.cardTitle = cardTitle;
     }
 
-    public void setCardText(int cardText) {
+    public void setCardText(String cardText) {
         this.cardText = cardText;
     }
 
@@ -24,11 +24,11 @@ public class MenuModel {
         this.cardImage = cardImage;
     }
 
-    public int getCardTitle() {
+    public String getCardTitle() {
         return cardTitle;
     }
 
-    public int getCardText() {
+    public String getCardText() {
         return cardText;
     }
 

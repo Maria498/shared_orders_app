@@ -21,9 +21,11 @@ public class MainActivity extends AppCompatActivity {
 
     private RecyclerView recyclerViewAddresses;
     private RecyclerView recyclerViewCategories;
+    private RecyclerView recyclerViewOrders;
     private MenuCardsAdapter adapter;
     private ArrayList<MenuModel> cardsList;
     private ArrayList<MenuModel> cardsListCath;
+    private ArrayList<MenuModel> cardsListOrders;
 
 
 
@@ -33,23 +35,32 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         recyclerViewAddresses = findViewById(R.id.recyclerViewAddresses);
         recyclerViewCategories = findViewById(R.id.recyclerViewCategories);
+        recyclerViewOrders = findViewById(R.id.recyclerViewOrders);
 
         cardsList = new ArrayList<>();
-        cardsList.add(new MenuModel(R.string.home_address, R.string.namal, R.drawable.map_small));
-        cardsList.add(new MenuModel(R.string.recently_address, R.string.herzel, R.drawable.map_small));
+        cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
+        cardsList.add(new MenuModel("Recently used","Herzel str. 4", R.drawable.map_small));
         adapter = new MenuCardsAdapter(this, cardsList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewAddresses.setLayoutManager(layoutManager);
         recyclerViewAddresses.setAdapter(adapter);
 
         cardsListCath = new ArrayList<>();
-        cardsListCath.add(new MenuModel(R.string.fruits, R.string.no, R.drawable.fruit));
-        cardsListCath.add(new MenuModel(R.string.veggie, R.string.no, R.drawable.veggi));
-        cardsListCath.add(new MenuModel(R.string.meat, R.string.no, R.drawable.meat));
+        cardsListCath.add(new MenuModel("Fruits", "", R.drawable.fruit));
+        cardsListCath.add(new MenuModel("Veggies","", R.drawable.veggi));
+        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meat));
         adapter = new MenuCardsAdapter(this, cardsListCath);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(layoutManager1);
         recyclerViewCategories.setAdapter(adapter);
+
+        cardsListOrders = new ArrayList<>();
+        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
+        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
+        adapter = new MenuCardsAdapter(this, cardsListOrders);
+        RecyclerView.LayoutManager layoutManagerOrder = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        recyclerViewOrders.setLayoutManager(layoutManagerOrder);
+        recyclerViewOrders.setAdapter(adapter);
 
         logInBtn = findViewById(R.id.logInBtn);
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
@@ -103,4 +114,4 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    }
+}

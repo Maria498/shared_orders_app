@@ -110,7 +110,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
     private void moveToActivity (Class<?> cls) {
 
         Intent i = new Intent(getApplicationContext(),  cls);
-        i.putExtra("msg", "Data collector");
+        i.putExtra("msg", "msg");
         startActivity(i);
 
     }
