@@ -3,7 +3,6 @@ package com.example.super_app;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -13,11 +12,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.super_app.Model.ProductModel;
 import com.example.super_app.db.entity.Cart;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Objects;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {

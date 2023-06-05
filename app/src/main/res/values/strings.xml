@@ -23,5 +23,10 @@
     <string name="OrderHistory">Order History</string>
     <string name="coinBag">Coin Bag</string>
 
+    <string name="personal_de">personal details:</string>
+    <string name="userName">userName\n</string>
+    <string name="AddOrder">Add Order</string>
+    <string name="existOrder">exist orders</string>
+
 
 </resources>

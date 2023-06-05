@@ -1,4 +1,4 @@
-package com.example.super_app;
+package com.example.super_app.Model;
 
 public class ProductModel {
 

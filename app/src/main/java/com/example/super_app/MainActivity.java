@@ -11,14 +11,10 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
-
     private Button logInBtn;
-
     private RecyclerView recyclerViewAddresses;
     private RecyclerView recyclerViewCategories;
     private RecyclerView recyclerViewOrders;
@@ -55,8 +51,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewCategories.setAdapter(adapter);
 
         cardsListOrders = new ArrayList<>();
-        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
-        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
+//        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
+//        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
         adapter = new MenuCardsAdapter(this, cardsListOrders);
         RecyclerView.LayoutManager layoutManagerOrder = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewOrders.setLayoutManager(layoutManagerOrder);

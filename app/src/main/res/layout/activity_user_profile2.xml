@@ -1,0 +1,82 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/food_bag" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/personal_de"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:text="@string/personal_de"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/userImg"
+            android:layout_width="104.25dp"
+            android:layout_height="104.25dp"
+            android:layout_below="@+id/personal_de"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:src="@drawable/anonymousman" />
+
+        <TextView
+            android:id="@+id/userName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userImg"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
+            android:text="@string/userName"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/userImg"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/userName"
+            android:src="@drawable/baseline_edit_24" />
+
+        <Button
+            android:id="@+id/addOrder"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/userName"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="10dp"
+            android:backgroundTint="#404040"
+            android:drawableLeft="@drawable/baseline_add_circle_24"
+            android:text="@string/AddOrder"
+            />
+        <Button
+            android:id="@+id/showOrderOpen"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_below="@+id/userName"
+            android:layout_toLeftOf="@id/addOrder"
+            android:backgroundTint="#404040"
+            android:text="@string/existOrder"/>
+
+        <!-- Other widgets you want to place on top of the image -->
+
+    </RelativeLayout>
+
+</FrameLayout>
