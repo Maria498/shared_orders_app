@@ -58,7 +58,7 @@ public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewH
         else if (Objects.equals(model.getCardTitle(), "Order1")) {
             i = new Intent(context, OrderActivity.class);
             i.putExtra("msg", "Order1");
-        }
+        }//todo
         context.startActivity(i);
     }
 
