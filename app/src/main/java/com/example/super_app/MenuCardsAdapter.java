@@ -10,6 +10,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewHolder> {
 
@@ -42,17 +43,21 @@ public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewH
     //  switching activities according to picked category
     private void moveToActivity (MenuModel model) {
         Intent i = new Intent(context, MainActivity.class);;
-        if (model.getCardTitle() == R.string.fruits) {
+        if (Objects.equals(model.getCardTitle(), "Fruits")) {
             i = new Intent(context, ProductsActivity.class);
             i.putExtra("msg", "Fruits");
         }
-        else if (model.getCardTitle() == R.string.veggie) {
+        else if (Objects.equals(model.getCardTitle(), "Veggies")) {
             i = new Intent(context, ProductsActivity.class);
             i.putExtra("msg", "Veggies");
         }
-        else if (model.getCardTitle() == R.string.meat) {
+        else if (Objects.equals(model.getCardTitle(), "Meat")) {
             i = new Intent(context, ProductsActivity.class);
             i.putExtra("msg", "Meat");
+        }
+        else if (Objects.equals(model.getCardTitle(), "Order1")) {
+            i = new Intent(context, OrderActivity.class);
+            i.putExtra("msg", "Order1");
         }
         context.startActivity(i);
     }
