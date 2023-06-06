@@ -25,6 +25,11 @@
     <string name="Addaddress">your adress</string>
     <string name="street">street</string>
     <string name="Apartment">Apatment</string>
+    <string name="productName">product Name\n</string>
+    <string name="productPrice">product Price</string>
+    <string name="produceQuantity">product Quantity</string>
+    <string name="productCategory">product Category</string>
+    <string name="discount">discount</string>
     <string-array name="israeliCities">
         <item>Filter By city</item>
         <item>Jerusalem</item>
