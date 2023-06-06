@@ -55,8 +55,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewCategories.setAdapter(adapter);
 
         cardsListOrders = new ArrayList<>();
-        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
-        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
+//        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
+  //      cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
         adapter = new MenuCardsAdapter(this, cardsListOrders);
         RecyclerView.LayoutManager layoutManagerOrder = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         recyclerViewOrders.setLayoutManager(layoutManagerOrder);
@@ -110,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
         String defaultText = sharedPref.getString("userName", "Log In");
         //logInBtn.setEnabled(true);
         logInBtn.setText(defaultText);
-        logInBtn.setOnClickListener(v -> moveToActivity(UserProfileActivity.class));
     }
 
 

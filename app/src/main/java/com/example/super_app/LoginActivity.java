@@ -12,18 +12,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.User;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Button backBtn;
+
+    private FirebaseAuth auth;
     private Button signInBtn;
     private Button logInBtn;
+    private TextView linkSignUp;
     private EditText email;
     private EditText password;
     private DatabaseHelper db;
@@ -36,14 +43,12 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
-
         signInBtn = findViewById(R.id.signInBtn);
-        backBtn = findViewById(R.id.backBtn);
-        logInBtn = findViewById(R.id.logInBtn);
+        logInBtn = findViewById(R.id.signInBtn);
         email = findViewById(R.id.userEmail);
-        password = findViewById(R.id.editTextTextPassword3);
-
-        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        password = findViewById(R.id.editTextTextPassword);
+        linkSignUp = findViewById(R.id.linkSignUp);
+        auth = FirebaseAuth.getInstance();
 
         db = new DatabaseHelper(context);
         //db.deleteAllUsers();
@@ -56,10 +61,26 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 db = new DatabaseHelper(context);
                 //db.deleteAllUsers();
-                loginUser();
+              //  loginUser();
+                auth.signInWithEmailAndPassword(email.getText().toString(),password.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
+                    }
+                });
+                Toast.makeText(LoginActivity.this,"something went wrong",Toast.LENGTH_SHORT).show();
+
 
             }
         }));
+        linkSignUp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, SigninActivity.class);
+                startActivity(intent);
+            }
+        });
 
     }
 

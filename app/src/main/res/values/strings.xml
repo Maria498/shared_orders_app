@@ -22,6 +22,63 @@
     <string name="UpdateUserProfile">Update user profile</string>
     <string name="OrderHistory">Order History</string>
     <string name="coinBag">Coin Bag</string>
+    <string name="Addaddress">your adress</string>
+    <string name="street">street</string>
+    <string name="Apartment">Apatment</string>
+    <string-array name="israeliCities">
+        <item>Filter By city</item>
+        <item>Jerusalem</item>
+        <item>Tel Aviv</item>
+        <item>Haifa</item>
+        <item>Rishon LeZion</item>
+        <item>Petah Tikva</item>
+        <item>Ashdod</item>
+        <item>Netanya</item>
+        <item>Beer Sheva</item>
+        <item>Bnei Brak</item>
+        <item>Holon</item>
+        <item>Ramat Gan</item>
+        <item>Bat Yam</item>
+        <item>Ashkelon</item>
+        <item>Herzliya</item>
+        <item>Kfar Saba</item>
+        <item>Raanana</item>
+        <item>Rehovot</item>
+        <item>Nazareth</item>
+        <item>Ramat HaSharon</item>
+        <item>Modiin-Maccabim-Reut</item>
+        <item>Hadera</item>
+        <item>Lod</item>
+        <item>Ramla</item>
+        <item>Acre</item>
+        <item>Bet Shemesh</item>
+        <item>Eilat</item>
+        <item>Dimona</item>
+        <item>Tiberias</item>
+        <item>Kiryat Gat</item>
+        <item>Nahariya</item>
+        <item>Givatayim</item>
+        <item>Ness Ziona</item>
+        <item>Yavne</item>
+        <item>Yehud-Monosson</item>
+        <item>Ras al-Ayn</item>
+        <item>Tira</item>
+        <item>Kafr Qasim</item>
+        <item>Sderot</item>
+        <item>Tamra</item>
+        <item>Afula</item>
+        <item>Beit Shean</item>
+        <item>Kiryat Shmona</item>
+        <item>Migdal HaEmek</item>
+        <item>Or Akiva</item>
+        <item>Tirat Carmel</item>
+        <item>Umm al-Fahm</item>
+        <item>Maalot-Tarshiha</item>
+        <item>Qalansawe</item>
+        <item>Karmiel</item>
+        <item>Arad</item>
+        <item>Hod HaSharon</item>
+    </string-array>
 
 
 </resources>
