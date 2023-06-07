@@ -49,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
+        backBtn = findViewById(R.id.backBtn);
+        signInBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+
 
         db = new DatabaseHelper(context);
         //db.deleteAllUsers();
