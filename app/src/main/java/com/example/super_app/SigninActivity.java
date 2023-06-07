@@ -92,8 +92,10 @@ public class SigninActivity extends AppCompatActivity {
                                         public void onSuccess(DocumentReference documentReference) {
                                             Log.d(TAG, "DocumentSnapshot added with ID: " +
                                                     documentReference.getId());
-                                            Intent intent = new Intent(SigninActivity.this, LoginActivity.class);
-                                            startActivity(intent);
+                                            Intent i = new Intent(getApplicationContext(),  MainActivity.class);
+                                            String userName =user.getDisplayName();
+                                            i.putExtra("USER_NAME", userName);
+                                            startActivity(i);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override

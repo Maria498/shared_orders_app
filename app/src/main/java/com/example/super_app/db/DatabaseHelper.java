@@ -79,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{
                         User.COLUMN_ID,
                         User.COLUMN_NAME,
-                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD, User.COLUMN_ADDRESS},
+                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD},
                 User.COLUMN_ID + "=?",
                 new String[]{
                         String.valueOf(id)

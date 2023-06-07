@@ -79,8 +79,10 @@ public class LoginActivity extends AppCompatActivity {
                 auth.signInWithEmailAndPassword(userEmail,userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
-                        Intent intent = new Intent(LoginActivity.this,MainActivity.class);
-                        startActivity(intent);
+                        Intent i = new Intent(getApplicationContext(),  MainActivity.class);
+                        String userName =auth.getCurrentUser().getDisplayName();
+                        i.putExtra("USER_NAME", userName);
+                        startActivity(i);
                     }
                 });
                 Toast.makeText(LoginActivity.this,"something went wrong",Toast.LENGTH_SHORT).show();
