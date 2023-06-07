@@ -38,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton shoppingCart;
     private FrameLayout fragmentContainer;
+    FragmentTransaction fragmentTransaction = null;
+    shoppingCartFragment fragment = null;
+
+    private boolean isFragmentOpen = false;
+    FragmentManager fragmentManager;
 
 
     @Override
@@ -87,26 +92,34 @@ public class MainActivity extends AppCompatActivity {
         shoppingCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               ArrayList<ProductModel> shoppingList = new ArrayList<>();
-                String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
-                Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
+
+                if (isFragmentOpen) {
+                    fragmentContainer.setVisibility(View.GONE);
+                    isFragmentOpen = false;
+                } else {
+                    fragmentContainer.setVisibility(View.VISIBLE);
+                    ArrayList<ProductModel> shoppingList = new ArrayList<>();
+                    String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
+                    Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
 
 // Iterate over the cursor to retrieve all items
-                while (cursor.moveToNext()) {
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                    String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-                    int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
-                    int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
-                    shoppingList.add(new ProductModel(name,pic,price,quantity));
-                }
+                    while (cursor.moveToNext()) {
+                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                        String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
+                        int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
+                        int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
+                        shoppingList.add(new ProductModel(name, pic, price, quantity));
+                    }
 
 // Close the cursor and database connection when done
-                shoppingCartFragment fragment = new shoppingCartFragment();
-                fragment.setItemList(shoppingList);
-                FragmentManager fragmentManager = getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.replace(R.id.fragmentContainer, fragment);
-                fragmentTransaction.commit();
+                    fragment = new shoppingCartFragment();
+                    fragment.setItemList(shoppingList);
+                    fragmentManager = getSupportFragmentManager();
+                    fragmentTransaction = fragmentManager.beginTransaction();
+                    fragmentTransaction.add(R.id.fragmentContainer, fragment);
+                    fragmentTransaction.commit();
+                    isFragmentOpen = true;
+                }
             }
         });
     }
