@@ -36,6 +36,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewAddresses = findViewById(R.id.recyclerViewAddresses);
         recyclerViewCategories = findViewById(R.id.recyclerViewCategories);
         recyclerViewOrders = findViewById(R.id.recyclerViewOrders);
+        logInBtn = findViewById(R.id.logInBtn);
+        logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
+        DisplaySavedText();
 
         cardsList = new ArrayList<>();
         cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
@@ -62,9 +65,6 @@ public class MainActivity extends AppCompatActivity {
         recyclerViewOrders.setLayoutManager(layoutManagerOrder);
         recyclerViewOrders.setAdapter(adapter);
 
-        logInBtn = findViewById(R.id.logInBtn);
-        logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
-        DisplaySavedText();
 
 
     }

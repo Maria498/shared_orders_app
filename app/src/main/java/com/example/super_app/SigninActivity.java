@@ -95,6 +95,7 @@ public class SigninActivity extends AppCompatActivity {
                                             Intent i = new Intent(getApplicationContext(),  MainActivity.class);
                                             String userName =user.getDisplayName();
                                             i.putExtra("USER_NAME", userName);
+                                            Log.d("i am onSuccess() signIn", "i am onSuccess() signIn");
                                             startActivity(i);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {

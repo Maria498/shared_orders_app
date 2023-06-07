@@ -81,6 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                     public void onSuccess(AuthResult authResult) {
                         Intent i = new Intent(getApplicationContext(),  MainActivity.class);
                         String userName =auth.getCurrentUser().getDisplayName();
+                        Log.d("i am onSuccess() login", "i am onSuccess()");
                         i.putExtra("USER_NAME", userName);
                         startActivity(i);
                     }
