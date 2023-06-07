@@ -8,11 +8,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -20,115 +22,53 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.super_app.db.DatabaseHelper;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
+    BottomNavigationView bottomNavigationView;
+    HomeFragment home = new HomeFragment();
+    NewOrderFragment newOrder = new NewOrderFragment();
+    UserFragment userFragment = new UserFragment();
 
-    private Button logInBtn;
-
-    private RecyclerView recyclerViewAddresses;
-    private RecyclerView recyclerViewCategories;
-    private RecyclerView recyclerViewOrders;
-    private MenuCardsAdapter adapter;
-    private ArrayList<MenuModel> cardsList;
-    private ArrayList<MenuModel> cardsListCath;
-    private ArrayList<MenuModel> cardsListOrders;
-
-    private ImageButton shoppingCart;
-    private FrameLayout fragmentContainer;
-    FragmentTransaction fragmentTransaction = null;
-    shoppingCartFragment fragment = null;
-
-    private boolean isFragmentOpen = false;
-    FragmentManager fragmentManager;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DatabaseHelper dbHelper = new DatabaseHelper(this);
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        dbHelper.createShopping(db);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.home);
 
-        recyclerViewAddresses = findViewById(R.id.recyclerViewAddresses);
-        recyclerViewCategories = findViewById(R.id.recyclerViewCategories);
-        recyclerViewOrders = findViewById(R.id.recyclerViewOrders);
-        shoppingCart = findViewById(R.id.shoppingCartIcon);
-        fragmentContainer = findViewById(R.id.fragmentContainer);
+        if(bottomNavigationView.getSelectedItemId() == R.id.home) {
+            // System.out.println("In Home: ");
+        }
 
-        cardsList = new ArrayList<>();
-        cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
-        cardsList.add(new MenuModel("Recently used","Herzel str. 4", R.drawable.map_small));
-        adapter = new MenuCardsAdapter(this, cardsList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewAddresses.setLayoutManager(layoutManager);
-        recyclerViewAddresses.setAdapter(adapter);
 
-        cardsListCath = new ArrayList<>();
-        cardsListCath.add(new MenuModel("Fruits", "", R.drawable.fruit));
-        cardsListCath.add(new MenuModel("Veggies","", R.drawable.veggi));
-        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meat));
-        adapter = new MenuCardsAdapter(this, cardsListCath);
-        RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewCategories.setLayoutManager(layoutManager1);
-        recyclerViewCategories.setAdapter(adapter);
 
-        cardsListOrders = new ArrayList<>();
-        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
-        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
-        adapter = new MenuCardsAdapter(this, cardsListOrders);
-        RecyclerView.LayoutManager layoutManagerOrder = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        recyclerViewOrders.setLayoutManager(layoutManagerOrder);
-        recyclerViewOrders.setAdapter(adapter);
-
-        logInBtn = findViewById(R.id.logInBtn);
-        logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
-        DisplaySavedText();
-
-        shoppingCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if (isFragmentOpen) {
-                    fragmentContainer.setVisibility(View.GONE);
-                    isFragmentOpen = false;
-                } else {
-                    fragmentContainer.setVisibility(View.VISIBLE);
-                    ArrayList<ProductModel> shoppingList = new ArrayList<>();
-                    String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
-                    Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
-
-// Iterate over the cursor to retrieve all items
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                        String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-                        int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
-                        int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
-                        shoppingList.add(new ProductModel(name, pic, price, quantity));
-                    }
-
-// Close the cursor and database connection when done
-                    fragment = new shoppingCartFragment();
-                    fragment.setItemList(shoppingList);
-                    fragmentManager = getSupportFragmentManager();
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.fragmentContainer, fragment);
-                    fragmentTransaction.commit();
-                    isFragmentOpen = true;
-                }
-            }
-        });
     }
 
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.new_order:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, newOrder).commit();
+                return true;
+            case R.id.home:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, home).commit();
+                return true;
+            case R.id.account:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, userFragment).commit();
+                return true;
 
-    private void moveToActivity (Class<?> cls) {
-        Intent i = new Intent(getApplicationContext(),  cls);
-        i.putExtra("msg", "msg");
-        startActivity(i);
+        }
+
+        return false;
     }
 
     private void updateRecycled (Class<?> cls) {}
@@ -147,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("LongLogTag")
     private void DisplayAndSaveUserName(String userName) {
         //Display the text
-        logInBtn.setText("Hey, "+userName);
+//        logInBtn.setText("Hey, "+userName);
 
         //-------store data--------
         SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
@@ -165,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         String defaultText = sharedPref.getString("userName", "Log In");
         //logInBtn.setEnabled(true);
-        logInBtn.setText(defaultText);
+//        logInBtn.setText(defaultText);
     }
 
 

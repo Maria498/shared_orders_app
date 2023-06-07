@@ -1,77 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
+    android:background="#EFF4F4"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/logInBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="36dp"
-        android:text="@string/log_in"
-        android:textColor="@color/text"
-        android:textStyle="bold"
-        app:backgroundTint="@color/white"
-        app:cornerRadius="35dp" />
-    <ImageButton
-        android:id="@+id/shoppingCartIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="30dp"
-        android:src="@drawable/baseline_shopping_cart_24"
-        />
-
     <FrameLayout
-        android:id="@+id/fragmentContainer"
+        android:id="@+id/flFragment"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
 
-    <TextView
-        android:id="@+id/textCathegories"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/explore_by_category"
-        android:textSize="20sp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewCategories"
-        android:layout_width="419dp"
-        android:layout_height="100dp"
-        android:textSize="20sp" />
-
-    <TextView
-        android:id="@+id/textOrders"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="Open Orders"
-        android:textSize="20sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewOrders"
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="100dp" />
-
-    <TextView
-        android:id="@+id/textAddr"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:text="@string/addresses"
-        android:textSize="20sp" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerViewAddresses"
-        android:layout_width="match_parent"
-        android:layout_height="100dp" />
+        android:layout_height="75dp"
+        app:itemBackground="@color/cardview_dark_background"
+        app:itemIconTint="@color/white"
+        app:itemPaddingTop="15dp"
+        app:itemTextColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 
 
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
