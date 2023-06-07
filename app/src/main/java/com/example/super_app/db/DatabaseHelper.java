@@ -67,7 +67,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(User.COLUMN_NAME, name);
         values.put(User.COLUMN_EMAIL, email);
         values.put(User.COLUMN_PASSWORD,currentUser.getPassword());
-        values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
+       // values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
 
         try {
             long id = db.insert(User.TABLE_NAME, null, values);
@@ -134,7 +134,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(User.COLUMN_ID)));
                 user.setName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
                 user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
-                user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
+                //user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
                 user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
 
                 users.add(user);

@@ -126,7 +126,7 @@ public class SigninActivity extends AppCompatActivity {
         } else if (street.getText().toString().isEmpty() || apartmentNum.getText().toString().isEmpty()) {
             Toast.makeText(context, "Please fill all fileds", Toast.LENGTH_SHORT).show();
             return;
-        } else if (userName1.isEmpty() || userName1.length() < 7 || !userName1.matches("[a-zA-Z]+")) {
+        } else if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z]+")) {
             userName.setError("User name is required");
             userName.requestFocus();
             return;// Stop further processing

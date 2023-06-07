@@ -60,9 +60,20 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 db = new DatabaseHelper(context);
-                //db.deleteAllUsers();
-              //  loginUser();
-                auth.signInWithEmailAndPassword(email.getText().toString(),password.getText().toString()).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                String userEmail = email.getText().toString();
+                String userPassword =password.getText().toString();
+                //field validation
+                if(userEmail.isEmpty()){
+                    email.setError("Email is required");
+                    email.requestFocus();
+                    return; // Stop further processing
+                }
+                if(userPassword.isEmpty()){
+                    password.setError("Password is required");
+                    password.requestFocus();
+                    return;// Stop further processing
+                }
+                auth.signInWithEmailAndPassword(userEmail,userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
                         Intent intent = new Intent(LoginActivity.this,MainActivity.class);
