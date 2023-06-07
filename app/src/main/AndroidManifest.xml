@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Super_app"
+
         tools:targetApi="31">
         <activity android:name=".UserProfileActivity"
             android:exported="false"/>

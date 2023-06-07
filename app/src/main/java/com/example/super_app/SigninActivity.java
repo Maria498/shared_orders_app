@@ -92,8 +92,11 @@ public class SigninActivity extends AppCompatActivity {
                                         public void onSuccess(DocumentReference documentReference) {
                                             Log.d(TAG, "DocumentSnapshot added with ID: " +
                                                     documentReference.getId());
-                                            Intent intent = new Intent(SigninActivity.this, LoginActivity.class);
-                                            startActivity(intent);
+                                            Intent i = new Intent(getApplicationContext(),  MainActivity.class);
+                                            String userName =user.getDisplayName();
+                                            i.putExtra("USER_NAME", userName);
+                                            Log.d("i am onSuccess() signIn", "i am onSuccess() signIn");
+                                            startActivity(i);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
                                         @Override
@@ -120,25 +123,31 @@ public class SigninActivity extends AppCompatActivity {
         userPassword = password.getText().toString();
         userName1 = userName.getText().toString();
         userAdd = city.getSelectedItem().toString() + "," + street.getText().toString() + "," + apartmentNum.getText().toString();
-        if (city == null || city.getSelectedItem() == null || city.getSelectedItem().toString().isEmpty()) {
-            Toast.makeText(context, "Please fill all fileds", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (street.getText().toString().isEmpty() || apartmentNum.getText().toString().isEmpty()) {
-            Toast.makeText(context, "Please fill all fileds", Toast.LENGTH_SHORT).show();
-            return;
-        } else if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z]+")) {
+
+        if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z]+")) {
             userName.setError("User name is required");
             userName.requestFocus();
             return;// Stop further processing
-        } else if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
+        }
+        if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
             email.setError("Email is required");
             email.requestFocus();
             return; // Stop further processing
-        } else if (userPassword.isEmpty()) {
+        }
+        if (userPassword.isEmpty()) {
             password.setError("Password is required");
             password.requestFocus();
             return;// Stop further processing
-        } else {
+        }
+        if (city == null || city.getSelectedItem() == null || city.getSelectedItem().toString().isEmpty()) {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (street.getText().toString().isEmpty() || apartmentNum.getText().toString().isEmpty()) {
+            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        else {
             user = new User(userName1, userEmail, userPassword, userAdd);
             userMap.put("userName", userName1);
             userMap.put("userEmail", userEmail);
