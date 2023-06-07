@@ -50,7 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
         backBtn = findViewById(R.id.backBtn);
-        signInBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
 
         db = new DatabaseHelper(context);
