@@ -4,13 +4,22 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.super_app.db.DatabaseHelper;
 
 import java.util.ArrayList;
 
@@ -27,15 +36,24 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<MenuModel> cardsListCath;
     private ArrayList<MenuModel> cardsListOrders;
 
+    private ImageButton shoppingCart;
+    private FrameLayout fragmentContainer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.createShopping(db);
+
         recyclerViewAddresses = findViewById(R.id.recyclerViewAddresses);
         recyclerViewCategories = findViewById(R.id.recyclerViewCategories);
         recyclerViewOrders = findViewById(R.id.recyclerViewOrders);
+        shoppingCart = findViewById(R.id.shoppingCartIcon);
+        fragmentContainer = findViewById(R.id.fragmentContainer);
 
         cardsList = new ArrayList<>();
         cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
@@ -66,8 +84,33 @@ public class MainActivity extends AppCompatActivity {
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
         DisplaySavedText();
 
+        shoppingCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+               ArrayList<ProductModel> shoppingList = new ArrayList<>();
+                String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
+                Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
 
+// Iterate over the cursor to retrieve all items
+                while (cursor.moveToNext()) {
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
+                    int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
+                    int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
+                    shoppingList.add(new ProductModel(name,pic,price,quantity));
+                }
+
+// Close the cursor and database connection when done
+                shoppingCartFragment fragment = new shoppingCartFragment();
+                fragment.setItemList(shoppingList);
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                fragmentTransaction.replace(R.id.fragmentContainer, fragment);
+                fragmentTransaction.commit();
+            }
+        });
     }
+
 
     private void moveToActivity (Class<?> cls) {
         Intent i = new Intent(getApplicationContext(),  cls);

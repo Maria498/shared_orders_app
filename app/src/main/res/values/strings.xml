@@ -30,6 +30,7 @@
     <string name="produceQuantity">product Quantity</string>
     <string name="productCategory">product Category</string>
     <string name="discount">discount</string>
+    <string name="checkOut">checkout</string>
     <string-array name="israeliCities">
         <item>Filter By city</item>
         <item>Jerusalem</item>

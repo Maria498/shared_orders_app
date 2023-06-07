@@ -11,6 +11,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
+import com.example.super_app.R;
 import com.example.super_app.db.entity.User;
 
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(User.CREATE_TABLE);
 
+
+
     }
 
     @Override
@@ -43,6 +46,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
 
+    public void createShopping(SQLiteDatabase sqLiteDatabase)
+    {
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS shoppingCart");
+        String createTableQuery = "CREATE TABLE shoppingCart (name TEXT PRIMARY KEY, price TEXT,quantity INTEGER, pic INTEGER)";
+        sqLiteDatabase.execSQL(createTableQuery);
+        int apple = R.drawable.apple;
+
+    }
 
     // Insert Data into Database
     //-------------------USER-----------------------
