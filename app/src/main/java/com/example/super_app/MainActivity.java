@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    private void updateRecycled (Class<?> cls) {}
+
 
     @Override
     public void onResume() {
@@ -108,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
         //Reading values from shared preference
         SharedPreferences sharedPref = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
         String defaultText = sharedPref.getString("userName", "Log In");
-        //logInBtn.setEnabled(true);
         logInBtn.setText(defaultText);
     }
 

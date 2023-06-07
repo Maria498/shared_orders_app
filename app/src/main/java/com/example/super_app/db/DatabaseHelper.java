@@ -18,7 +18,7 @@ import java.util.ArrayList;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "ShoppingApp";
+    private static final String DATABASE_NAME = "ShoppingApp1";
 
 
     public DatabaseHelper(Context context){
@@ -56,7 +56,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(User.COLUMN_NAME, name);
         values.put(User.COLUMN_EMAIL, email);
         values.put(User.COLUMN_PASSWORD,currentUser.getPassword());
-       // values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
+        values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
 
         try {
             long id = db.insert(User.TABLE_NAME, null, values);
@@ -79,7 +79,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 new String[]{
                         User.COLUMN_ID,
                         User.COLUMN_NAME,
-                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD},
+                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD, User.COLUMN_ADDRESS},
                 User.COLUMN_ID + "=?",
                 new String[]{
                         String.valueOf(id)
@@ -123,7 +123,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 user.setId(cursor.getInt(cursor.getColumnIndexOrThrow(User.COLUMN_ID)));
                 user.setName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
                 user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
-                //user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
+                user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
                 user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
 
                 users.add(user);
