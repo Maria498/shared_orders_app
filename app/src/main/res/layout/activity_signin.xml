@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <ImageView
         android:id="@+id/backgroundImageView"
@@ -102,18 +103,48 @@
             android:paddingLeft="20dp"
             android:paddingEnd="20dp" />
 
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/editTextRePassword"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textViewBd"
+                android:layout_width="81dp"
+                android:layout_height="24dp"
+                android:layout_gravity="left"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/birthdate"
+                android:textSize="18sp"
+                android:textColor="@color/black"
+                tools:layout_editor_absoluteX="27dp"
+                tools:layout_editor_absoluteY="338dp" />
+
+            <TextView
+                android:id="@+id/dateCal"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="left"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="16dp"
+                android:drawableLeft="@drawable/baseline_calendar_today_24" />
+        </LinearLayout>
+
         <TextView
             android:id="@+id/txtAddAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/editTextRePassword"
+            android:layout_below="@+id/linear"
             android:layout_marginLeft="16dp"
-            android:layout_marginTop="15dp"
             android:layout_marginRight="16dp"
             android:text="@string/Addaddress"
             android:textColor="@color/black"
             android:textSize="18sp"
-            android:textStyle="bold"/>
+           />
 
         <Spinner
             android:id="@+id/spinnerCity"

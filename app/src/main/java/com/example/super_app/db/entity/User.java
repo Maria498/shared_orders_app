@@ -13,30 +13,22 @@ public class User {
     // var
     private String name;
     private String email;
-    private int id;
     private String password;
     private String address;
+    private String date;
 
     public User() {
 
     }
 
-    public User(String name, String email,String password,String address, int id) {
-        this.name = name;
-        this.email = email;
-        this.id = id;
-        this.password = password;
-        this.address = address;
 
-    }
-
-    public User(String name, String email,String password,String address) {
+    public User(String userName1, String userEmail, String userPassword, String userAdd, String date) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.address = address;
+        this.date=date;
     }
-
 
 
     public String getPassword() {
@@ -47,9 +39,6 @@ public class User {
         this.password = password;
     }
 
-    public int getId() {
-        return id;
-    }
 
     public String getEmail() {
         return email;
@@ -67,13 +56,16 @@ public class User {
         this.email = email;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
     public String getAddress() {return address;}
 
     public void setAddress(String address) {this.address = address;}
+    public String getDate() {
+        return date;
+    }
 
+    public void setDate(String date) {
+        this.date = date;
+    }
     //SQL QUERY - Creating table
 
     public static final String CREATE_TABLE =
@@ -86,14 +78,4 @@ public class User {
 
 
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", id=" + id +
-                ", password='" + password + '\'' +
-                ", address='" + address + '\'' +
-                '}';
-    }
 }

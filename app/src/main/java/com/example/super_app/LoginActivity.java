@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -48,11 +50,6 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
-
-
-        db = new DatabaseHelper(context);
-        //db.deleteAllUsers();
-        Log.d("db.getAllUsers()", String.valueOf(db.getAllUsers()));
         signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
 
         logInBtn.setOnClickListener((new View.OnClickListener() {
@@ -61,26 +58,30 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 db = new DatabaseHelper(context);
                 String userEmail = email.getText().toString();
-                String userPassword =password.getText().toString();
+                String userPassword = password.getText().toString();
                 //field validation
-                if(userEmail.isEmpty()){
+                if (userEmail.isEmpty()) {
                     email.setError("Email is required");
                     email.requestFocus();
                     return; // Stop further processing
-                }
-                else if(userPassword.isEmpty()){
+                } else if (userPassword.isEmpty()) {
                     password.setError("Password is required");
                     password.requestFocus();
                     return;// Stop further processing
-                }else {
-                    auth.signInWithEmailAndPassword(userEmail, userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                } else {
+                    auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>()  {
                         @Override
-                        public void onSuccess(AuthResult authResult) {
-                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                            startActivity(i);
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if(task.isSuccessful())
+                            {
+                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(i);
+                            }
+                            else {
+                                Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
-                    Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
                 }
             }
@@ -95,50 +96,7 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    public void loginUser(){
-        String userEmail = email.getText().toString();
-        String userPassword = password.getText().toString();
-        //todo shared references for loin button.
-        if(userEmail.isEmpty()){
-            email.setError("Email is required");
-            email.requestFocus();
-            return; // Stop further processing
-        }
-        if(userPassword.isEmpty()){
-            password.setError("Password is required");
-            password.requestFocus();
-            return;// Stop further processing
-        }
 
-
-        long userId = db.getUserIdByEmail(userEmail);
-        if(userId > -1){
-            String passwordByEmail = db.getPasswordByEmail(userEmail);
-            if(passwordByEmail.equals(userPassword)){
-                Toast.makeText(getApplicationContext(), "login:success", Toast.LENGTH_SHORT).show();
-                Log.d("login:success","login:success");
-                Intent i = new Intent(getApplicationContext(),  MainActivity.class);
-                String userName =db.getUserNameById((int) userId);
-                i.putExtra("USER_NAME", userName);
-                startActivity(i);
-
-                //moveToActivity(MainActivity.class);
-            }
-            else {
-                Toast.makeText(getApplicationContext(), "login:failed - passwords do not match", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else {
-            Toast.makeText(getApplicationContext(), "login:failed - user not fount, please sig in", Toast.LENGTH_SHORT).show();
-            moveToActivity(SigninActivity.class);
-        }
-
-
-
-
-
-
-    }
 
     private void moveToActivity (Class<?> cls) {
 
