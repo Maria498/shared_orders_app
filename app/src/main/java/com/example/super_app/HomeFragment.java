@@ -71,7 +71,7 @@ public class HomeFragment extends Fragment {
         cardsListCath = new ArrayList<>();
         cardsListCath.add(new MenuModel("Fruits", "", R.drawable.fruit));
         cardsListCath.add(new MenuModel("Veggies","", R.drawable.veggi));
-        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meat));
+        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meatCategory));
         adapter = new MenuCardsAdapter(this.getContext(), cardsListCath);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(layoutManager1);
