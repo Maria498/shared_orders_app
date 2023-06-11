@@ -90,6 +90,11 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="birthdate">birth date</string>
+    <string name="personal_de">Edit Personal Details\n\n</string>
+    <string name="userName">User Name\n</string>
+    <string name="openOrder">open order\n</string>
+    <string name="email">Email</string>
+    <string name="AllOrder">All Orders</string>
 
 
 </resources>
