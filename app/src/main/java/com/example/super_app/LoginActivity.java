@@ -68,24 +68,21 @@ public class LoginActivity extends AppCompatActivity {
                     email.requestFocus();
                     return; // Stop further processing
                 }
-                if(userPassword.isEmpty()){
+                else if(userPassword.isEmpty()){
                     password.setError("Password is required");
                     password.requestFocus();
                     return;// Stop further processing
+                }else {
+                    auth.signInWithEmailAndPassword(userEmail, userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                            startActivity(i);
+                        }
+                    });
+                    Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+
                 }
-                auth.signInWithEmailAndPassword(userEmail,userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        Intent i = new Intent(getApplicationContext(),  MainActivity.class);
-                        String userName =auth.getCurrentUser().getDisplayName();
-                        Log.d("i am onSuccess() login", "i am onSuccess()");
-                        i.putExtra("USER_NAME", userName);
-                        startActivity(i);
-                    }
-                });
-                Toast.makeText(LoginActivity.this,"something went wrong",Toast.LENGTH_SHORT).show();
-
-
             }
         }));
         linkSignUp.setOnClickListener(new View.OnClickListener() {

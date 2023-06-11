@@ -73,7 +73,7 @@ public class SigninActivity extends AppCompatActivity {
         city = findViewById(R.id.spinnerCity);
         street = findViewById(R.id.Street);
         apartmentNum = findViewById(R.id.ApartmentNum);
-        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        backBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
 
         signInBtn.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -90,7 +90,8 @@ public class SigninActivity extends AppCompatActivity {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
                                                 Toast.makeText(SigninActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
-
+                                                Intent i = new Intent(SigninActivity.this, LoginActivity.class);
+                                                startActivity(i);
                                             }
                                         }).addOnFailureListener(new OnFailureListener() {
                                             @Override
@@ -98,8 +99,7 @@ public class SigninActivity extends AppCompatActivity {
                                                 Log.w(TAG, "Error adding document", e);
                                             }
                                         });
-                                        Intent i = new Intent(SigninActivity.this, LoginActivity.class);
-                                        startActivity(i);
+
                                     } else {
                                         // If sign in fails, display a message to the user.s
                                         Toast.makeText(SigninActivity.this, "Authentication failed.",
