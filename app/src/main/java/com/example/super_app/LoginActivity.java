@@ -25,7 +25,6 @@ import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button backBtn;
 
     private FirebaseAuth auth;
     private Button signInBtn;
@@ -49,8 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
-        backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
 
         db = new DatabaseHelper(context);

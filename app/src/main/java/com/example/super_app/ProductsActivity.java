@@ -2,8 +2,6 @@ package com.example.super_app;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,7 +13,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.Cart;
 
 import java.util.ArrayList;
@@ -98,12 +95,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
             //todo add the product to the cart logic
             if (!quantityString.isEmpty()) {
                 int quantity = Integer.parseInt(quantityString);
-                DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
-                SQLiteDatabase db = dbHelper.getWritableDatabase();
-               // cant put image with the method currently implemented needs to change way of keeping images in the class
-                String addItemQuery = "INSERT INTO shoppingCart (name, price, quantity, pic) VALUES ('" + productName.getText().toString() + "', '" + productPrice.getText().toString() + "', " + quantity + ", '" + R.drawable.apple + "');";
-
-                db.execSQL(addItemQuery);
+                //todo add the product to the cart logic
 
 
             } else {

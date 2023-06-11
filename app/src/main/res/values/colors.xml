@@ -9,5 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="text">#99000000</color>
     <color name="gray">#aeb8bf</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="linkTextColor">#0000FF</color>
+    <color name="buttonColor">#404040</color>
+
 
 </resources>

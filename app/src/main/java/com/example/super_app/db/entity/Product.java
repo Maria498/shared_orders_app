@@ -6,17 +6,22 @@ public class Product {
 
     private String productId;
     private String name;
-    private int imageResId;
+    private String imageResId;
     private String category;
     private double price;
     private int discount;
     private boolean healthy_tag;
     private ArrayList<Integer> ratings;
-
-
+    private int quantity;
     public Product() {}
+    public Product(String name,String imageResId,int discount)
+    {
+        this.name=name;
+        this.imageResId=imageResId;
+        this.discount=discount;
+    }
 
-    public Product(String name, String category, double price, int discount, boolean healthy_tag, int imageResId) {
+    public Product(String name, String category, double price, int discount, boolean healthy_tag, String imageResId) {
         this.name = name;
         this.category = category;
         this.price = price;
@@ -26,6 +31,16 @@ public class Product {
         this.imageResId = imageResId;
 
     }
+
+    public Product( String name, String imageResId, String category, double price, int discount, int quantity) {
+        this.name = name;
+        this.imageResId = imageResId;
+        this.category = category;
+        this.price = price;
+        this.discount = discount;
+        this.quantity = quantity;
+    }
+
 
     public String getName() {
         return name;
@@ -54,8 +69,12 @@ public class Product {
     public ArrayList<Integer> getRatings() {
         return ratings;
     }
-    public int getImageResId() {
+    public String getImageResId() {
         return imageResId;
+    }
+    public void setImageResId(String img)
+    {
+        this.imageResId=img;
     }
 
     public void setName(String name) {
@@ -85,7 +104,13 @@ public class Product {
     public void setProductId(String productId) {
         this.productId = productId;
     }
+    public int getQuantity() {
+        return quantity;
+    }
 
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
     @Override
     public String toString() {
         return "Product{" +

@@ -32,7 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="35dp"
-            android:text="@string/signIn"
+            android:text="@string/signUp"
             android:textColor="@color/black"
             android:textSize="22sp"
             android:textStyle="bold" />
@@ -86,24 +86,41 @@
             android:inputType="textPassword"
             android:paddingLeft="20dp"
             android:paddingEnd="20dp" />
+        <EditText
+            android:id="@+id/editTextRePassword"
+            android:layout_width="match_parent"
+            android:layout_height="45dp"
+            android:layout_below="@+id/editTextTextPassword"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/input_bg"
+            android:drawableLeft="@drawable/baseline_lock_24"
+            android:ems="10"
+            android:hint="@string/reEnter_a_password"
+            android:inputType="textPassword"
+            android:paddingLeft="20dp"
+            android:paddingEnd="20dp" />
 
         <TextView
             android:id="@+id/txtAddAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/editTextTextPassword"
+            android:layout_below="@+id/editTextRePassword"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="16dp"
             android:text="@string/Addaddress"
             android:textColor="@color/black"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <Spinner
             android:id="@+id/spinnerCity"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_gravity="left"
+            android:layout_marginTop="10dp"
             android:layout_below="@+id/txtAddAddress"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -114,6 +131,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/spinnerCity"
+            android:layout_marginTop="10dp"
             android:orientation="horizontal">
 
             <EditText
@@ -155,7 +173,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="15dp"
             android:backgroundTint="#404040"
-            android:text="@string/signIn" />
+            android:text="@string/signUp" />
 
 
 

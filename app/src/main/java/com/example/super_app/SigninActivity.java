@@ -43,6 +43,8 @@ public class SigninActivity extends AppCompatActivity {
 
     private EditText email;
     private EditText password;
+    private EditText rePassword;
+
     private EditText street;
     private EditText apartmentNum;
     private Spinner city;
@@ -51,7 +53,7 @@ public class SigninActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private FirebaseAuth mAuth;
     private FirebaseFirestore firestore;
-    private String userEmail, userPassword, userName1, userAdd;
+    private String userEmail, userPassword, userRePassword, userName1, userAdd, userStreet, userApart;
     private User user;
     private HashMap<String, Object> userMap = new HashMap<>();
 
@@ -66,113 +68,102 @@ public class SigninActivity extends AppCompatActivity {
         userName = findViewById(R.id.userName);
         email = findViewById(R.id.userEmail);
         password = findViewById(R.id.editTextTextPassword);
+        rePassword = findViewById(R.id.editTextRePassword);
+
         city = findViewById(R.id.spinnerCity);
         street = findViewById(R.id.Street);
         apartmentNum = findViewById(R.id.ApartmentNum);
-
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-        db = new DatabaseHelper(context);
-        firestore = FirebaseFirestore.getInstance();
-        Log.d("db.getAllUsers()", String.valueOf(db.getAllUsers()));
         signInBtn.setOnClickListener((new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                db = new DatabaseHelper(context);
-                addUserToDB();
-                mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
-                        .addOnCompleteListener(SigninActivity.this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    firestore.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            Log.d(TAG, "DocumentSnapshot added with ID: " +
-                                                    documentReference.getId());
-                                            Intent i = new Intent(getApplicationContext(),  MainActivity.class);
-                                            String userName =user.getDisplayName();
-                                            i.putExtra("USER_NAME", userName);
-                                            Log.d("i am onSuccess() signIn", "i am onSuccess() signIn");
-                                            startActivity(i);
-                                        }
-                                    }).addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error adding document", e ) ;
-                                        }
-                                    });
+                if(addUserToDB()) {
+                    mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+                            .addOnCompleteListener(SigninActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        // Sign in success, update UI with the signed-in user's information
+                                        firestore = FirebaseFirestore.getInstance();
+                                        firestore.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                            @Override
+                                            public void onSuccess(DocumentReference documentReference) {
+                                                Toast.makeText(SigninActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
 
-                                } else {
-                                    // If sign in fails, display a message to the user.s
-                                    Toast.makeText(SigninActivity.this, "Authentication failed.",
-                                            Toast.LENGTH_SHORT).show();
+                                            }
+                                        }).addOnFailureListener(new OnFailureListener() {
+                                            @Override
+                                            public void onFailure(@NonNull Exception e) {
+                                                Log.w(TAG, "Error adding document", e);
+                                            }
+                                        });
+                                        Intent i = new Intent(SigninActivity.this, LoginActivity.class);
+                                        startActivity(i);
+                                    } else {
+                                        // If sign in fails, display a message to the user.s
+                                        Toast.makeText(SigninActivity.this, "Authentication failed.",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
 
             }
         }));
 
     }
 
-    private void addUserToDB() {
+    private boolean addUserToDB() {
         userEmail = email.getText().toString();
         userPassword = password.getText().toString();
         userName1 = userName.getText().toString();
-        userAdd = city.getSelectedItem().toString() + "," + street.getText().toString() + "," + apartmentNum.getText().toString();
+        userRePassword = rePassword.getText().toString();
+        userStreet=street.getText().toString();
+        userApart=apartmentNum.getText().toString();
 
         if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z]+")) {
             userName.setError("User name is required");
             userName.requestFocus();
-            return;// Stop further processing
+            return false;// Stop further processing
         }
-        if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
+        else if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
             email.setError("Email is required");
             email.requestFocus();
-            return; // Stop further processing
+            return false; // Stop further processing
         }
-        if (userPassword.isEmpty()) {
-            password.setError("Password is required");
+        else if (userPassword.isEmpty() || userRePassword.isEmpty()&&userPassword.length()<7) {
+            password.setError("Password is required and should contain 7 characters");
             password.requestFocus();
-            return;// Stop further processing
+            return false;
         }
-        if (city == null || city.getSelectedItem() == null || city.getSelectedItem().toString().isEmpty()) {
-            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-            return;
+        else if (!userRePassword.equals(userPassword)) {
+            rePassword.setError("password dont match!");
+            rePassword.requestFocus();
+            return false;
         }
-        if (street.getText().toString().isEmpty() || apartmentNum.getText().toString().isEmpty()) {
-            Toast.makeText(context, "Please fill all the fields", Toast.LENGTH_SHORT).show();
-            return;
+        else if (city == null || city.getSelectedItem() == null ||city.getSelectedItem().equals("Filter By city")|| city.getSelectedItem().toString().isEmpty()) {
+            Toast.makeText(context, "Please choose a city", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+       else if (userStreet.isEmpty() || !userName1.matches("[a-zA-Z]+")) {
+            street.setError("Street is required");
+            street.requestFocus();
+            return false;
+        }
+        else if (userApart.isEmpty()|| !userApart.matches("\\d+")) {
+            apartmentNum.setError("Apartment num  is required");
+            apartmentNum.requestFocus();
+            return false;
         }
         else {
+            userAdd = city.getSelectedItem().toString() + "," +userStreet + "," + userApart;
             user = new User(userName1, userEmail, userPassword, userAdd);
             userMap.put("userName", userName1);
             userMap.put("userEmail", userEmail);
             userMap.put("userPassword", userPassword);
             userMap.put("userAdd", userAdd);
-            long currentId;
-            Log.d("usersFromDB", String.valueOf(db.getAllUsers()));
-
-            try {
-                currentId = db.insertUser(userName1, userEmail, userPassword, userAdd);
-                if (currentId >= 0) {
-                    Log.d("currentId", String.valueOf(currentId));
-                    Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();
-                    User currentUserFromDB = db.getUser(currentId);
-                    Log.d("currentUserFromDB", " " + currentUserFromDB + "");
-                   // moveToActivity(MainActivity.class);
-                } else {
-                    Toast.makeText(getApplicationContext(), "Email already exists!", Toast.LENGTH_SHORT).show();
-                }
-
-            } catch (SQLiteConstraintException e) {
-                Toast.makeText(getApplicationContext(), "Email already exists!", Toast.LENGTH_SHORT).show();
-                Log.e("SQLiteException", e.getMessage());
-                e.printStackTrace();
-            }
+            return true;
         }
 
     }

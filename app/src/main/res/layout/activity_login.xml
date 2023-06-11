@@ -83,14 +83,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/log_in" />
 
-        <Button
-            android:id="@+id/backBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linkSignUp"
-            android:layout_marginTop="-245dp"
-            android:backgroundTint="#404040"
-            android:text="@string/back" />
+
 
 
     </RelativeLayout>

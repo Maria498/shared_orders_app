@@ -29,25 +29,25 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
-    BottomNavigationView bottomNavigationView;
-    HomeFragment home = new HomeFragment();
-    NewOrderFragment newOrder = new NewOrderFragment();
-    UserFragment userFragment = new UserFragment();
-
-
+//    BottomNavigationView bottomNavigationView;
+//    HomeFragment home = new HomeFragment();
+//    NewOrderFragment newOrder = new NewOrderFragment();
+//    UserFragment userFragment = new UserFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
+        startActivity(intent);
 
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-        bottomNavigationView.setOnItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.home);
-
-        if(bottomNavigationView.getSelectedItemId() == R.id.home) {
-            // System.out.println("In Home: ");
-        }
+//        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+//        bottomNavigationView.setOnItemSelectedListener(this);
+//        bottomNavigationView.setSelectedItemId(R.id.home);
+//
+//        if(bottomNavigationView.getSelectedItemId() == R.id.home) {
+//            // System.out.println("In Home: ");
+//        }
 
 
 
@@ -56,15 +56,15 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-            case R.id.new_order:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, newOrder).commit();
-                return true;
-            case R.id.home:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, home).commit();
-                return true;
-            case R.id.account:
-                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, userFragment).commit();
-                return true;
+//            case R.id.new_order:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, newOrder).commit();
+//                return true;
+//            case R.id.home:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, home).commit();
+//                return true;
+//            case R.id.account:
+//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, userFragment).commit();
+//                return true;
 
         }
 

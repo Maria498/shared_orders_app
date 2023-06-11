@@ -38,13 +38,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         ProductModel product = productList.get(position);
         holder.productName.setText(product.getProductName());
-        if(product.getProductPrice()==0.0)
-        {
-            holder.productPrice.setText(product.getProductPrice2());
-        }
-        else {
-            holder.productPrice.setText(String.valueOf(product.getProductPrice()));
-        }
+        holder.productPrice.setText(String.valueOf(product.getProductPrice()));
         holder.productImage.setImageResource(product.getProductImage());
 
         holder.itemView.setOnClickListener(v -> {
