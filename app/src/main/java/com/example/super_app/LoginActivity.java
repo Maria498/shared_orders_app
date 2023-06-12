@@ -16,14 +16,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
@@ -35,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
    private DatabaseHelper db;
     private Context context;
     private ArrayList<User> usersFromDB;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

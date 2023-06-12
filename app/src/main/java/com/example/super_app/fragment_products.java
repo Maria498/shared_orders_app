@@ -74,7 +74,27 @@ public class fragment_products extends AppCompatActivity {
             productData.put("category", product.getCategory());
             db.collection("MakeUpAndBrush").add(productData);
         }
+        List<Product> productListMeat = new ArrayList<>();
+        productListMeat.add(new Product("steak", 120, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/15.png?alt=media&token=8f85e446-5f0d-4292-a6a2-59db2c2d464e", "Meat"));
+        productListMeat.add(new Product("chicken", 60, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/16.png?alt=media&token=a362194c-790d-489f-a2ab-5591a780c215", "Meat"));
+        productListMeat.add(new Product("edges", 90, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/17.png?alt=media&token=a25409dd-5382-4f9d-a833-6971fa165410", "Meat"));
+        productListMeat.add(new Product("wings", 55, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/18.png?alt=media&token=97459668-aaa1-40e3-9749-5259c7cdb8e4", "Meat"));
+        productListMeat.add(new Product("Meatballs", 30, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/19.png?alt=media&token=7cc8caef-dd59-4ef0-a879-447ebfe048d5", "Meat"));
+        for (Product product : productListMeat) {
+            HashMap<String, Object> productData = new HashMap<>();
+            productData.put("name", product.getName());
+            productData.put("price", product.getPrice());
+            productData.put("img", product.getImageResId());
+            productData.put("category", product.getCategory());
+            db.collection("Meat").add(productData);
+        }
     }
 
-}
+
+
+
+    }
+
+
+
 
