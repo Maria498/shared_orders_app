@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextView linkSignUp;
     private EditText email;
     private EditText password;
-    private DatabaseHelper db;
+   private DatabaseHelper db;
     private Context context;
     private ArrayList<User> usersFromDB;
     @Override
@@ -48,11 +48,12 @@ public class LoginActivity extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
 
+
         logInBtn.setOnClickListener((new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
-                db = new DatabaseHelper(context);
+               db = new DatabaseHelper(context);
                 String userEmail = email.getText().toString();
                 String userPassword = password.getText().toString();
                 //field validation

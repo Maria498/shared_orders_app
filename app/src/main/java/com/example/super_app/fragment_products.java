@@ -55,5 +55,26 @@ public class fragment_products extends AppCompatActivity {
             productData.put("category", product.getCategory());
             db.collection("MakeUpAndBrush").add(productData);
         }
+        List<Product> electronics = new ArrayList<>();
+        electronics.add(new Product("pc monitor", 1000, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/20.png?alt=media&token=047fd7bb-1671-451c-a90d-d91ba6d093af", "electronics"));
+        electronics.add(new Product("fridge", 2500, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/21.png?alt=media&token=5aea7b5e-cbb7-4c86-b7c9-c72c3edffffc", "electronics"));
+        electronics.add(new Product("oven", 800, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/22.png?alt=media&token=00ca6055-4fd9-4bc6-8767-f3396275be97", "electronics"));
+        electronics.add(new Product("washing machine", 750, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/23.png?alt=media&token=8043d3cf-a194-4162-a2b8-3dfe18156c23", "electronics"));
+        electronics.add(new Product("microwave", 150, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/24.png?alt=media&token=d13af68d-73d2-4fe4-8500-4e9f239efed0", "electronics"));
+        electronics.add(new Product("kettle", 55, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/25.png?alt=media&token=0cf1fa39-8f0a-42d9-8d18-b06615c0dd3e", "electronics"));
+        electronics.add(new Product("toaster", 70, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/26.png?alt=media&token=6f7618cd-4d6b-4031-92de-394ae61d685f", "electronics"));
+        electronics.add(new Product("blender", 120, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/27.png?alt=media&token=0a9218db-8db9-49af-8a7b-1d3756e3f64c", "electronics"));
+        electronics.add(new Product("I robot", 450, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/28.png?alt=media&token=28faf0a1-7af6-4cfb-a836-081dd05b4f0c", "electronics"));
+
+        for (Product product : electronics) {
+            HashMap<String, Object> productData = new HashMap<>();
+            productData.put("name", product.getName());
+            productData.put("price", product.getPrice());
+            productData.put("img", product.getImageResId());
+            productData.put("category", product.getCategory());
+            db.collection("MakeUpAndBrush").add(productData);
+        }
     }
+
 }
+

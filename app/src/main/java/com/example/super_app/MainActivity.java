@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,6 +27,7 @@ import com.example.super_app.db.DatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         setContentView(R.layout.activity_main);
         Intent intent=new Intent(MainActivity.this,LoginActivity.class);
         startActivity(intent);
+
 
 //        bottomNavigationView = findViewById(R.id.bottomNavigationView);
 //        bottomNavigationView.setOnItemSelectedListener(this);
