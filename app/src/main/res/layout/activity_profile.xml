@@ -92,7 +92,8 @@
                             android:layout_marginRight="16dp"
                             android:backgroundTint="#404040"
                             android:drawableLeft="@drawable/baseline_add_circle_24"
-                            android:text="@string/openOrder" />
+                            android:text="@string/openOrder"
+                            android:textColor="@color/white"/>
                     </LinearLayout>
 
                 </LinearLayout>

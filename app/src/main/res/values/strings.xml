@@ -95,6 +95,11 @@
     <string name="openOrder">open order\n</string>
     <string name="email">Email</string>
     <string name="AllOrder">All Orders</string>
+    <string name="Category">Categories</string>
+    <string name="Brush">Brush</string>
+    <string name="Electronics">Electronics</string>
+    <string name="Meat">Meat\n</string>
+    <string name="FruitsAndVeggies">Fruits and Vegtables</string>
 
 
 </resources>

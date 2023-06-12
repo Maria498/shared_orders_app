@@ -17,8 +17,7 @@ public class SuperCategoryActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super_category);
         gridview=(GridView)findViewById(R.id.gridCategory);
-        storage=FirebaseStorage.getInstance();
-        db=FirebaseFirestore.getInstance();
+
 
 
 

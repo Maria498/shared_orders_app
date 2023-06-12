@@ -6,14 +6,12 @@
         android:id="@+id/cart"
         android:enabled="true"
         android:icon="@drawable/outline_shopping_bag_24"
-        android:tint="@android:color/black"
         android:title="Cart"/>
 
     <item
         android:id="@+id/profile"
         android:enabled="true"
         android:icon="@drawable/outline_person_24"
-        android:tint="@android:color/black"
         android:title="Profile"/>
     <item
         android:id="@+id/menu"
@@ -24,14 +22,12 @@
     <item
         android:id="@+id/Search"
         android:enabled="true"
-        android:tint="@android:color/black"
         android:icon="@drawable/outline_search_24"
         android:title="Search"/>
     <item
         android:id="@+id/Home"
         android:enabled="true"
         android:icon="@drawable/outline_home_24"
-        android:tint="@android:color/black"
         android:title="Home"/>
 
 

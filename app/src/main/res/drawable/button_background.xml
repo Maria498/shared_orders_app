@@ -1,0 +1,6 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <stroke
+        android:width="1.5dp"
+        android:color="@color/white" /> <!-- Customize the stroke color and width as needed -->
+    <solid android:color="#F2F2F2" /> <!-- Set the cell background color to a bright shade of gray -->
+</shape>
