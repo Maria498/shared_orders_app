@@ -1,6 +1,9 @@
 package com.example.super_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -19,34 +22,53 @@ public class SuperCategoryActivity extends AppCompatActivity {
         cardEle = findViewById(R.id.cardEle);
         cardMeat = findViewById(R.id.cardMeat);
         cardFruVegg = findViewById(R.id.cardFruVegg);
+        FragmentManager fm = getFragmentManager();
+        Bundle args = new Bundle();
 
         // Set click listeners for CardViews
         cardBrush.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform desired action
+                args.putString("Type","MakeUpAndBrush");
+                fragment_products fragment_products=new fragment_products();
+                fragment_products.setArguments(args);
+                FragmentTransaction t = fm.beginTransaction();
+                t.addToBackStack(null);
+                t.commit();
             }
         });
 
         cardEle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform desired action
-            }
+                args.putString("Type","Electronics");
+                fragment_products fragment_products=new fragment_products();
+                fragment_products.setArguments(args);
+                FragmentTransaction t = fm.beginTransaction();
+                t.addToBackStack(null);
+                t.commit();            }
         });
 
         cardMeat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform desired action
-            }
+                args.putString("Type","Meat");
+                fragment_products fragment_products=new fragment_products();
+                fragment_products.setArguments(args);
+                FragmentTransaction t = fm.beginTransaction();
+                t.addToBackStack(null);
+                t.commit();            }
         });
 
         cardFruVegg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Perform desired action
-            }
+                args.putString("Type","FruitsAndVeg");
+                fragment_products fragment_products=new fragment_products();
+                fragment_products.setArguments(args);
+                FragmentTransaction t = fm.beginTransaction();
+                t.addToBackStack(null);
+                t.commit();            }
         });
     }
 }
