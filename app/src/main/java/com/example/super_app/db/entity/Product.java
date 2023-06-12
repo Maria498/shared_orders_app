@@ -3,8 +3,6 @@ package com.example.super_app.db.entity;
 import java.util.ArrayList;
 
 public class Product {
-
-    private String productId;
     private String name;
     private String imageResId;
     private String category;
@@ -14,11 +12,13 @@ public class Product {
     private ArrayList<Integer> ratings;
     private int quantity;
     public Product() {}
-    public Product(String name,String imageResId,int discount)
+    public Product(String name,double price,String imageResId,String category)
     {
         this.name=name;
+        this.price=price;
         this.imageResId=imageResId;
-        this.discount=discount;
+        this.category=category;
+
     }
 
     public Product(String name, String category, double price, int discount, boolean healthy_tag, String imageResId) {
@@ -58,9 +58,6 @@ public class Product {
         return discount;
     }
 
-    public String getProductId() {
-        return productId;
-    }
 
     public boolean isHealthy_tag() {
         return healthy_tag;
@@ -101,9 +98,6 @@ public class Product {
         this.ratings = ratings;
     }
 
-    public void setProductId(String productId) {
-        this.productId = productId;
-    }
     public int getQuantity() {
         return quantity;
     }
