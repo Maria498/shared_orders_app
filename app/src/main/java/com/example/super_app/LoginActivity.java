@@ -26,8 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
-
-
     private FirebaseAuth auth;
     private Button signInBtn;
     private Button logInBtn;
@@ -37,8 +35,6 @@ public class LoginActivity extends AppCompatActivity {
     private DatabaseHelper db;
     private Context context;
     private ArrayList<User> usersFromDB;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
