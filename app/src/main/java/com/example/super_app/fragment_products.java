@@ -1,14 +1,16 @@
 package com.example.super_app;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Build;
 import android.os.Bundle;
+import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+
+import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.super_app.db.entity.Product;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -26,6 +28,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
@@ -33,9 +36,8 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
         rec = view.findViewById(R.id.recyclerView);
         Bundle args = getArguments();
 
-        LinearLayoutManager llm = new LinearLayoutManager(getContext());
-        llm.setOrientation(LinearLayoutManager.VERTICAL);
-        rec.setLayoutManager(llm);
+        LinearLayoutManager llm =new LinearLayoutManager(getContext());
+        rec.setLayoutManager(new GridLayoutManager(getContext(),2));
         db = FirebaseFirestore.getInstance();
 
         if(args!=null) {
@@ -115,7 +117,10 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
             }
 
         }
-        productItemAdapter productItemAdapter=new productItemAdapter(list,getContext(),fragment_products.this);
+        productItemAdapter productItemAdapter= null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            productItemAdapter = new productItemAdapter(list,getContext(), fragment_products.this);
+        }
         rec.setAdapter(productItemAdapter);
         return view;
     }

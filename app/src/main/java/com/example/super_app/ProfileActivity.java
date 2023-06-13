@@ -1,5 +1,4 @@
-package com.example.solmatchfinalproject.profile;
-
+package com.example.super_app;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;

@@ -31,7 +31,6 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
     private FirebaseAuth auth;
-    private Button signInBtn;
     private Button logInBtn;
     private TextView linkSignUp;
     private EditText email;
@@ -45,13 +44,11 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
         context = getApplicationContext();
-        signInBtn = findViewById(R.id.signInBtn);
         logInBtn = findViewById(R.id.signInBtn);
         email = findViewById(R.id.userEmail);
         password = findViewById(R.id.editTextTextPassword);
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
-        signInBtn.setOnClickListener(v -> moveToActivity(SigninActivity.class));
 
 
         logInBtn.setOnClickListener((new View.OnClickListener() {
