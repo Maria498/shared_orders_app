@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 
 import androidx.annotation.RequiresApi;
@@ -24,6 +25,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     private RecyclerView rec;
     private List<Product> list = new ArrayList<>();
 
+    private ImageView back;
     public fragment_products() {
 
     }
@@ -112,7 +114,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     productData.put("price", product.getPrice());
                     productData.put("img", product.getImageResId());
                     productData.put("category", product.getCategory());
-                    db.collection("MakeUpAndBrush").add(productData);
+                    db.collection("Electronics").add(productData);
                 }
             }
 
@@ -122,8 +124,12 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
             productItemAdapter = new productItemAdapter(list,getContext(), fragment_products.this);
         }
         rec.setAdapter(productItemAdapter);
+
         return view;
+
+
     }
+
 
     @Override
     public void onItemClick(int position) {

@@ -11,6 +11,8 @@ public class Product {
     private boolean healthy_tag;
     private ArrayList<Integer> ratings;
     private int quantity;
+
+    private String description;
     public Product() {}
     public Product(String name,double price,String imageResId,String category)
     {
@@ -32,15 +34,23 @@ public class Product {
 
     }
 
-    public Product( String name, String imageResId, String category, double price, int discount, int quantity) {
+    public Product( String name, String imageResId, String category, double price, int discount, int quantity,String description) {
         this.name = name;
         this.imageResId = imageResId;
         this.category = category;
         this.price = price;
         this.discount = discount;
         this.quantity = quantity;
+        this.description = description;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
     public String getName() {
         return name;
