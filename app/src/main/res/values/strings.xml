@@ -105,6 +105,8 @@
     <string name="FruitsAndVeggies">Fruits and Vegtables</string>
     <string name="ProductName">Product Name</string>
     <string name="addToCart">Add</string>
+
+    <string name="price">price</string>
     <string name="quantity">1</string>
 
 

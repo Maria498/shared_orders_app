@@ -64,7 +64,6 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         quantityTextView = v.findViewById(R.id.digitEditText);
         minusButton = v.findViewById(R.id.minusButton);
         addButton = v.findViewById(R.id.addbtn);
-        quantityTextView.setVisibility(View.GONE);
 
         if (b != null) {
             Product product = (Product) b.getSerializable("Product");
