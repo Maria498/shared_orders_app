@@ -27,6 +27,9 @@
     <string name="Addaddress">your adress</string>
     <string name="street">street</string>
     <string name="Apartment">Apatment</string>
+    <string name="description">Description</string>
+    <string name="productDescribe">description...</string>
+
     <string name="productName">product Name\n</string>
     <string name="productPrice">product Price</string>
     <string name="produceQuantity">product Quantity</string>
@@ -100,6 +103,9 @@
     <string name="Electronics">Electronics</string>
     <string name="Meat">Meat\n</string>
     <string name="FruitsAndVeggies">Fruits and Vegtables</string>
+    <string name="ProductName">Product Name</string>
+    <string name="addToCart">Add</string>
+    <string name="quantity">1</string>
 
 
 </resources>
