@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class fragment_products extends Fragment implements RecycleViewInterface {
+public class fragment_products extends Fragment implements RecycleViewInterface,AlertDialogFragmentListener {
     private FirebaseFirestore db;
     private RecyclerView rec;
     private List<Product> list = new ArrayList<>();
@@ -136,11 +136,16 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     @Override
     public void onItemClick(int position) {
         Product product=list.get(position);
-        Alert_dialog_fragmentViewProduct frag=new Alert_dialog_fragmentViewProduct();
+        AlertDialogFragmentViewProduct frag=new AlertDialogFragmentViewProduct();
         Bundle b=new Bundle();
         b.putSerializable("Product",product);
         frag.setArguments(b);
         frag.show(getFragmentManager(), "dialog");
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(AlertDialogFragmentViewProduct dialog) {
 
     }
 }

@@ -1,9 +1,5 @@
 package com.example.super_app;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.graphics.drawable.Drawable;
@@ -19,6 +15,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
@@ -26,7 +26,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.db.entity.Product;
 
-public class Alert_dialog_fragmentViewProduct extends DialogFragment {
+public class AlertDialogFragmentViewProduct extends DialogFragment {
     private ImageView imageView;
     private TextView productNameTextView;
     private TextView descriptionTextView;
@@ -37,21 +37,22 @@ public class Alert_dialog_fragmentViewProduct extends DialogFragment {
     private ImageButton minusButton;
     private Button addButton;
     AlertDialogFragmentListener mListener;
+
     @Override
-    public void onAttach(Activity activity) {
+    public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
-        // this.activity = activity;
-        // Verify that the host activity implements the callback interface
         try {
-            // Instantiate the MyAlertDialogFragmentListener so we can send events to the host
             mListener = (AlertDialogFragmentListener) activity;
         } catch (Throwable e) {
             e.printStackTrace();
         }
     }
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle b = getArguments();
-        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product, null);
+        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product, container, false);
         imageView = v.findViewById(R.id.imgPro);
         productNameTextView = v.findViewById(R.id.productNameTextView);
         descriptionTextView = v.findViewById(R.id.descriptionTextView);
@@ -61,10 +62,12 @@ public class Alert_dialog_fragmentViewProduct extends DialogFragment {
         digitEditText = v.findViewById(R.id.digitEditText);
         minusButton = v.findViewById(R.id.minusButton);
         addButton = v.findViewById(R.id.addbtn);
+
         if (b != null) {
             Product product = (Product) b.getSerializable("Product");
             productNameTextView.setText(product.getName());
-            price.setText("" + product.getPrice());
+            price.setText(String.valueOf(product.getPrice()));
+
             if (product.getCategory().equals("Electronics") || product.getCategory().equals("MakeUpAndBrush")) {
                 productDescribeTextView.setText(product.getDescription());
             } else {
@@ -79,7 +82,9 @@ public class Alert_dialog_fragmentViewProduct extends DialogFragment {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                                 // Handle image loading failure
-                                Log.e("Glide", "Image loading failed: " + e.getMessage());
+                                if (e != null) {
+                                    Log.e("Glide", "Image loading failed: " + e.getMessage());
+                                }
                                 return false; // Return false to allow Glide to handle the error and show any error placeholder you have set
                             }
 
@@ -98,26 +103,25 @@ public class Alert_dialog_fragmentViewProduct extends DialogFragment {
                     int quantity = Integer.parseInt(digitEditText.getText().toString());
                     if (quantity < 100) {
                         quantity++;
-                        digitEditText.setText(quantity);
-                        price.setText(""+product.getPrice()*quantity);
+                        digitEditText.setText(String.valueOf(quantity));
+                        price.setText(String.valueOf(product.getPrice() * quantity));
                     }
                 }
             });
+
             minusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int quantity = Integer.parseInt(digitEditText.getText().toString());
                     if (quantity > 0) {
                         quantity--;
-                        digitEditText.setText(quantity);
-                        price.setText(""+product.getPrice()*quantity);
+                        digitEditText.setText(String.valueOf(quantity));
+                        price.setText(String.valueOf(product.getPrice() * quantity));
                     }
                 }
             });
-
         }
+
         return v;
-
     }
-
 }
