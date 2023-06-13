@@ -1,8 +1,9 @@
 package com.example.super_app.db.entity;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Product {
+public class Product implements Serializable {
     private String name;
     private String imageResId;
     private String category;

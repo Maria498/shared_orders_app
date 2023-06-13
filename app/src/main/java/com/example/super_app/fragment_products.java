@@ -16,6 +16,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.super_app.db.entity.Product;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.checkerframework.checker.units.qual.A;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,6 +135,12 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
 
     @Override
     public void onItemClick(int position) {
+        Product product=list.get(position);
+        Alert_dialog_fragmentViewProduct frag=new Alert_dialog_fragmentViewProduct();
+        Bundle b=new Bundle();
+        b.putSerializable("Product",product);
+        frag.setArguments(b);
+        frag.show(getFragmentManager(), "dialog");
 
     }
 }
