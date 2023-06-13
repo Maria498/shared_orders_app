@@ -68,11 +68,11 @@ public class LoginActivity extends AppCompatActivity {
                         password.requestFocus();
                         return;// Stop further processing
                     } else {
-                        auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                          auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent i = new Intent(getApplicationContext(), SuperCategoryActivity.class);
+                                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                                     startActivity(i);
                                 } else {
                                     Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();

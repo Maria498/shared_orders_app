@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import androidx.annotation.RequiresApi;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class fragment_products extends Fragment implements RecycleViewInterface,AlertDialogFragmentListener {
+public class fragment_products extends Fragment implements RecycleViewInterface {
     private FirebaseFirestore db;
     private RecyclerView rec;
     private List<Product> list = new ArrayList<>();
@@ -144,10 +145,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface,
 
     }
 
-    @Override
-    public void onDialogPositiveClick(AlertDialogFragmentViewProduct dialog) {
 
-    }
 }
 
 

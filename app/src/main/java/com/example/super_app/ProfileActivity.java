@@ -1,4 +1,5 @@
 package com.example.super_app;
+
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import com.bumptech.glide.request.target.Target;
 import com.example.super_app.R;
 import com.example.super_app.RecycleViewInterface;
 import com.example.super_app.db.entity.Order;
+import com.example.super_app.db.entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -34,6 +36,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,14 +48,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-public class ProfileActivity extends AppCompatActivity   {
-    ImageView userImg;
-    TextView userName;
-    EditText userEmail, birthDate;
-    RecyclerView recOrder;
-    BottomNavigationView menu;
-    List<Order> hostList = new ArrayList<>();
-    Button addOrder;
+public class ProfileActivity extends AppCompatActivity {
+    private ImageView userImg;
+    private TextView userName;
+    private EditText userEmail, birthDate;
+    private RecyclerView recOrder;
+    private BottomNavigationView menu;
+    private List<Order> hostList = new ArrayList<>();
+    private Button addOrder;
+    private User currentUser;
+    FirebaseAuth mAuth;
+    FirebaseFirestore db;
 
 
     @Override
@@ -61,7 +69,7 @@ public class ProfileActivity extends AppCompatActivity   {
         userEmail = findViewById(R.id.userEmail);
         birthDate = findViewById(R.id.birthDateEditTxt);
         recOrder = findViewById(R.id.recOrders);
-        addOrder=findViewById(R.id.btnOpenOrder);
+        addOrder = findViewById(R.id.btnOpenOrder);
         menu = findViewById(R.id.menu);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
@@ -91,6 +99,31 @@ public class ProfileActivity extends AppCompatActivity   {
 //                }
 //            }
 //        });
+
+        mAuth = FirebaseAuth.getInstance();
+        currentUser = new User();
+        String uid = mAuth.getCurrentUser().getUid();
+        db = FirebaseFirestore.getInstance();
+        db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        if (doc.getId().equals(uid)) {
+                            userName.setText("" + doc.getData().get("userName"));
+                            userEmail.setText("" + doc.getData().get("userEmail"));
+                            birthDate.setText("" + doc.get("birthdate"));
+
+                        }
+                    }
+                }
+            }
+        });
+
+        /*
+        *  userName = findViewById(R.id.userName);
+        userEmail = findViewById(R.id.userEmail);
+        birthDate = findViewById(R.id.birthDateEditTxt);*/
 
         addOrder.setOnClickListener(new View.OnClickListener() {
 
