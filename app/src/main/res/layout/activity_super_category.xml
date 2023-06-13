@@ -6,6 +6,7 @@
     tools:context=".SuperCategoryActivity">
 
     <LinearLayout
+        android:id="@+id/linearLay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -38,7 +39,8 @@
                 android:layout_margin="8dp"
                 android:layout_rowWeight="1"
                 app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
+                app:cardElevation="5dp"
+                android:onClick="brushClick">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -74,7 +76,8 @@
                 android:layout_margin="8dp"
                 android:layout_rowWeight="1"
                 app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
+                app:cardElevation="5dp"
+                android:onClick="eleClick">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -110,7 +113,8 @@
                 android:layout_margin="8dp"
                 android:layout_rowWeight="1"
                 app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
+                app:cardElevation="5dp"
+                android:onClick="meatClick">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -147,7 +151,8 @@
                 android:layout_margin="8dp"
                 android:layout_rowWeight="1"
                 app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
+                app:cardElevation="5dp"
+                android:onClick="vegClick">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
