@@ -16,8 +16,8 @@
 
         <ImageView
             android:id="@+id/productImg"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:textColor="@color/black" />
@@ -30,7 +30,7 @@
             android:layout_weight="1"
             android:text="@string/productName"
             android:textColor="@color/black"
-            android:textSize="10sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
@@ -41,7 +41,7 @@
             android:layout_weight="1"
             android:text="@string/productPrice"
             android:textColor="@color/black"
-            android:textSize="10sp" />
+            android:textSize="16sp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
