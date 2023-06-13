@@ -3,189 +3,203 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SuperCategoryActivity">
+    tools:context=".SuperCategoryActivity"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_below="@id/toolbar">
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/linearLay"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="72dp"
-            android:gravity="center"
-            android:text="@string/Category"
-            android:textColor="@color/black"
-            android:textSize="22dp"
-            android:textStyle="bold" />
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <GridLayout
-            android:id="@+id/gridCategory"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_weight="1"
-            android:columnCount="1"
-            android:rowCount="4">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="72dp"
+                android:gravity="center"
+                android:text="@string/Category"
+                android:textColor="@color/black"
+                android:textSize="22dp"
+                android:textStyle="bold" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardBrush"
-                android:layout_width="0dp"
+            <GridLayout
+                android:id="@+id/gridCategory"
+                android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:layout_rowWeight="1"
-                app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_weight="1"
+                android:columnCount="1"
+                android:rowCount="4">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="10dp">
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardBrush"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="#F2F2F2"
+                    app:cardElevation="5dp"
+                    android:onClick="brushClick">
 
-                    <ImageView
-                        android:id="@+id/imgFir"
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/brush" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="40dp"
-                        android:layout_toLeftOf="@id/imgFir"
-                        android:text="@string/Brush"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardEle"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:layout_rowWeight="1"
-                app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/imgSec"
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/electronics" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="40dp"
-                        android:layout_toLeftOf="@id/imgSec"
-                        android:text="@string/Electronics"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardMeat"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:layout_rowWeight="1"
-                app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/imgThir"
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/meatcategory" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="40dp"
-                        android:layout_toLeftOf="@id/imgThir"
-                        android:text="@string/Meat"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardFruVegg"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_columnWeight="1"
-                android:layout_margin="8dp"
-                android:layout_rowWeight="1"
-                app:cardBackgroundColor="#F2F2F2"
-                app:cardElevation="5dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="10dp">
-
-                    <ImageView
-                        android:id="@+id/imgFo"
-                        android:layout_width="150dp"
-                        android:layout_height="match_parent"
-                        android:layout_alignParentRight="true"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/fruitsandveg" />
-
-                    <TextView
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="47dp"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="40dp"
-                        android:layout_toLeftOf="@id/imgFo"
-                        android:text="@string/FruitsAndVeggies"
-                        android:textColor="@color/black"
-                        android:textSize="18dp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </androidx.cardview.widget.CardView>
+                        android:layout_height="match_parent"
+                        android:padding="10dp">
 
+                        <ImageView
+                            android:id="@+id/imgFir"
+                            android:layout_width="150dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/brush" />
 
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="40dp"
+                            android:layout_toLeftOf="@id/imgFir"
+                            android:text="@string/Brush"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
 
-        </GridLayout>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardEle"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="#F2F2F2"
+                    app:cardElevation="5dp"
+                    android:onClick="eleClick">
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:menu="@menu/bottom_navigation_menu" />
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp">
 
-    </LinearLayout>
+                        <ImageView
+                            android:id="@+id/imgSec"
+                            android:layout_width="150dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/electronics" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="40dp"
+                            android:layout_toLeftOf="@id/imgSec"
+                            android:text="@string/Electronics"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardMeat"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="#F2F2F2"
+                    app:cardElevation="5dp"
+                    android:onClick="meatClick">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp">
+
+                        <ImageView
+                            android:id="@+id/imgThir"
+                            android:layout_width="150dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/meatcategory" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="40dp"
+                            android:layout_toLeftOf="@id/imgThir"
+                            android:text="@string/Meat"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cardFruVegg"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_rowWeight="1"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="8dp"
+                    app:cardBackgroundColor="#F2F2F2"
+                    app:cardElevation="5dp"
+                    android:onClick="vegClick">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="10dp">
+
+                        <ImageView
+                            android:id="@+id/imgFo"
+                            android:layout_width="150dp"
+                            android:layout_height="match_parent"
+                            android:layout_alignParentRight="true"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/fruitsandveg" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="47dp"
+                            android:layout_alignParentStart="true"
+                            android:layout_centerVertical="true"
+                            android:layout_marginLeft="40dp"
+                            android:layout_toLeftOf="@id/imgFo"
+                            android:text="@string/FruitsAndVeggies"
+                            android:textColor="@color/black"
+                            android:textSize="18dp"
+                            android:textStyle="bold" />
+                    </RelativeLayout>
+                </androidx.cardview.widget.CardView>
+            </GridLayout>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/bottom_navigation_menu" />
+
 </LinearLayout>
