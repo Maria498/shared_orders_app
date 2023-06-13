@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class SuperCategoryActivity extends AppCompatActivity {
+public class SuperCategoryActivity extends AppCompatActivity implements  AlertDialogFragmentListener{
     private CardView cardBrush, cardEle, cardMeat, cardFruVegg;
     LinearLayout layout;
     private ImageView back;
@@ -108,6 +108,11 @@ public class SuperCategoryActivity extends AppCompatActivity {
         t.replace(R.id.fragmentContainer, fragment);
         t.addToBackStack(null);
         t.commit();
+
+    }
+
+    @Override
+    public void onDialogPositiveClick(AlertDialogFragmentViewProduct dialog) {
 
     }
 }

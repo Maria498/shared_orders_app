@@ -26,6 +26,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.db.entity.Product;
 
+import org.w3c.dom.Text;
+
 public class AlertDialogFragmentViewProduct extends DialogFragment {
     private ImageView imageView;
     private TextView productNameTextView;
@@ -33,7 +35,7 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     private TextView productDescribeTextView;
     private TextView price;
     private ImageButton plusButton;
-    private EditText digitEditText;
+    private TextView quantityTextView;
     private ImageButton minusButton;
     private Button addButton;
     AlertDialogFragmentListener mListener;
@@ -52,16 +54,17 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle b = getArguments();
-        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product, container, false);
+        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product,null);
         imageView = v.findViewById(R.id.imgPro);
         productNameTextView = v.findViewById(R.id.productNameTextView);
         descriptionTextView = v.findViewById(R.id.descriptionTextView);
         productDescribeTextView = v.findViewById(R.id.productDescribeTextView);
         price = v.findViewById(R.id.price);
         plusButton = v.findViewById(R.id.pluseButton);
-        digitEditText = v.findViewById(R.id.digitEditText);
+        quantityTextView = v.findViewById(R.id.digitEditText);
         minusButton = v.findViewById(R.id.minusButton);
         addButton = v.findViewById(R.id.addbtn);
+        quantityTextView.setVisibility(View.GONE);
 
         if (b != null) {
             Product product = (Product) b.getSerializable("Product");
@@ -100,10 +103,10 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
             plusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int quantity = Integer.parseInt(digitEditText.getText().toString());
+                    int quantity = Integer.parseInt(quantityTextView.getText().toString());
                     if (quantity < 100) {
                         quantity++;
-                        digitEditText.setText(String.valueOf(quantity));
+                        quantityTextView.setText(String.valueOf(quantity));
                         price.setText(String.valueOf(product.getPrice() * quantity));
                     }
                 }
@@ -112,10 +115,10 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
             minusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int quantity = Integer.parseInt(digitEditText.getText().toString());
+                    int quantity = Integer.parseInt(quantityTextView.getText().toString());
                     if (quantity > 0) {
                         quantity--;
-                        digitEditText.setText(String.valueOf(quantity));
+                        quantityTextView.setText(String.valueOf(quantity));
                         price.setText(String.valueOf(product.getPrice() * quantity));
                     }
                 }
