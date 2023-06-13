@@ -1,16 +1,20 @@
 package com.example.super_app;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
-import androidx.cardview.widget.CardView;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
+
+import com.google.android.material.card.MaterialCardView;
 
 public class SuperCategoryActivity extends AppCompatActivity {
-    private CardView cardBrush, cardEle, cardMeat, cardFruVegg;
+    private MaterialCardView cardBrush, cardEle, cardMeat, cardFruVegg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,7 +26,7 @@ public class SuperCategoryActivity extends AppCompatActivity {
         cardEle = findViewById(R.id.cardEle);
         cardMeat = findViewById(R.id.cardMeat);
         cardFruVegg = findViewById(R.id.cardFruVegg);
-        FragmentManager fm = getFragmentManager();
+        FragmentManager fm = getSupportFragmentManager();
         Bundle args = new Bundle();
 
         // Set click listeners for CardViews
@@ -33,6 +37,7 @@ public class SuperCategoryActivity extends AppCompatActivity {
                 fragment_products fragment_products=new fragment_products();
                 fragment_products.setArguments(args);
                 FragmentTransaction t = fm.beginTransaction();
+                t.replace(R.id.fragmentContainer, fragment_products);
                 t.addToBackStack(null);
                 t.commit();
             }
@@ -45,6 +50,7 @@ public class SuperCategoryActivity extends AppCompatActivity {
                 fragment_products fragment_products=new fragment_products();
                 fragment_products.setArguments(args);
                 FragmentTransaction t = fm.beginTransaction();
+                t.replace(R.id.fragmentContainer, fragment_products);
                 t.addToBackStack(null);
                 t.commit();            }
         });
@@ -56,8 +62,10 @@ public class SuperCategoryActivity extends AppCompatActivity {
                 fragment_products fragment_products=new fragment_products();
                 fragment_products.setArguments(args);
                 FragmentTransaction t = fm.beginTransaction();
+                t.replace(R.id.fragmentContainer, fragment_products);
                 t.addToBackStack(null);
-                t.commit();            }
+                t.commit();
+            }
         });
 
         cardFruVegg.setOnClickListener(new View.OnClickListener() {
@@ -67,8 +75,10 @@ public class SuperCategoryActivity extends AppCompatActivity {
                 fragment_products fragment_products=new fragment_products();
                 fragment_products.setArguments(args);
                 FragmentTransaction t = fm.beginTransaction();
+                t.replace(R.id.fragmentContainer, fragment_products);
                 t.addToBackStack(null);
-                t.commit();            }
+                t.commit();
+            }
         });
     }
 }

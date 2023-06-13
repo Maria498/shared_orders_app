@@ -58,33 +58,32 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-               db = new DatabaseHelper(context);
-                String userEmail = email.getText().toString();
-                String userPassword = password.getText().toString();
-                //field validation
-                if (userEmail.isEmpty()) {
-                    email.setError("Email is required");
-                    email.requestFocus();
-                    return; // Stop further processing
-                } else if (userPassword.isEmpty()) {
-                    password.setError("Password is required");
-                    password.requestFocus();
-                    return;// Stop further processing
-                } else {
-                    auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>()  {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(task.isSuccessful())
-                            {
-                                Intent i = new Intent(getApplicationContext(), SuperCategoryActivity.class);
-                                startActivity(i);
+                if (email.getText() != null && password.getText() != null) {
+                    String userEmail = email.getText().toString();
+                    String userPassword = password.getText().toString();
+                    //field validation
+                    if (userEmail.isEmpty()) {
+                        email.setError("Email is required");
+                        email.requestFocus();
+                        return; // Stop further processing
+                    } else if (userPassword.isEmpty()) {
+                        password.setError("Password is required");
+                        password.requestFocus();
+                        return;// Stop further processing
+                    } else {
+                        auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    Intent i = new Intent(getApplicationContext(), SuperCategoryActivity.class);
+                                    startActivity(i);
+                                } else {
+                                    Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            else {
-                                Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+                        });
 
+                    }
                 }
             }
         }));
