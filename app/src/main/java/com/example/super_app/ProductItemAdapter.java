@@ -26,31 +26,29 @@ import com.example.super_app.db.entity.Product;
 
 import java.util.List;
 
-public class productItemAdapter extends RecyclerView.Adapter<productItemAdapter.ProductItemViewHolder> {
+public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.ProductItemViewHolder> {
     private List<Product> productList;
     private Context context;
-    private RecycleViewInterface recycleViewInterface;
+    private RecycleViewInterface recyclerViewInterface;
     private boolean isAdmin = false;
 
-    public productItemAdapter(List<Product> productList, Context context, RecycleViewInterface recycleViewInterface) {
+    public ProductItemAdapter(List<Product> productList, Context context, RecycleViewInterface recyclerViewInterface) {
         this.productList = productList;
         this.context = context;
-        this.recycleViewInterface = recycleViewInterface;
+        this.recyclerViewInterface = recyclerViewInterface;
     }
 
-
     @Override
-    public productItemAdapter.ProductItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ProductItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.product_item, parent, false);
-        return new ProductItemViewHolder(itemView, recycleViewInterface);
+        return new ProductItemViewHolder(itemView, recyclerViewInterface);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull productItemAdapter.ProductItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ProductItemViewHolder holder, int position) {
         Product product = productList.get(position);
         holder.setData(product);
-
     }
 
     public boolean isAdmin() {
@@ -74,7 +72,7 @@ public class productItemAdapter extends RecyclerView.Adapter<productItemAdapter.
         private ImageButton vDelete;
         private Product product = null;
 
-        public ProductItemViewHolder(@NonNull View itemView, RecycleViewInterface recycleViewInterface) {
+        public ProductItemViewHolder(@NonNull View itemView, RecycleViewInterface recyclerViewInterface) {
             super(itemView);
             vImg = itemView.findViewById(R.id.productImg);
             vName = itemView.findViewById(R.id.productName);
@@ -85,23 +83,24 @@ public class productItemAdapter extends RecyclerView.Adapter<productItemAdapter.
             if (!isAdmin) {
                 vEdit.setVisibility(View.GONE);
                 vDelete.setVisibility(View.GONE);
-            }
-            else{
+            } else {
                 vDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        showSimpleAlertDialog(v);
+                    }
+                });
+                
             }
 
             itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
                 public void onClick(View v) {
-                    if (recycleViewInterface != null) {
+                    if (recyclerViewInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                            recycleViewInterface.onItemClick(position);
+                            recyclerViewInterface.onItemClick(position);
                         }
-
-
                     }
                 }
             });
@@ -129,44 +128,30 @@ public class productItemAdapter extends RecyclerView.Adapter<productItemAdapter.
                     })
                     .into(vImg);
         }
-
     }
-}
-    public void showSimpleAlertDialog(View view) {
 
+    public void showSimpleAlertDialog(View view) {
         // 1. Instantiate an AlertDialog.Builder with its constructor
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setMessage(R.string.dialog_message);
-        builder. setTitle(R.string.dialog_title);
+        builder.setTitle(R.string.dialog_title);
 
         // Add the buttons
         builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-                Toast.makeText(context, "User clicked OK button",Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Admin clicked OK button", Toast.LENGTH_SHORT).show();
             }
         });
         builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-
-                Toast.makeText(context, "User cancelled the dialog",Toast.LENGTH_SHORT).show();
-
-            }
-        });
-        builder.setNeutralButton(R.string.ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context, "User clicked on Neutral Btn",Toast.LENGTH_SHORT).show();
-
+                Toast.makeText(context, "Admin cancelled the dialog", Toast.LENGTH_SHORT).show();
             }
         });
 
         // 3. Get the AlertDialog from create()
         AlertDialog dialog = builder.create();
-
         dialog.show();
     }
 }
-                });
