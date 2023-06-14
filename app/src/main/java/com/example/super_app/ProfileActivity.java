@@ -110,6 +110,7 @@ public class ProfileActivity extends AppCompatActivity {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         if (doc.getId().equals(uid)) {
+                            Log.d("", (String) doc.getData().get("userName"));
                             userName.setText("" + doc.getData().get("userName"));
                             userEmail.setText("" + doc.getData().get("userEmail"));
                             birthDate.setText("" + doc.get("birthdate"));

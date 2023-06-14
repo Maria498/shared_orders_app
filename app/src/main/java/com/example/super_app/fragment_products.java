@@ -122,9 +122,9 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
             }
 
         }
-        productItemAdapter productItemAdapter= null;
+        ProductItemAdapter productItemAdapter= null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            productItemAdapter = new productItemAdapter(list,getContext(), fragment_products.this);
+            productItemAdapter = new ProductItemAdapter(list,getContext(), fragment_products.this);
         }
         rec.setAdapter(productItemAdapter);
 
