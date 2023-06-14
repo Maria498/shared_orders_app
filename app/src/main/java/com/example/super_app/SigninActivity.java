@@ -101,42 +101,30 @@ public class SigninActivity extends AppCompatActivity {
 
         setDate(dateCal);
 
-        signInBtn.setOnClickListener((new View.OnClickListener() {
+        signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if(addUserToDB()) {
-                    mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
-                            .addOnCompleteListener(SigninActivity.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        // Sign in success, update UI with the signed-in user's information
-                                        firestore = FirebaseFirestore.getInstance();
-                                        firestore.collection("users").add(userMap).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                Toast.makeText(SigninActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
-                                                Intent i = new Intent(SigninActivity.this, LoginActivity.class);
-                                                startActivity(i);
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w(TAG, "Error adding document", e);
-                                            }
-                                        });
-
-                                    } else {
-                                        // If sign in fails, display a message to the user.s
-                                        Toast.makeText(SigninActivity.this, "Authentication failed.",
-                                                Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-
+            public void onClick(View v) {
+                if(addUserToDB())
+                {
+                mAuth.createUserWithEmailAndPassword(userEmail,userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                    @Override
+                    public void onSuccess(AuthResult authResult) {
+                        firestore = FirebaseFirestore.getInstance();
+                        firestore.collection("users").document(mAuth.getUid()).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(SigninActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
+                                Intent i = new Intent(SigninActivity.this, LoginActivity.class);
+                                startActivity(i);
+                            }
+                        });
+                    }
+                });
             }
-        }));
+            }
+        });
+
+
 
     }
 
