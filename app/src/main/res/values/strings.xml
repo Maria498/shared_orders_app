@@ -16,7 +16,6 @@
     <string name="explore_by_category">Explore by Category</string>
     <string name="meat">Meat</string>
     <string name="veggie">Veggies</string>
-    <string name="no"> </string>
     <string name="signUp">Sign Up</string>
     <string name="enter_your_name">enter your name</string>
     <string name="fruits">Fruits</string>
@@ -29,6 +28,7 @@
     <string name="Apartment">Apatment</string>
     <string name="description">Description</string>
     <string name="productDescribe">description...</string>
+    <string name="ADMIN">8dBeKyo5aZSNAV2yAmnFDes2soz1</string>
 
     <string name="productName">product Name\n</string>
     <string name="productPrice">product Price</string>

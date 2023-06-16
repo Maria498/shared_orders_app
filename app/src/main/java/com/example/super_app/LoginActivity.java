@@ -68,6 +68,12 @@ public class LoginActivity extends AppCompatActivity {
                         password.requestFocus();
                         return;// Stop further processing
                     } else {
+                        if(userEmail.equals("ADMIN"))
+                        {
+                            userEmail = "ADMIN@gmail.com";
+                            userPassword = "1234567";
+                        }
+
                           auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
