@@ -13,9 +13,6 @@
         android:theme="@style/Theme.Super_app"
         tools:targetApi="31">
         <activity
-            android:name=".Alert_dialog_fragmentViewProduct"
-            android:exported="false" />
-        <activity
             android:name=".fragment_products"
             android:exported="false" />
         <activity

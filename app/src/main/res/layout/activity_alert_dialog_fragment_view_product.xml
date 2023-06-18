@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".Alert_dialog_fragmentViewProduct">
+    tools:context=".AlertDialogFragmentViewProduct">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -64,17 +64,15 @@
 
         <ImageButton
             android:id="@+id/pluseButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/shape_circle_btn"
             android:src="@drawable/baseline_add_24"
-            android:textColor="#000000"
-
-            />
+            android:textColor="#000000" />
 
         <TextView
             android:id="@+id/digitEditText"
@@ -83,36 +81,32 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/minusButton"
             android:layout_toRightOf="@id/pluseButton"
-            android:layout_marginLeft="30dp"
-            android:layout_marginRight="30dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
             android:inputType="number"
             android:text="@string/quantity"
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textAlignment="center"
-            android:textSize="20sp"
-         />
-
+            android:textSize="20sp" />
 
         <ImageButton
             android:id="@+id/minusButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:textColor="#000000"
             android:src="@drawable/baseline_remove_24"
             android:layout_centerVertical="true"
             android:background="@drawable/shape_circle_btn"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
-            android:layout_toLeftOf="@id/price"
-             />
+            android:layout_toLeftOf="@id/price" />
 
         <TextView
             android:id="@+id/price"
             android:layout_width="75dp"
             android:layout_height="38dp"
             android:layout_centerVertical="true"
-
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:layout_toLeftOf="@id/addbtn"
@@ -122,6 +116,7 @@
             android:layout_marginRight="5dp"
             android:textSize="18sp"
             android:textStyle="bold" />
+
         <Button
             android:id="@+id/addbtn"
             android:layout_width="wrap_content"
@@ -134,6 +129,7 @@
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
             android:textColor="@color/white" />
+
     </RelativeLayout>
 
 </LinearLayout>
