@@ -27,6 +27,7 @@ public class SuperCategoryActivity extends AppCompatActivity{
     LinearLayout layout;
     private ImageView back;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

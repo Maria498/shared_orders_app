@@ -32,10 +32,11 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
     private RecycleViewInterface recyclerViewInterface;
     private boolean isAdmin = false;
 
-    public ProductItemAdapter(List<Product> productList, Context context, RecycleViewInterface recyclerViewInterface) {
+    public ProductItemAdapter(List<Product> productList, Context context, RecycleViewInterface recyclerViewInterface,boolean isAdmin) {
         this.productList = productList;
         this.context = context;
         this.recyclerViewInterface = recyclerViewInterface;
+        this.isAdmin=isAdmin;
     }
 
     @Override
@@ -79,7 +80,6 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
             vPrice = itemView.findViewById(R.id.productPrice);
             vEdit = itemView.findViewById(R.id.editBtn);
             vDelete = itemView.findViewById(R.id.removeBtn);
-
             if (!isAdmin) {
                 vEdit.setVisibility(View.GONE);
                 vDelete.setVisibility(View.GONE);

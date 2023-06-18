@@ -22,6 +22,7 @@
             android:layout_marginRight="16dp"
             android:scaleType="centerCrop" />
 
+
         <TextView
             android:id="@+id/productNameTextView"
             android:layout_width="match_parent"

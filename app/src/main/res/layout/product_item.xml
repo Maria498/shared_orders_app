@@ -55,7 +55,6 @@
             android:layout_alignParentEnd="true"
             android:src="@drawable/baseline_edit_24"
             android:layout_gravity="right"
-            android:layout_marginRight="16dp"
             tools:ignore="NotSibling" />
         <ImageButton
             android:id="@+id/removeBtn"
