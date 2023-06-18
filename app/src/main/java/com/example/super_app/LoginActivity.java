@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -39,6 +40,9 @@ public class LoginActivity extends AppCompatActivity {
     private Context context;
     private ArrayList<User> usersFromDB;
 
+    private ProgressDialog mLoadingBar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         password = findViewById(R.id.editTextTextPassword);
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
+        mLoadingBar = new ProgressDialog(this);
 
 
         logInBtn.setOnClickListener((new View.OnClickListener() {
@@ -68,11 +73,15 @@ public class LoginActivity extends AppCompatActivity {
                         password.requestFocus();
                         return;// Stop further processing
                     } else {
-                        if(userEmail.equals("ADMIN"))
+                        if(userEmail.equals("ADMIN")&& userPassword.equals("ADMIN"))
                         {
                             userEmail = "ADMIN@gmail.com";
                             userPassword = "1234567";
                         }
+                        mLoadingBar.setTitle("Login");
+                        mLoadingBar.setMessage("Please wait while we check your credentials");
+                        mLoadingBar.setCanceledOnTouchOutside(false);
+                        mLoadingBar.show();
 
                           auth.signInWithEmailAndPassword(userEmail, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override

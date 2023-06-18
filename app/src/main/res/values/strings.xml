@@ -112,6 +112,7 @@
     <string name="ok">ok</string>
     <string name="cancel">cancel</string>
     <string name="yes">yes</string>
+    <string name="no">no</string>
 
 
 </resources>
