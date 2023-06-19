@@ -23,6 +23,7 @@ import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.db.entity.Product;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.List;
 
@@ -87,8 +88,22 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
                 vDelete.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showSimpleAlertDialog(v);
-                    }
+                        if (recyclerViewInterface != null) {
+                            int position = getAdapterPosition();
+                            if (position != RecyclerView.NO_POSITION) {
+                                recyclerViewInterface.onDeleteClick(position);
+                            }
+                        }                    }
+                });
+                vEdit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (recyclerViewInterface != null) {
+                            int position = getAdapterPosition();
+                            if (position != RecyclerView.NO_POSITION) {
+                                recyclerViewInterface.onEditClick(position);
+                            }
+                        }                    }
                 });
                 
             }
@@ -130,28 +145,5 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
         }
     }
 
-    public void showSimpleAlertDialog(View view) {
-        // 1. Instantiate an AlertDialog.Builder with its constructor
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
-        // 2. Chain together various setter methods to set the dialog characteristics
-        builder.setMessage(R.string.dialog_message);
-        builder.setTitle(R.string.dialog_title);
-
-        // Add the buttons
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(context, "Admin clicked OK button", Toast.LENGTH_SHORT).show();
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                Toast.makeText(context, "Admin cancelled the dialog", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        // 3. Get the AlertDialog from create()
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
 }

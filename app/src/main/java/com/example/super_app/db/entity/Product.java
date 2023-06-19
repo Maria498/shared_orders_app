@@ -2,6 +2,7 @@ package com.example.super_app.db.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class Product implements Serializable {
     private String name;
@@ -126,5 +127,18 @@ public class Product implements Serializable {
                 ", healthy_tag=" + healthy_tag +
                 ", ratings=" + ratings +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return Double.compare(product.price, price) == 0  && Objects.equals(name, product.name) && Objects.equals(imageResId, product.imageResId) && Objects.equals(category, product.category)&& Objects.equals(description, product.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, imageResId, category, price, description);
     }
 }

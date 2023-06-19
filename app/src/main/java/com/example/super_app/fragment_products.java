@@ -1,5 +1,7 @@
 package com.example.super_app;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -20,8 +22,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.super_app.db.entity.Product;
 import com.facebook.internal.WebDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -154,8 +159,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
                             rec.setAdapter(productItemAdapter);
-                        }
-                        else {
+                        } else {
                         }
                     }
                 });
@@ -252,18 +256,93 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
 
 
     }
-        @Override
-        public void onItemClick ( int position){
-            Product product = list.get(position);
-            AlertDialogFragmentViewProduct frag = new AlertDialogFragmentViewProduct();
-            Bundle b = new Bundle();
-            b.putSerializable("Product", product);
-            frag.setArguments(b);
-            frag.show(getFragmentManager(), "dialog");
 
-        }
+    @Override
+    public void onItemClick(int position) {
+        Product product = list.get(position);
+        AlertDialogFragmentViewProduct frag = new AlertDialogFragmentViewProduct();
+        Bundle b = new Bundle();
+        b.putSerializable("Product", product);
+        frag.setArguments(b);
+        frag.show(getFragmentManager(), "dialog");
+
+    }
+
+    @Override
+    public void onDeleteClick(int position) {
+        showSimpleAlertDialog(position);
 
 
     }
+
+    @Override
+    public void onEditClick(int position) {
+
+    }
+
+    public void showSimpleAlertDialog(int position) {
+        // 1. Instantiate an AlertDialog.Builder with its constructor
+        AlertDialog.Builder builder = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            builder = new AlertDialog.Builder(getContext());
+        }
+
+        // 2. Chain together various setter methods to set the dialog characteristics
+        builder.setMessage(R.string.dialog_message);
+        builder.setTitle(R.string.dialog_title);
+
+        // Add the buttons
+        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+                Product product = list.get(position);
+                db.collection(product.getCategory()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Product newproduct = document.toObject(Product.class);
+                                if(newproduct.equals(product))
+                                {
+                                    db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                @Override
+                                                public void onSuccess(Void aVoid) {
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                        Toast.makeText(getContext(), "The product has been deleted", Toast.LENGTH_SHORT).show();
+                                                    }
+
+                                                }
+                                            })
+                                            .addOnFailureListener(new OnFailureListener() {
+                                                @Override
+                                                public void onFailure(@NonNull Exception e) {
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                        Toast.makeText(getContext(), "There is a problem", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                }
+
+                            }
+                        } else {
+                        }
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    Toast.makeText(getContext(), "Admin cancelled the dialog", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        // 3. Get the AlertDialog from create()
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+}
 
 
