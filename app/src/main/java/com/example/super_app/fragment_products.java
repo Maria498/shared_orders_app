@@ -154,8 +154,6 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
                             rec.setAdapter(productItemAdapter);
-
-
                         }
                         else {
                         }
