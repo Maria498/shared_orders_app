@@ -29,6 +29,8 @@
         <activity
             android:name=".UserProfileActivity"
             android:exported="false" />
+        <activity android:name=".homePageActivity"
+            android:exported="false"/>
         <activity
             android:name=".OrderActivity"
             android:exported="false" />

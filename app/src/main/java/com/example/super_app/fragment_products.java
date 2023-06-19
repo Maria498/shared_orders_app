@@ -302,7 +302,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product newproduct = document.toObject(Product.class);
-                                if(newproduct.equals(product))
+                                if(newproduct.getName() == product.getName() && newproduct.getPrice() == product.getPrice())
                                 {
                                     db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
