@@ -45,7 +45,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     private ImageButton addAdm;
     private FirebaseAuth mAuth;
     private boolean isAdmin;
-
+    ProductItemAdapter productItemAdapter = null;
     public fragment_products() {
 
     }
@@ -231,7 +231,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 product.setCategory((String) document.getData().get("category"));
                                 list.add(product);
                             }
-                            ProductItemAdapter productItemAdapter = null;
+
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
@@ -302,12 +302,14 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product newproduct = document.toObject(Product.class);
-                                if(newproduct.getName() == product.getName() && newproduct.getPrice() == product.getPrice())
+                                if(newproduct.equals(product))
                                 {
                                     db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
                                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                        list.remove(position);
+                                                        productItemAdapter.notifyDataSetChanged();
                                                         Toast.makeText(getContext(), "The product has been deleted", Toast.LENGTH_SHORT).show();
                                                     }
 
@@ -344,5 +346,6 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     }
 
 }
+
 
 

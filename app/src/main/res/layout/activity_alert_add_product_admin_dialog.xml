@@ -2,6 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -16,18 +19,22 @@
             android:layout_marginTop="22dp"
             android:layout_gravity="center"
             android:textSize="25sp"
+            android:scaleType="centerCrop"
+
             android:textColor="@color/black"
+
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/imgPro"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="30dp"
             android:layout_marginRight="16dp"
-            android:scaleType="centerCrop" />
+           />
 
         <ImageButton
             android:id="@+id/uploadImg"
@@ -92,5 +99,5 @@
     </LinearLayout>
 
 
-
+    </ScrollView>
 </RelativeLayout>
