@@ -35,8 +35,7 @@ import java.util.List;
 public class fragment_products extends Fragment implements RecycleViewInterface {
     private FirebaseFirestore db;
     private RecyclerView rec;
-    private List<Product> list = new ArrayList<>();
-
+    private List<Product> list;
     private ImageView back;
     private ImageButton addAdm;
     private FirebaseAuth mAuth;
@@ -49,7 +48,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     @RequiresApi(api = Build.VERSION_CODES.M)
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
+        list = new ArrayList<>();
         View view = inflater.inflate(R.layout.activity_fragment_products, container, false);
         db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();

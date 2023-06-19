@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -13,7 +15,7 @@
         android:theme="@style/Theme.Super_app"
         tools:targetApi="31">
         <activity
-            android:name=".AlertAddProductAdminDialog"
+            android:name=".AlertDialogFragmentAddProductAdm"
             android:exported="false" />
         <activity
             android:name=".fragment_products"

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -44,8 +45,7 @@ import org.w3c.dom.Text;
 
 import java.util.HashMap;
 
-
-public class AlertDialogFragmentAddProductAdm extends DialogFragment  {
+public class AlertDialogFragmentAddProductAdm extends DialogFragment {
     private ImageView imageView;
     private EditText productName;
     private EditText productPrice;
@@ -57,7 +57,6 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment  {
     Uri imageURIProduct;
     int PICK_IMAGE_REQUEST = 100;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-
 
     @Nullable
     @Override
@@ -72,6 +71,20 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment  {
         addButton = view.findViewById(R.id.addbtn);
         uploadImg = view.findViewById(R.id.uploadImg);
         productDescribeTextView.setVisibility(View.GONE);
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (spinnerCategory.getSelectedItem().toString().equals("MakeUpAndBrush") || spinnerCategory.getSelectedItem().toString().equals("Electronics")) {
+                    productDescribeTextView.setVisibility(View.VISIBLE);
+                } else {
+                    productDescribeTextView.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,10 +105,6 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment  {
                     }
                     return;
                 } else {
-                    if(!spinnerCategory.getSelectedItem().toString().equals("MakeUpAndBrush")&&!spinnerCategory.getSelectedItem().toString().equals("Electronics"))
-                    {
-                        productDescribeTextView.setVisibility(View.GONE);
-                    }
                     // Upload the image to Firebase Storage
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference(imageURIProduct.toString());
                     storageRef.putFile(imageURIProduct).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -116,6 +125,9 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment  {
                                         db.collection(product.getCategory()).add(productData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
                                             public void onSuccess(DocumentReference documentReference) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    Toast.makeText(getContext(), "New product added to company", Toast.LENGTH_SHORT).show();
+                                                }
                                                 dismiss();
                                             }
                                         });

@@ -68,7 +68,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="16dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/shape_circle_btn"
@@ -89,7 +89,7 @@
             android:textStyle="bold"
             android:textColor="@color/black"
             android:textAlignment="center"
-            android:textSize="20sp" />
+            android:textSize="15sp" />
 
         <ImageButton
             android:id="@+id/minusButton"
@@ -101,12 +101,13 @@
             android:background="@drawable/shape_circle_btn"
             android:layout_marginBottom="20dp"
             android:layout_marginTop="20dp"
+            android:layout_marginRight="16dp"
             android:layout_toLeftOf="@id/price" />
 
         <TextView
             android:id="@+id/price"
-            android:layout_width="75dp"
-            android:layout_height="38dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
@@ -114,8 +115,8 @@
             android:text="@string/price"
             android:textColor="@color/black"
             android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:textSize="18sp"
+            android:layout_marginRight="30dp"
+            android:textSize="15sp"
             android:textStyle="bold" />
 
         <Button
