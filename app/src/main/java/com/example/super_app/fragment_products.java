@@ -45,7 +45,8 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     private ImageButton addAdm;
     private FirebaseAuth mAuth;
     private boolean isAdmin;
-    ProductItemAdapter productItemAdapter = null;
+    private ProductItemAdapter productItemAdapter = null;
+
     public fragment_products() {
 
     }
@@ -111,7 +112,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 Product product = new Product();
                                 product.setName("" + document.getData().get("name"));
                                 product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
+                                product.setimg((String) document.getData().get("img"));
                                 product.setCategory((String) document.getData().get("category"));
                                 list.add(product);
                             }
@@ -150,7 +151,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 Product product = new Product();
                                 product.setName("" + document.getData().get("name"));
                                 product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
+                                product.setimg((String) document.getData().get("img"));
                                 product.setCategory((String) document.getData().get("category"));
                                 list.add(product);
                             }
@@ -185,7 +186,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 Product product = new Product();
                                 product.setName("" + document.getData().get("name"));
                                 product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
+                                product.setimg((String) document.getData().get("img"));
                                 product.setCategory((String) document.getData().get("category"));
                                 list.add(product);
                             }
@@ -227,7 +228,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 Product product = new Product();
                                 product.setName("" + document.getData().get("name"));
                                 product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
+                                product.setimg((String) document.getData().get("img"));
                                 product.setCategory((String) document.getData().get("category"));
                                 list.add(product);
                             }
@@ -301,28 +302,31 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product newproduct = document.toObject(Product.class);
-                                if(newproduct.equals(product))
-                                {
-                                    db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                        list.remove(position);
-                                                        productItemAdapter.notifyDataSetChanged();
-                                                        Toast.makeText(getContext(), "The product has been deleted", Toast.LENGTH_SHORT).show();
-                                                    }
+                                if (document != null&&product!=null&&product.getName()!=null&&product.getimg()!=null) {
+                                    Product newproduct = document.toObject(Product.class);
+                                    if(newproduct.getimg()!=null) {
+                                        if (newproduct.getName().equals(product.getName()) && newproduct.getimg().equals(product.getimg())) {
+                                            db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                        @Override
+                                                        public void onSuccess(Void aVoid) {
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                                list.remove(position);
+                                                              //  productItemAdapter.notifyDataSetChanged();
+                                                                Toast.makeText(getContext(), "The product has been deleted", Toast.LENGTH_SHORT).show();
+                                                            }
 
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
-                                                @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                        Toast.makeText(getContext(), "There is a problem", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
+                                                        }
+                                                    })
+                                                    .addOnFailureListener(new OnFailureListener() {
+                                                        @Override
+                                                        public void onFailure(@NonNull Exception e) {
+                                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                                Toast.makeText(getContext(), "There is a problem", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    }
                                 }
 
                             }

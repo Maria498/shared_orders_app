@@ -120,7 +120,7 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                                         HashMap<String, Object> productData = new HashMap<>();
                                         productData.put("name", product.getName());
                                         productData.put("price", product.getPrice());
-                                        productData.put("img", product.getImageResId());
+                                        productData.put("img", product.getimg());
                                         productData.put("category", product.getCategory());
                                         db.collection(product.getCategory()).add(productData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override
