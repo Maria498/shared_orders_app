@@ -57,12 +57,13 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
     Uri imageURIProduct;
     int PICK_IMAGE_REQUEST = 100;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    boolean isEditMode=false;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_alert_add_product_admin_dialog, container, false);
-
+       Bundle b=getArguments();
         imageView = view.findViewById(R.id.imgPro);
         productName = view.findViewById(R.id.EditTextProductName);
         productPrice = view.findViewById(R.id.EditTextPrice);
@@ -85,6 +86,43 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+        if(b!=null)
+        {
+            isEditMode=true;
+            Product product= (Product) b.getSerializable("Product");
+            productName.setText(product.getName());
+            productPrice.setText(""+product.getPrice());
+            for (int i = 0; i < spinnerCategory.getCount(); i++) {
+                if (spinnerCategory.getItemAtPosition(i).equals(product.getCategory())) {
+                    spinnerCategory.setSelection(i);
+                    break;
+                }
+            }
+            if(product.getDescription()!=null)
+            {
+                productDescribeTextView.setText(product.getDescription());
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Glide.with(getContext())
+                        .load(product.getImg())
+                        .listener(new RequestListener<Drawable>() {
+                            @Override
+                            public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
+                                // Handle image loading failure
+                                Log.e("Glide", "Image loading failed: " + e.getMessage());
+                                return false; // Return false to allow Glide to handle the error and show any error placeholder you have set
+                            }
+
+                            @Override
+                            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
+                                // Image successfully loaded
+                                return false; // Return false to allow Glide to handle the resource and display it
+                            }
+                        })
+                        .into(imageView);
+            }
+            addButton.setText("save");
+        }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -120,7 +158,7 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                                         HashMap<String, Object> productData = new HashMap<>();
                                         productData.put("name", product.getName());
                                         productData.put("price", product.getPrice());
-                                        productData.put("img", product.getImageResId());
+                                        productData.put("img", product.getImg());
                                         productData.put("category", product.getCategory());
                                         db.collection(product.getCategory()).add(productData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                                             @Override

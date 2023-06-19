@@ -93,9 +93,10 @@
             android:layout_gravity="right"
             android:layout_marginRight="16dp"
             android:layout_marginBottom="20dp"
-            android:background="#404040"
             android:text="@string/addToCart"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:background="#404040"
+            />
     </LinearLayout>
 
 

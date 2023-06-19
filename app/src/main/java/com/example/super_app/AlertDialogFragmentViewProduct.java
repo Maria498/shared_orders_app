@@ -80,7 +80,7 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Glide.with(getContext())
-                        .load(product.getImageResId())
+                        .load(product.getImg())
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -103,7 +103,8 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
                             if (position != RecyclerView.NO_POSITION) {
                                 recyclerViewInterface.onEditClick(position);
                             }
-                        }                    }
+                        }
+                    }
                 });
                 
             }
@@ -126,7 +127,7 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
             vName.setText(product.getName());
             vPrice.setText("" + product.getPrice());
             Glide.with(context)
-                    .load(product.getImageResId())
+                    .load(product.getImg())
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

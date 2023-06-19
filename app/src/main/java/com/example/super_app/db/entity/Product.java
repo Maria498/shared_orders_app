@@ -6,39 +6,38 @@ import java.util.Objects;
 
 public class Product implements Serializable {
     private String name;
-    private String imageResId;
+
+
+
+    private String img;
     private String category;
     private double price;
     private int discount;
     private boolean healthy_tag;
     private ArrayList<Integer> ratings;
     private int quantity;
-
     private String description;
     public Product() {}
-    public Product(String name,double price,String imageResId,String category)
+    public Product(String name,double price,String img,String category)
     {
         this.name=name;
         this.price=price;
-        this.imageResId=imageResId;
+        this.img=img;
         this.category=category;
 
     }
-
-    public Product(String name, String category, double price, int discount, boolean healthy_tag, String imageResId) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.discount = discount;
-        this.healthy_tag = healthy_tag;
-        ratings = ratings;
-        this.imageResId = imageResId;
+    public Product(String name,double price,String img,String category,String description)
+    {
+        this.name=name;
+        this.price=price;
+        this.img=img;
+        this.category=category;
+        this.description=description;
 
     }
-
     public Product( String name, String imageResId, String category, double price, int discount, int quantity,String description) {
         this.name = name;
-        this.imageResId = imageResId;
+        this.img = imageResId;
         this.category = category;
         this.price = price;
         this.discount = discount;
@@ -70,20 +69,19 @@ public class Product implements Serializable {
         return discount;
     }
 
+    public String getImg() {
+        return img;
+    }
 
+    public void setImg(String img) {
+        this.img = img;
+    }
     public boolean isHealthy_tag() {
         return healthy_tag;
     }
 
     public ArrayList<Integer> getRatings() {
         return ratings;
-    }
-    public String getImageResId() {
-        return imageResId;
-    }
-    public void setImageResId(String img)
-    {
-        this.imageResId=img;
     }
 
     public void setName(String name) {
@@ -135,11 +133,11 @@ public class Product implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return Double.compare(product.price, price) == 0 && Objects.equals(name, product.name) && Objects.equals(imageResId, product.imageResId) && Objects.equals(category, product.category) && Objects.equals(description, product.description);
+        return Double.compare(product.price, price) == 0 && Objects.equals(name, product.name) && Objects.equals(img, product.img) && Objects.equals(category, product.category) && Objects.equals(description, product.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, imageResId, category, price, description);
+        return Objects.hash(name, img, category, price, description);
     }
 }

@@ -99,7 +99,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             productQuantity.setText(""+product.getQuantity());
             priceAfterDiscount.setText(" "+ (1-product.getDiscount()/100)*product.getPrice()*product.getQuantity());
             Glide.with(context)
-                    .load(product.getImageResId())
+                    .load(product.getImg())
                     .listener(new RequestListener<Drawable>() {
                         @Override
                         public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {

@@ -46,6 +46,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     private FirebaseAuth mAuth;
     private boolean isAdmin;
     ProductItemAdapter productItemAdapter = null;
+
     public fragment_products() {
 
     }
@@ -108,14 +109,9 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product product = new Product();
-                                product.setName("" + document.getData().get("name"));
-                                product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
-                                product.setCategory((String) document.getData().get("category"));
+                                Product product = document.toObject(Product.class);
                                 list.add(product);
                             }
-                            ProductItemAdapter productItemAdapter = null;
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
@@ -147,14 +143,9 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product product = new Product();
-                                product.setName("" + document.getData().get("name"));
-                                product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
-                                product.setCategory((String) document.getData().get("category"));
+                                Product product = document.toObject(Product.class);
                                 list.add(product);
                             }
-                            ProductItemAdapter productItemAdapter = null;
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
@@ -182,14 +173,9 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product product = new Product();
-                                product.setName("" + document.getData().get("name"));
-                                product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
-                                product.setCategory((String) document.getData().get("category"));
+                                Product product = document.toObject(Product.class);
                                 list.add(product);
                             }
-                            ProductItemAdapter productItemAdapter = null;
                             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
@@ -200,35 +186,32 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                     }
                 });
             } else if (type.equals("Electronics")) {
-//                list.add(new Product("pc monitor", 1000, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/20.png?alt=media&token=047fd7bb-1671-451c-a90d-d91ba6d093af", "Electronics"));
-//                list.add(new Product("fridge", 2500, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/21.png?alt=media&token=5aea7b5e-cbb7-4c86-b7c9-c72c3edffffc", "Electronics"));
-//                list.add(new Product("oven", 800, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/22.png?alt=media&token=00ca6055-4fd9-4bc6-8767-f3396275be97", "Electronics"));
-//                list.add(new Product("washing machine", 750, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/23.png?alt=media&token=8043d3cf-a194-4162-a2b8-3dfe18156c23", "Electronics"));
-//                list.add(new Product("microwave", 150, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/24.png?alt=media&token=d13af68d-73d2-4fe4-8500-4e9f239efed0", "Electronics"));
-//                list.add(new Product("kettle", 55, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/25.png?alt=media&token=0cf1fa39-8f0a-42d9-8d18-b06615c0dd3e", "Electronics"));
-//                list.add(new Product("toaster", 70, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/26.png?alt=media&token=6f7618cd-4d6b-4031-92de-394ae61d685f", "Electronics"));
-//                list.add(new Product("blender", 120, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/27.png?alt=media&token=0a9218db-8db9-49af-8a7b-1d3756e3f64c", "Electronics"));
-//                list.add(new Product("I robot", 450, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/28.png?alt=media&token=28faf0a1-7af6-4cfb-a836-081dd05b4f0c", "Electronics"));
-//
-//                for (Product product : list) {
-//                    HashMap<String, Object> productData = new HashMap<>();
-//                    productData.put("name", product.getName());
-//                    productData.put("price", product.getPrice());
-//                    productData.put("img", product.getImageResId());
-//                    productData.put("category", product.getCategory());
-//                    db.collection("Electronics").add(productData);
-//                }
-//            }
+                list=new ArrayList<>();
+                list.add(new Product("pc monitor", 1000, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/20.png?alt=media&token=047fd7bb-1671-451c-a90d-d91ba6d093af", "Electronics"));
+                list.add(new Product("fridge", 2500, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/21.png?alt=media&token=5aea7b5e-cbb7-4c86-b7c9-c72c3edffffc", "Electronics"));
+                list.add(new Product("oven", 800, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/22.png?alt=media&token=00ca6055-4fd9-4bc6-8767-f3396275be97", "Electronics"));
+                list.add(new Product("washing machine", 750, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/23.png?alt=media&token=8043d3cf-a194-4162-a2b8-3dfe18156c23", "Electronics"));
+                list.add(new Product("microwave", 150, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/24.png?alt=media&token=d13af68d-73d2-4fe4-8500-4e9f239efed0", "Electronics"));
+                list.add(new Product("kettle", 55, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/25.png?alt=media&token=0cf1fa39-8f0a-42d9-8d18-b06615c0dd3e", "Electronics"));
+                list.add(new Product("toaster", 70, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/26.png?alt=media&token=6f7618cd-4d6b-4031-92de-394ae61d685f", "Electronics"));
+                list.add(new Product("blender", 120, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/27.png?alt=media&token=0a9218db-8db9-49af-8a7b-1d3756e3f64c", "Electronics"));
+                list.add(new Product("I robot", 450, "https://firebasestorage.googleapis.com/v0/b/mind-66851.appspot.com/o/28.png?alt=media&token=28faf0a1-7af6-4cfb-a836-081dd05b4f0c", "Electronics"));
+
+                for (Product product : list) {
+                    HashMap<String, Object> productData = new HashMap<>();
+                    productData.put("name", product.getName());
+                    productData.put("price", product.getPrice());
+                    productData.put("img", product.getImg());
+                    productData.put("category", product.getCategory());
+                    db.collection("Electronics").add(productData);
+                }
+            }
                 db.collection("Electronics").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                Product product = new Product();
-                                product.setName("" + document.getData().get("name"));
-                                product.setPrice((Double) document.getData().get("price"));
-                                product.setImageResId((String) document.getData().get("img"));
-                                product.setCategory((String) document.getData().get("category"));
+                            list.clear();                            for (QueryDocumentSnapshot document : task.getResult()) {
+                                Product product = document.toObject(Product.class);
                                 list.add(product);
                             }
 
@@ -236,25 +219,13 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                                 productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
                             }
                             rec.setAdapter(productItemAdapter);
-
                         } else {
                         }
                     }
                 });
             }
 
-//            ProductItemAdapter productItemAdapter = null;
-//            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-//                productItemAdapter = new ProductItemAdapter(list, getContext(), fragment_products.this, isAdmin);
-//            }
-//            rec.setAdapter(productItemAdapter);
-//
-
-
-        }
         return view;
-
-
     }
 
     @Override
@@ -277,6 +248,14 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
 
     @Override
     public void onEditClick(int position) {
+        Product product=list.get(position);
+        AlertDialogFragmentAddProductAdm frag = new AlertDialogFragmentAddProductAdm();
+        Bundle b = new Bundle();
+        b.putSerializable("Product",product);
+        frag.setArguments(b);
+        frag.show(getFragmentManager(), "dialog");
+
+
 
     }
 
@@ -302,8 +281,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
                         if (task.isSuccessful()) {
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Product newproduct = document.toObject(Product.class);
-                                if(newproduct.equals(product))
-                                {
+                                if (newproduct.equals(product)) {
                                     db.collection(product.getCategory()).document(document.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void aVoid) {
