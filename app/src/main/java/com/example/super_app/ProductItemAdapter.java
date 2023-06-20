@@ -72,6 +72,8 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
         private TextView vPrice;
         private ImageButton vEdit;
         private ImageButton vDelete;
+        private View vLine;
+        private TextView vDiscount;
         private Product product = null;
 
         public ProductItemViewHolder(@NonNull View itemView, RecycleViewInterface recyclerViewInterface) {
@@ -79,6 +81,8 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
             vImg = itemView.findViewById(R.id.productImg);
             vName = itemView.findViewById(R.id.productName);
             vPrice = itemView.findViewById(R.id.productPrice);
+            vDiscount=itemView.findViewById(R.id.productPriceAfterDiscount);
+            vLine=itemView.findViewById(R.id.line);
             vEdit = itemView.findViewById(R.id.editBtn);
             vDelete = itemView.findViewById(R.id.removeBtn);
             if (!isAdmin) {
@@ -126,6 +130,16 @@ public class ProductItemAdapter extends RecyclerView.Adapter<ProductItemAdapter.
             this.product = product;
             vName.setText(product.getName());
             vPrice.setText("" + product.getPrice());
+            if(product.getDiscount()==0)
+            {
+                vDiscount.setVisibility(View.GONE);
+                vLine.setVisibility(View.GONE);
+            }
+            else {
+                vDiscount.setText(""+product.getPrice()*(100-product.getDiscount())/100);
+                vDiscount.setVisibility(View.VISIBLE);
+                vLine.setVisibility(View.VISIBLE);
+            }
             Glide.with(context)
                     .load(product.getImg())
                     .listener(new RequestListener<Drawable>() {

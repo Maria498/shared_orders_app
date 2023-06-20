@@ -10,6 +10,7 @@ public class Product implements Serializable {
 
 
     private String img;
+
     private String category;
     private double price;
     private int discount;
@@ -26,15 +27,17 @@ public class Product implements Serializable {
         this.category=category;
 
     }
-    public Product(String name,double price,String img,String category,String description)
+    public Product(String name,double price,String img,String category,String description,int discount)
     {
         this.name=name;
         this.price=price;
         this.img=img;
         this.category=category;
         this.description=description;
+        this.discount = discount;
 
     }
+
     public Product( String name, String imageResId, String category, double price, int discount, int quantity,String description) {
         this.name = name;
         this.img = imageResId;

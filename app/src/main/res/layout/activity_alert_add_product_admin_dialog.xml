@@ -83,6 +83,17 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="@string/productDescribe" />
+        <EditText
+            android:id="@+id/salePercentageEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:hint="Sale Percentage"
+            android:inputType="number"
+            android:digits="0123456789" />
 
         <Button
             android:id="@+id/addbtn"

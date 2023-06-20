@@ -124,6 +124,7 @@
     <string name="no">no</string>
     <string name="productDetails">Product Details:</string>
     <string name="appDescription">Welocme to the sharedSal app, ome to you from shufersal. \n\nJoin yor neighborse and order food supliies toghether, saving costs and aloowing you to order items you wouldnt be able to when orderdering delivery alone!</string>
+    <string name="productPriceAfterDiscount">price after discount</string>
 
 
 </resources>
