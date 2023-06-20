@@ -1,8 +1,10 @@
 package com.example.super_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +16,16 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.super_app.db.entity.Order;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,9 +42,10 @@ public class SharedOrderActivity extends AppCompatActivity {
     private EditText street;
     private EditText apartmentNum;
     private Button continueBtn;
-    private String userStreet;
-    private String userApart;
-    private String selectedDate;
+    private String userStreet, userApart, selectedDate, userName, phoneNum;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    boolean isOpen=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +60,9 @@ public class SharedOrderActivity extends AppCompatActivity {
         street = findViewById(R.id.Street);
         apartmentNum = findViewById(R.id.ApartmentNum);
         continueBtn = findViewById(R.id.continueBtn);
+
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         dateCal.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,7 +81,7 @@ public class SharedOrderActivity extends AppCompatActivity {
                 }, year, month, day);
 
                 // Set the minimum date to today
-                pickerDialog.getDatePicker().setMinDate(System.currentTimeMillis());
+                pickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
 
                 // Set the maximum date to one week from today
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
@@ -77,13 +93,21 @@ public class SharedOrderActivity extends AppCompatActivity {
         });
 
         setDate(dateCal);
-        userStreet = street.getText().toString();
-        userApart = apartmentNum.getText().toString();
 
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (spinnerCity == null || spinnerCity.getSelectedItem() == null || spinnerCity.getSelectedItem().equals("Filter By city") || spinnerCity.getSelectedItem().toString().isEmpty()) {
+                userName = fullName.getText().toString().trim();
+                phoneNum = phoneNumber.getText().toString().trim();
+                userStreet = street.getText().toString().trim();
+                userApart = apartmentNum.getText().toString().trim();
+
+                if (userName.isEmpty() || userName.length() < 3 || !userName.matches("[a-zA-Z]+")) {
+                    Toast.makeText(SharedOrderActivity.this, "INVALID NAME", Toast.LENGTH_SHORT).show();
+                } else if (phoneNum.isEmpty() || phoneNum.length() < 9) {
+                    Toast.makeText(SharedOrderActivity.this, "INVALID PHONE Number", Toast.LENGTH_SHORT).show();
+
+                } else if (spinnerCity == null || spinnerCity.getSelectedItem() == null || spinnerCity.getSelectedItem().equals("Filter By city") || spinnerCity.getSelectedItem().toString().isEmpty()) {
                     Toast.makeText(SharedOrderActivity.this, "Please choose a city", Toast.LENGTH_SHORT).show();
                 } else if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z]+")) {
                     street.setError("Street is required");
@@ -91,11 +115,45 @@ public class SharedOrderActivity extends AppCompatActivity {
                 } else if (userApart.isEmpty() || !userApart.matches("\\d+")) {
                     apartmentNum.setError("Apartment number is required");
                     apartmentNum.requestFocus();
-                } else if (selectedDate != null && isDateWithinOneWeek(selectedDate)) {
-                    // Proceed with the order
-                    Toast.makeText(SharedOrderActivity.this, "Order placed successfully!", Toast.LENGTH_SHORT).show();
-                } else {
+                } else if (selectedDate == null || !isDateWithinOneWeek(selectedDate)) {
                     Toast.makeText(SharedOrderActivity.this, "Please select a valid date within one week", Toast.LENGTH_SHORT).show();
+
+                } else {
+                    String uid = mAuth.getUid();
+                    db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    if(document.getId().equals(uid))
+                                    {
+                                        Toast.makeText(SharedOrderActivity.this, "You already have an open order", Toast.LENGTH_SHORT).show();
+                                        isOpen=true;
+                                    }
+
+                                }
+                            }
+                        }
+
+                    });
+                    if(!isOpen)
+                    {
+                        Order order=new Order();
+                        db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void unused) {
+                                Toast.makeText(SharedOrderActivity.this, "An order has been opened that you own", Toast.LENGTH_SHORT).show();
+                                Intent intent=new Intent(SharedOrderActivity.this,SuperCategoryActivity.class);
+                                startActivity(intent);
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(SharedOrderActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
+
+                            }
+                        });
+                    }
                 }
             }
         });
