@@ -206,7 +206,9 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                     }
                     return;
                 }   if (salePercentageEditText.getText().toString() != null && !salePercentageEditText.getText().toString().isEmpty() && ((Integer.parseInt((salePercentageEditText.getText().toString())) > 100))) {
-                    Toast.makeText(getContext(), "discount must be smaller than 100", Toast.LENGTH_SHORT).show();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Toast.makeText(getContext(), "discount must be smaller than 100", Toast.LENGTH_SHORT).show();
+                    }
 
                 } else {
                     if (productDescribeTextView.getVisibility() == View.VISIBLE) {

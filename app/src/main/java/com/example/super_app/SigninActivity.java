@@ -160,7 +160,7 @@ public class SigninActivity extends AppCompatActivity {
             Toast.makeText(context, "Please choose a city", Toast.LENGTH_SHORT).show();
             return false;
         }
-       else if (userStreet.isEmpty() || !userName1.matches("[a-zA-Z]+")) {
+       else if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z]+")) {
             street.setError("Street is required");
             street.requestFocus();
             return false;

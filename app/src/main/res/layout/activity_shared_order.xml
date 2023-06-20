@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/backgroundImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:src="@drawable/food_bag" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="72dp"
+            android:text="@string/createNewOrder"
+            android:textColor="@color/black"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+        <LinearLayout
+            android:id="@+id/linear"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/textView"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/textViewDeliveryDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:layout_marginLeft="20dp"
+                android:layout_marginTop="10dp"
+                android:text="@string/deliveryDate"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                />
+
+            <TextView
+                android:id="@+id/dateCal"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:layout_gravity="left"
+                android:layout_marginStart="8dp"
+                android:drawableLeft="@drawable/baseline_calendar_today_24" />
+        </LinearLayout>
+        <TextView
+            android:id="@+id/ContactDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/linear"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="15dp"
+            android:text="@string/ContactDetails"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:textSize="22sp"
+            />
+        <EditText
+            android:id="@+id/fullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@id/ContactDetails"
+            android:drawableLeft="@drawable/baseline_person_24"
+            android:inputType="text"
+            android:hint="@string/fullname"
+            />
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@id/fullName"
+            android:drawableLeft="@drawable/baseline_local_phone_24"
+            android:inputType="phone"
+            />
+        <TextView
+            android:id="@+id/txtAddAddress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/phoneNumber"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="10dp"
+            android:text="@string/AddaddressForDelivery"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            />
+
+        <Spinner
+            android:id="@+id/spinnerCity"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:layout_gravity="left"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/txtAddAddress"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:entries="@array/israeliCities" />
+        <LinearLayout
+            android:id="@+id/linearLay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/spinnerCity"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/Street"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/input_bg"
+                android:ems="10"
+                android:layout_weight="1"
+                android:hint="@string/street"
+                android:paddingLeft="20dp"
+                android:paddingEnd="20dp" />
+
+
+            <EditText
+                android:id="@+id/ApartmentNum"
+                android:layout_width="110dp"
+                android:layout_height="45dp"
+                android:layout_below="@+id/linearLay"
+                android:layout_centerVertical="true"
+                android:layout_gravity="left"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/input_bg"
+                android:ems="10"
+                android:hint="@string/Apartment"
+                android:paddingLeft="20dp" />
+        </LinearLayout>
+
+
+
+
+        <Button
+            android:id="@+id/continueBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/linearLay"
+            android:backgroundTint="#404040"
+            android:layout_marginTop="15dp"
+            android:text="@string/Continue" />
+
+
+
+
+    </RelativeLayout>
+</FrameLayout>

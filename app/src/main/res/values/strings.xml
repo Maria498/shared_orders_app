@@ -125,6 +125,13 @@
     <string name="productDetails">Product Details:</string>
     <string name="appDescription">Welocme to the sharedSal app, ome to you from shufersal. \n\nJoin yor neighborse and order food supliies toghether, saving costs and aloowing you to order items you wouldnt be able to when orderdering delivery alone!</string>
     <string name="productPriceAfterDiscount">price after discount</string>
+    <string name="createNewOrder">Create New Order</string>
+    <string name="deliveryDate">choose a Delivery date</string>
+    <string name="Continue">Continue</string>
+    <string name="AddaddressForDelivery">Your address for Delivery</string>
+    <string name="ContactDetails">Contact Details:</string>
+    <string name="phoneNum">05********</string>
+    <string name="fullname">full Name</string>
 
 
 </resources>
