@@ -53,7 +53,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:hint="@string/productName"
-            android:textColor="@color/black" />
+            />
 
         <EditText
             android:id="@+id/EditTextPrice"

@@ -70,8 +70,6 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
             @Override
             public void onClick(View v) {
                 AlertDialogFragmentAddProductAdm frag = new AlertDialogFragmentAddProductAdm();
-                Bundle b = new Bundle();
-                frag.setArguments(b);
                 frag.show(getFragmentManager(), "dialog");
 
             }

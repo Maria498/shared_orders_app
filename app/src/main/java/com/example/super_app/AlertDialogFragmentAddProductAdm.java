@@ -2,6 +2,7 @@ package com.example.super_app;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Intent;
@@ -33,10 +34,13 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.db.entity.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -57,13 +61,14 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
     Uri imageURIProduct;
     int PICK_IMAGE_REQUEST = 100;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    boolean isEditMode=false;
+    boolean isEditMode = false;
+    Product editProduct;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_alert_add_product_admin_dialog, container, false);
-       Bundle b=getArguments();
+        Bundle b = getArguments();
         imageView = view.findViewById(R.id.imgPro);
         productName = view.findViewById(R.id.EditTextProductName);
         productPrice = view.findViewById(R.id.EditTextPrice);
@@ -86,25 +91,37 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        if(b!=null)
-        {
-            isEditMode=true;
-            Product product= (Product) b.getSerializable("Product");
-            productName.setText(product.getName());
-            productPrice.setText(""+product.getPrice());
+        if (b != null) {
+            isEditMode = true;
+            uploadImg.setVisibility(View.GONE);
+            addButton.setText("Edit");
+            editProduct = (Product) b.getSerializable("Product");
+
+            productPrice.setText("" + editProduct.getPrice());
+            productPrice.setEnabled(false);
+            productPrice.setFocusable(false);
+            productPrice.setFocusableInTouchMode(false);
+
+            productName.setText(editProduct.getName());
+            productName.setEnabled(false);
+            productName.setFocusable(false);
+            productName.setFocusableInTouchMode(false);
             for (int i = 0; i < spinnerCategory.getCount(); i++) {
-                if (spinnerCategory.getItemAtPosition(i).equals(product.getCategory())) {
+                if (spinnerCategory.getItemAtPosition(i).equals(editProduct.getCategory())) {
                     spinnerCategory.setSelection(i);
                     break;
                 }
             }
-            if(product.getDescription()!=null)
-            {
-                productDescribeTextView.setText(product.getDescription());
+            spinnerCategory.setEnabled(false);
+            if (editProduct.getDescription() != null) {
+                productDescribeTextView.setText(editProduct.getDescription());
             }
+            productDescribeTextView.setEnabled(false);
+            productDescribeTextView.setFocusable(false);
+            productDescribeTextView.setFocusableInTouchMode(false);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 Glide.with(getContext())
-                        .load(product.getImg())
+                        .load(editProduct.getImg())
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
@@ -121,12 +138,26 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                         })
                         .into(imageView);
             }
-            addButton.setText("save");
+        } else {
+            isEditMode = false;
         }
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (isEditMode) {
+                    productName.setEnabled(true);
+                    productName.setFocusable(true);
+                    productName.setFocusableInTouchMode(true);
+                    productPrice.setEnabled(true);
+                    productPrice.setFocusable(true);
+                    productPrice.setFocusableInTouchMode(true);
+                    productDescribeTextView.setEnabled(true);
+                    productDescribeTextView.setFocusable(true);
+                    productDescribeTextView.setFocusableInTouchMode(true);
+                    addButton.setText("SAVE");
+                    uploadImg.setVisibility(View.VISIBLE);
+                }
                 if (productName.getText().toString().isEmpty() || productPrice.getText().toString().isEmpty()) {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         Toast.makeText(getContext(), "Please fill in all the fields", Toast.LENGTH_SHORT).show();
@@ -143,6 +174,10 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                     }
                     return;
                 } else {
+                    if(imageURIProduct==null)
+                    {
+                        imageURIProduct= Uri.parse(editProduct.getImg());
+                    }
                     // Upload the image to Firebase Storage
                     StorageReference storageRef = FirebaseStorage.getInstance().getReference(imageURIProduct.toString());
                     storageRef.putFile(imageURIProduct).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
@@ -152,25 +187,65 @@ public class AlertDialogFragmentAddProductAdm extends DialogFragment {
                                 storageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                     @Override
                                     public void onSuccess(Uri uri) {
-                                        URL = uri.toString();
-                                        double price = Double.parseDouble(productPrice.getText().toString());
-                                        Product product = new Product(productName.getText().toString(), price, URL, spinnerCategory.getSelectedItem().toString());
-                                        HashMap<String, Object> productData = new HashMap<>();
-                                        productData.put("name", product.getName());
-                                        productData.put("price", product.getPrice());
-                                        productData.put("img", product.getImg());
-                                        productData.put("category", product.getCategory());
-                                        db.collection(product.getCategory()).add(productData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                            @Override
-                                            public void onSuccess(DocumentReference documentReference) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    Toast.makeText(getContext(), "New product added to company", Toast.LENGTH_SHORT).show();
+                                        if(uri!=null) {
+                                            URL = uri.toString();
+                                        }
+                                            double price = Double.parseDouble(productPrice.getText().toString());
+                                            Product product = new Product(productName.getText().toString(), price, URL, spinnerCategory.getSelectedItem().toString());
+                                            HashMap<String, Object> productData = new HashMap<>();
+                                            productData.put("name", product.getName());
+                                            productData.put("price", product.getPrice());
+                                            productData.put("img", product.getImg());
+                                            productData.put("category", product.getCategory());
+
+                                        if (isEditMode) {
+                                            db.collection(editProduct.getCategory()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                                    if (task.isSuccessful()) {
+                                                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                                                            Product newProduct = doc.toObject(Product.class);
+                                                            if (newProduct.equals(editProduct)) {
+                                                                db.collection(editProduct.getCategory()).document(doc.getId()).update(
+                                                                        "name", product.getName(),
+                                                                        "price", product.getPrice(),
+                                                                        "img", product.getImg(),
+                                                                        "category", product.getCategory()
+                                                                ).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                    @Override
+                                                                    public void onSuccess(Void unused) {
+                                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                                            Toast.makeText(getContext(), "Product information has changed", Toast.LENGTH_SHORT).show();
+                                                                        }
+                                                                    }
+                                                                }).addOnFailureListener(new OnFailureListener() {
+                                                                    @SuppressLint("LongLogTag")
+                                                                    @Override
+                                                                    public void onFailure(@NonNull Exception e) {
+                                                                        Log.w("Error saving product information", e);
+                                                                    }
+                                                                });
+                                                            }
+                                                        }
+                                                    }
                                                 }
-                                                dismiss();
-                                            }
-                                        });
+                                            });
+                                        }
+                                        else {
+
+                                            db.collection(product.getCategory()).add(productData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                @Override
+                                                public void onSuccess(DocumentReference documentReference) {
+                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                        Toast.makeText(getContext(), "New product added to company", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                    dismiss();
+                                                }
+                                            });
+                                        }
                                     }
                                 });
+
                             } else {
                                 // Handle unsuccessful image upload
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
