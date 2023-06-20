@@ -63,10 +63,11 @@ public class ProfileActivity extends AppCompatActivity {
     private BottomNavigationView menu;
     private List<Order> hostList = new ArrayList<>();
     private Button addOrder;
-    private User currentUser;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private boolean isEditing = true;
+    String birthdateField, emailField;
+    String birthdateField1, emailField1;
 
 
     @Override
@@ -89,12 +90,10 @@ public class ProfileActivity extends AppCompatActivity {
         birthDate.setFocusableInTouchMode(false);
 
 
-
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         recOrder.setLayoutManager(llm);
         mAuth = FirebaseAuth.getInstance();
-        currentUser = new User();
         String uid = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -105,8 +104,9 @@ public class ProfileActivity extends AppCompatActivity {
                         if (doc.getId().equals(uid)) {
                             userName.setText("" + doc.getData().get("userName"));
                             userEmail.setText("" + doc.getData().get("userEmail"));
+                            emailField1= (String) doc.getData().get("userEmail");
                             birthDate.setText("" + doc.get("birthdate"));
-
+                            birthdateField1=(String)doc.get("birthdate");
                         }
                     }
                 }
@@ -121,13 +121,11 @@ public class ProfileActivity extends AppCompatActivity {
                     userEmail.setEnabled(true);
                     userEmail.setFocusable(true);
                     userEmail.setFocusableInTouchMode(true);
-                    userEmail.setAlpha(0.5f);
-                    userEmail.setTextColor(Color.parseColor("#000000"));
+                    userEmail.setTextColor(Color.BLACK);
                     birthDate.setEnabled(true);
                     birthDate.setFocusable(true);
                     birthDate.setFocusableInTouchMode(true);
-                    birthDate.setAlpha(0.5f);
-                    birthDate.setTextColor(Color.parseColor("#000000"));
+                    birthDate.setTextColor(Color.BLACK);
                 } else {
                     isEditing = true;
                     iconEdit.setImageResource(R.drawable.baseline_mode_edit_24);
@@ -137,7 +135,7 @@ public class ProfileActivity extends AppCompatActivity {
                     birthDate.setEnabled(false);
                     birthDate.setFocusable(false);
                     birthDate.setFocusableInTouchMode(false);
-                    HashMap<String, Object> userMap = new HashMap<>();
+
                     db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @SuppressLint("LongLogTag")
                         @Override
@@ -145,23 +143,59 @@ public class ProfileActivity extends AppCompatActivity {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     if (document.getId().equals(mAuth.getUid())) {
-                                        userMap.put("userName", document.getData().get("userName"));
-                                        userMap.put("userEmail", userEmail.getText().toString());
-                                        userMap.put("userPassword", document.getData().get("userPassword"));
-                                        userMap.put("userAdd", document.getData().get("userAdd"));
-                                        userMap.put("birthdate", birthDate.getText().toString());
-                                        db.collection("users").document(mAuth.getUid()).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Toast.makeText(ProfileActivity.this, "User information has changed", Toast.LENGTH_SHORT).show();
+                                        emailField = userEmail.getText().toString();
+                                        birthdateField = birthDate.getText().toString();
+                                        if (emailField.isEmpty() || (!(emailField.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
+                                            userEmail.setText(emailField1);
+                                            userEmail.setEnabled(false);
+                                            userEmail.setFocusable(false);
+                                            userEmail.setFocusableInTouchMode(false);
+                                            Toast.makeText(ProfileActivity.this, "Email is required", Toast.LENGTH_SHORT).show();
+                                            return;
+                                        }
+                                        // Birthdate validation check
+                                        else if (birthdateField.isEmpty()) {
+                                            Toast.makeText(ProfileActivity.this, "birthdate is required", Toast.LENGTH_SHORT).show();
+                                            birthDate.setText(birthdateField1);
+                                            birthDate.setEnabled(false);
+                                            birthDate.setFocusable(false);
+                                            birthDate.setFocusableInTouchMode(false);
+                                            return;
+                                        }
+
+                                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                                        dateFormat.setLenient(false);
+
+                                        try {
+                                            Date birthdate = dateFormat.parse(birthdateField);
+
+                                            Calendar minAgeCalendar = Calendar.getInstance();
+                                            minAgeCalendar.add(Calendar.YEAR, -18); // Subtract 18 years from current date
+
+                                            if (birthdate.after(minAgeCalendar.getTime())) {
+                                                birthDate.setError("You must be at least 18 years old");
+                                                return;
+                                            } else {
+                                                db.collection("users").document(mAuth.getUid()).update(
+                                                        "userEmail", userEmail.getText().toString(),
+                                                        "birthdate", birthDate.getText().toString()
+                                                ).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                    @Override
+                                                    public void onSuccess(Void unused) {
+                                                        Toast.makeText(ProfileActivity.this, "User information has changed", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }).addOnFailureListener(new OnFailureListener() {
+                                                    @Override
+                                                    public void onFailure(@NonNull Exception e) {
+                                                        Log.w("Error saving user information", e);
+                                                    }
+                                                });
                                             }
-                                        }).addOnFailureListener(new OnFailureListener() {
-                                            @Override
-                                            public void onFailure(@NonNull Exception e) {
-                                                Log.w("Error saving user information", e);
-                                            }
-                                        });
+                                        } catch (ParseException e) {
+                                            throw new RuntimeException(e);
+                                        }
                                     }
+
                                 }
                             } else {
                                 Log.w("Error getting documents.", task.getException());

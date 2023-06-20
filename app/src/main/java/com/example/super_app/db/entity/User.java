@@ -11,71 +11,62 @@ public class User {
     public static final String COLUMN_ADDRESS ="user_address";
 
     // var
-    private String name;
-    private String email;
-    private String password;
-    private String address;
-    private String date;
+    private String userName;
+    private String userEmail;
+    private String userPassword;
+    private String userAdd;
+    private String birthdate;
 
     public User() {
 
     }
 
 
-    public User(String userName1, String userEmail, String userPassword, String userAdd, String date) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.address = address;
-        this.date=date;
+    public User(String userName, String userEmail, String userPassword, String userAdd, String birthdate) {
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userPassword = userPassword;
+        this.userAdd = userAdd;
+        this.birthdate = birthdate;
     }
 
-
-    public String getPassword() {
-        return password;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-
-    public String getEmail() {
-        return email;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public String getName() {
-        return name;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getUserPassword() {
+        return userPassword;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserPassword(String userPassword) {
+        this.userPassword = userPassword;
     }
 
-    public String getAddress() {return address;}
-
-    public void setAddress(String address) {this.address = address;}
-    public String getDate() {
-        return date;
+    public String getUserAdd() {
+        return userAdd;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setUserAdd(String userAdd) {
+        this.userAdd = userAdd;
     }
-    //SQL QUERY - Creating table
 
-    public static final String CREATE_TABLE =
-            "CREATE TABLE " + TABLE_NAME + "(" + COLUMN_ID +
-                    " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_NAME +
-                    " TEXT, " + COLUMN_EMAIL + " TEXT UNIQUE, " + COLUMN_PASSWORD +
-                    " TEXT, " + COLUMN_ADDRESS + " TEXT" + ")";
+    public String getBirthdate() {
+        return birthdate;
+    }
 
-
-
-
-
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
+    }
 }

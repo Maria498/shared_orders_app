@@ -30,7 +30,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(User.CREATE_TABLE);
+     //   sqLiteDatabase.execSQL(User.CREATE_TABLE);
 
 
 
@@ -66,8 +66,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         values.put(User.COLUMN_NAME, name);
         values.put(User.COLUMN_EMAIL, email);
-        values.put(User.COLUMN_PASSWORD,currentUser.getPassword());
-        values.put(User.COLUMN_ADDRESS,currentUser.getPassword());
+        values.put(User.COLUMN_PASSWORD,currentUser.getUserPassword());
+        values.put(User.COLUMN_ADDRESS,currentUser.getUserPassword());
 
         try {
             long id = db.insert(User.TABLE_NAME, null, values);
@@ -130,10 +130,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         if (cursor.moveToFirst()){
             do{
                 User user = new User();
-                user.setName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
-                user.setEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
-                user.setAddress(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
-                user.setPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
+                user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
+                user.setUserEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
+                user.setUserAdd(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
+                user.setUserPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
 
                 users.add(user);
 
