@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -42,6 +43,8 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
     private RecyclerView rec;
     private List<Product> list;
     private ImageView back;
+    private ImageButton salBtn;
+    private TextView countOfProduct;
     private ImageButton addAdm;
     private FirebaseAuth mAuth;
     private boolean isAdmin;
@@ -61,8 +64,12 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
 
         rec = view.findViewById(R.id.recyclerView);
         addAdm = view.findViewById(R.id.addBtn);
+        salBtn=view.findViewById(R.id.salBtn);
+        countOfProduct=view.findViewById(R.id.productCountTextView);
         if (mAuth.getCurrentUser().getEmail().equals("admin@gmail.com")) {
             isAdmin = true;
+            salBtn.setVisibility(View.GONE);
+            countOfProduct.setVisibility(View.GONE);
         } else {
             addAdm.setVisibility(View.GONE);
         }

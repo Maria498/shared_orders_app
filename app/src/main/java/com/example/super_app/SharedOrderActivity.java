@@ -80,8 +80,13 @@ public class SharedOrderActivity extends AppCompatActivity {
                     }
                 }, year, month, day);
 
-                // Set the minimum date to today
-                pickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+                // Get tomorrow's date
+                calendar.add(Calendar.DAY_OF_MONTH, 1);
+                long tomorrowInMillis = calendar.getTimeInMillis();
+
+
+                    // Set the minimum date to tomorrow
+                pickerDialog.getDatePicker().setMinDate(tomorrowInMillis);
 
                 // Set the maximum date to one week from today
                 calendar.add(Calendar.WEEK_OF_YEAR, 1);
@@ -138,12 +143,14 @@ public class SharedOrderActivity extends AppCompatActivity {
                     });
                     if(!isOpen)
                     {
-                        Order order=new Order();
+                        String address=spinnerCity.getSelectedItem().toString()+","+street+","+apartmentNum;
+                        Order order=new Order(userName,phoneNum,address,selectedDate);
                         db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void unused) {
                                 Toast.makeText(SharedOrderActivity.this, "An order has been opened that you own", Toast.LENGTH_SHORT).show();
                                 Intent intent=new Intent(SharedOrderActivity.this,SuperCategoryActivity.class);
+                                intent.putExtra("typeOfUser","Owner");
                                 startActivity(intent);
                             }
                         }).addOnFailureListener(new OnFailureListener() {
@@ -174,7 +181,7 @@ public class SharedOrderActivity extends AppCompatActivity {
             Date currentDate = Calendar.getInstance().getTime();
             long difference = selectedDate.getTime() - currentDate.getTime();
             long differenceInDays = TimeUnit.MILLISECONDS.toDays(difference);
-            return differenceInDays <= 7;
+            return (differenceInDays <= 7&&differenceInDays>=1);
         } catch (Exception e) {
             e.printStackTrace();
         }

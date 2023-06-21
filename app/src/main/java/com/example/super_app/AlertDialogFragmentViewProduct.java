@@ -1,7 +1,7 @@
 package com.example.super_app;
 
 import android.app.Activity;
-import android.app.DialogFragment;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,16 +17,25 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
+import com.example.super_app.AlertDialogFragmentListener;
+import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.w3c.dom.Text;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class AlertDialogFragmentViewProduct extends DialogFragment {
     private ImageView imageView;
@@ -39,7 +47,11 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     private TextView quantityTextView;
     private ImageButton minusButton;
     private Button addButton;
-    AlertDialogFragmentListener mListener;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private AlertDialogFragmentListener mListener;
+    private ArrayList<Product> listofProduct;
+    private Product product;
 
     @Override
     public void onAttach(@NonNull Activity activity) {
@@ -55,7 +67,7 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle b = getArguments();
-        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product,null);
+        View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product, container, false);
         imageView = v.findViewById(R.id.imgPro);
         productNameTextView = v.findViewById(R.id.productNameTextView);
         descriptionTextView = v.findViewById(R.id.descriptionTextView);
@@ -66,8 +78,11 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         minusButton = v.findViewById(R.id.minusButton);
         addButton = v.findViewById(R.id.addbtn);
 
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
+
         if (b != null) {
-            Product product = (Product) b.getSerializable("Product");
+            product = (Product) b.getSerializable("Product");
             productNameTextView.setText(product.getName());
             price.setText(String.valueOf(product.getPrice()));
 
@@ -79,7 +94,7 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                Glide.with(getContext())
+                Glide.with(this)
                         .load(product.getImg())
                         .listener(new RequestListener<Drawable>() {
                             @Override
@@ -124,11 +139,49 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                 }
             });
         }
+
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Toast.makeText(getContext(),"added to cart",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                dismiss();
+                // Retrieve the Intent that started the current Activity
+                Intent intent = getActivity().getIntent();
+                // Check if the Intent has extra parameters
+                if (intent != null && intent.getExtras() != null) {
+                    String type = intent.getStringExtra("typeOfUser");
+                    if (type.equals("owner")) {
+                        String uid = mAuth.getUid();
+                        db.collection("Orders").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    DocumentSnapshot document = task.getResult();
+                                    if (document != null && document.exists()) {
+                                        Order order = document.toObject(Order.class);
+                                        HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
+                                        if (neighProducts == null) {
+                                            neighProducts = new HashMap<>();
+                                            listofProduct = new ArrayList<>();
+                                        } else {
+                                            listofProduct = neighProducts.get(uid);
+                                            if (listofProduct == null) {
+                                                listofProduct = new ArrayList<>();
+                                            }
+                                        }
+                                        listofProduct.add(product);
+                                        neighProducts.put(uid, listofProduct);
+                                        order.setProductsOfNeigh(neighProducts);
+                                        db.collection("Orders").document(uid).set(order);
+                                    }
+                                } else {
+                                    Log.e("Firebase", "Error getting order document: ", task.getException());
+                                }
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getContext(), "You must join an open order or create a new order to add products", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
