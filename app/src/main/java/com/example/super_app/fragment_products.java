@@ -245,7 +245,7 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
         Bundle b = new Bundle();
         b.putSerializable("Product", product);
         frag.setArguments(b);
-        frag.show(getFragmentManager(), "dialog");
+        frag.show(getFragmentManager(),"dialog");
 
     }
 
@@ -331,6 +331,11 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
         // 3. Get the AlertDialog from create()
         AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    public static void changeCount()
+    {
+
     }
 
 }

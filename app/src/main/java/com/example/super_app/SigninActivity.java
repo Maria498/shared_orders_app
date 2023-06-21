@@ -136,7 +136,7 @@ public class SigninActivity extends AppCompatActivity {
         userStreet=street.getText().toString();
         userApart=apartmentNum.getText().toString();
 
-        if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z]+")) {
+        if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z\\s]+")) {
             userName.setError("User name is required");
             userName.requestFocus();
             return false;// Stop further processing

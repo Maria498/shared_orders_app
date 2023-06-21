@@ -107,14 +107,15 @@ public class SharedOrderActivity extends AppCompatActivity {
                 userStreet = street.getText().toString().trim();
                 userApart = apartmentNum.getText().toString().trim();
 
-                if (userName.isEmpty() || userName.length() < 3 || !userName.matches("[a-zA-Z]+")) {
+                if (userName.isEmpty() || userName.length() < 3 || !userName.matches("[a-zA-Z\\s]+")) {
                     Toast.makeText(SharedOrderActivity.this, "INVALID NAME", Toast.LENGTH_SHORT).show();
                 } else if (phoneNum.isEmpty() || phoneNum.length() < 9) {
                     Toast.makeText(SharedOrderActivity.this, "INVALID PHONE Number", Toast.LENGTH_SHORT).show();
 
                 } else if (spinnerCity == null || spinnerCity.getSelectedItem() == null || spinnerCity.getSelectedItem().equals("Filter By city") || spinnerCity.getSelectedItem().toString().isEmpty()) {
                     Toast.makeText(SharedOrderActivity.this, "Please choose a city", Toast.LENGTH_SHORT).show();
-                } else if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z]+")) {
+                } else if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z\\s]+"))
+                {
                     street.setError("Street is required");
                     street.requestFocus();
                 } else if (userApart.isEmpty() || !userApart.matches("\\d+")) {
@@ -135,32 +136,32 @@ public class SharedOrderActivity extends AppCompatActivity {
                                         Toast.makeText(SharedOrderActivity.this, "You already have an open order", Toast.LENGTH_SHORT).show();
                                         isOpen=true;
                                     }
+                                }
+                                if(!isOpen)
+                                {
+                                    String address=spinnerCity.getSelectedItem().toString()+","+userStreet+","+userApart;
+                                    Order order=new Order(userName,phoneNum,address,selectedDate);
+                                    db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            Toast.makeText(SharedOrderActivity.this, "An order has been opened that you own", Toast.LENGTH_SHORT).show();
+                                            Intent intent=new Intent(SharedOrderActivity.this,SuperCategoryActivity.class);
+                                            intent.putExtra("typeOfUser","Owner");
+                                            startActivity(intent);
+                                        }
+                                    }).addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Toast.makeText(SharedOrderActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
+                                        }
+                                    });
                                 }
                             }
                         }
 
                     });
-                    if(!isOpen)
-                    {
-                        String address=spinnerCity.getSelectedItem().toString()+","+street+","+apartmentNum;
-                        Order order=new Order(userName,phoneNum,address,selectedDate);
-                        db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(SharedOrderActivity.this, "An order has been opened that you own", Toast.LENGTH_SHORT).show();
-                                Intent intent=new Intent(SharedOrderActivity.this,SuperCategoryActivity.class);
-                                intent.putExtra("typeOfUser","Owner");
-                                startActivity(intent);
-                            }
-                        }).addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Toast.makeText(SharedOrderActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
 
-                            }
-                        });
-                    }
                 }
             }
         });

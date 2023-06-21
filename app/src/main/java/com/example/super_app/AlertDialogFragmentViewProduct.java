@@ -1,6 +1,7 @@
 package com.example.super_app;
 
 import android.app.Activity;
+import android.app.DialogFragment;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.DialogFragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -53,6 +53,8 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     private ArrayList<Product> listofProduct;
     private Product product;
 
+    private double priceAfterDis;
+
     @Override
     public void onAttach(@NonNull Activity activity) {
         super.onAttach(activity);
@@ -84,7 +86,14 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         if (b != null) {
             product = (Product) b.getSerializable("Product");
             productNameTextView.setText(product.getName());
-            price.setText(String.valueOf(product.getPrice()));
+            if(product.getDiscount()!=0)
+            {
+                priceAfterDis = product.getPrice()*(100-product.getDiscount())/100;
+            }
+            else{
+                priceAfterDis = product.getPrice();
+            }
+            price.setText(""+priceAfterDis);
 
             if (product.getCategory().equals("Electronics") || product.getCategory().equals("MakeUpAndBrush")) {
                 productDescribeTextView.setText(product.getDescription());
@@ -122,7 +131,10 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                     if (quantity < 100) {
                         quantity++;
                         quantityTextView.setText(String.valueOf(quantity));
-                        price.setText(String.valueOf(product.getPrice() * quantity));
+                        double newPrice = priceAfterDis * quantity;
+                        price.setText(String.valueOf(newPrice));
+                        product.setQuantity(quantity);
+                        product.setPrice(newPrice);
                     }
                 }
             });
@@ -134,7 +146,10 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                     if (quantity > 0) {
                         quantity--;
                         quantityTextView.setText(String.valueOf(quantity));
-                        price.setText(String.valueOf(product.getPrice() * quantity));
+                        double newPrice = priceAfterDis * quantity;
+                        price.setText(String.valueOf(newPrice));
+                        product.setQuantity(quantity);
+                        product.setPrice(newPrice);
                     }
                 }
             });
@@ -143,14 +158,14 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
-                dismiss();
+
+
                 // Retrieve the Intent that started the current Activity
                 Intent intent = getActivity().getIntent();
                 // Check if the Intent has extra parameters
-                if (intent != null && intent.getExtras() != null) {
-                    String type = intent.getStringExtra("typeOfUser");
-                    if (type.equals("owner")) {
+                if (intent != null /*&& intent.getExtras() != null*/) {
+                   // String type = intent.getStringExtra("typeOfUser");
+                    if (/*type.equals("Owner")*/true) {
                         String uid = mAuth.getUid();
                         db.collection("Orders").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
@@ -172,7 +187,14 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                                         listofProduct.add(product);
                                         neighProducts.put(uid, listofProduct);
                                         order.setProductsOfNeigh(neighProducts);
-                                        db.collection("Orders").document(uid).set(order);
+                                        db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                             Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                             dismiss();
+
+                                            }
+                                        });
                                     }
                                 } else {
                                     Log.e("Firebase", "Error getting order document: ", task.getException());
@@ -181,6 +203,7 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                         });
                     } else {
                         Toast.makeText(getContext(), "You must join an open order or create a new order to add products", Toast.LENGTH_SHORT).show();
+
                     }
                 }
             }
