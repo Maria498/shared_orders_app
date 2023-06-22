@@ -133,6 +133,7 @@
     <string name="phoneNum">05********</string>
     <string name="fullname">full Name</string>
     <string name="countOfProduct">0</string>
+    <string name="Ordersyouown">Orders you own</string>
 
 
 </resources>

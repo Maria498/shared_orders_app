@@ -190,8 +190,10 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                                         db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
                                             @Override
                                             public void onSuccess(Void unused) {
-                                             Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
-                                             dismiss();
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                                }
+                                                dismiss();
 
                                             }
                                         });
@@ -202,7 +204,9 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                             }
                         });
                     } else {
-                        Toast.makeText(getContext(), "You must join an open order or create a new order to add products", Toast.LENGTH_SHORT).show();
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            Toast.makeText(getContext(), "You must join an open order or create a new order to add products", Toast.LENGTH_SHORT).show();
+                        }
 
                     }
                 }
