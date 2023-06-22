@@ -28,7 +28,9 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.R;
 import com.example.super_app.RecycleViewInterface;
+import com.example.super_app.db.OrderAdapter;
 import com.example.super_app.db.entity.Order;
+import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -41,6 +43,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -60,14 +63,17 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView userName;
     private EditText userEmail, birthDate;
     private RecyclerView recOrder;
+    private RecyclerView recOwnOrders;
     private BottomNavigationView menu;
     private List<Order> hostList = new ArrayList<>();
     private Button addOrder;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private boolean isEditing = true;
-    String birthdateField, emailField;
-    String birthdateField1, emailField1;
+    private String birthdateField, emailField, birthdateField1, emailField1;
+    private List<Order> orderSameAddress;
+    private List<Order> ownOrder;
+
 
 
     @Override
@@ -79,6 +85,7 @@ public class ProfileActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.userEmail);
         birthDate = findViewById(R.id.birthDateEditTxt);
         recOrder = findViewById(R.id.recOrders);
+        recOwnOrders=findViewById(R.id.recYourOrders);
         addOrder = findViewById(R.id.btnOpenOrder);
         menu = findViewById(R.id.menu);
 
@@ -89,13 +96,56 @@ public class ProfileActivity extends AppCompatActivity {
         birthDate.setFocusable(false);
         birthDate.setFocusableInTouchMode(false);
 
+        mAuth = FirebaseAuth.getInstance();
+        String uid = mAuth.getCurrentUser().getUid();
+        db = FirebaseFirestore.getInstance();
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         recOrder.setLayoutManager(llm);
-        mAuth = FirebaseAuth.getInstance();
-        String uid = mAuth.getCurrentUser().getUid();
-        db = FirebaseFirestore.getInstance();
+
+        LinearLayoutManager llm2 = new LinearLayoutManager(this);
+        llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recOwnOrders.setLayoutManager(llm2);
+
+        orderSameAddress=new ArrayList<>();
+        ownOrder=new ArrayList<>();
+        db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        Order order=doc.toObject(Order.class);
+                        if (doc.getId().equals(uid)) {
+                            //the current user is the owner of this order
+                            ownOrder.add(order);
+                        }
+                        else{
+                           db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                    if (task.isSuccessful()) {
+                                        DocumentSnapshot document = task.getResult();
+                                        HashMap<String,Object> map= (HashMap<String, Object>) document.getData();
+                                        String address= ((String) map.get("userAdd")).split(",")[0];
+                                        if(order.getAddress().split(",")[0].equals(address))
+                                        {
+                                            orderSameAddress.add(order);
+                                        }
+                                    } else {
+                                        Log.d("get failed with ", String.valueOf(task.getException()));
+                                    } }});
+                        }
+                    }
+                }
+            }
+        });
+        OrderAdapter orderAdapter=new OrderAdapter(orderSameAddress,ProfileActivity.this);
+        recOrder.setAdapter(orderAdapter);
+
+        OrderAdapter ownerOrderAdapter=new OrderAdapter(ownOrder,ProfileActivity.this);
+        recOrder.setAdapter(ownerOrderAdapter);
+
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -238,5 +288,8 @@ public class ProfileActivity extends AppCompatActivity {
                 // Implement your add order functionality here
             }
         });
+
+
+
     }
 }

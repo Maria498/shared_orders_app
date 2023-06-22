@@ -134,6 +134,11 @@
     <string name="fullname">full Name</string>
     <string name="countOfProduct">0</string>
     <string name="Ordersyouown">Orders you own</string>
+    <string name="CreatorName">Full name of owner</string>
+    <string name="DeliveryAddress">Delivery\'s Address</string>
+    <string name="DeliveryDate">Delivery Date</string>
+    <string name="join">Join</string>
+    <string name="phone">Phone number\n</string>
 
 
 </resources>
