@@ -1,5 +1,7 @@
 package com.example.super_app;
 
+import static android.content.ContentValues.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
@@ -75,7 +77,6 @@ public class ProfileActivity extends AppCompatActivity {
     private List<Order> ownOrder;
 
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
         userEmail = findViewById(R.id.userEmail);
         birthDate = findViewById(R.id.birthDateEditTxt);
         recOrder = findViewById(R.id.recOrders);
-        recOwnOrders=findViewById(R.id.recYourOrders);
+        recOwnOrders = findViewById(R.id.recYourOrders);
         addOrder = findViewById(R.id.btnOpenOrder);
         menu = findViewById(R.id.menu);
 
@@ -108,42 +109,72 @@ public class ProfileActivity extends AppCompatActivity {
         llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
         recOwnOrders.setLayoutManager(llm2);
 
-        orderSameAddress=new ArrayList<>();
-        ownOrder=new ArrayList<>();
+        orderSameAddress = new ArrayList<>();
+        ownOrder = new ArrayList<>();
         db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Order order=doc.toObject(Order.class);
-                        if (doc.getId().equals(uid)) {
-                            //the current user is the owner of this order
-                            ownOrder.add(order);
+                        Order order = doc.toObject(Order.class);
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String orderDate = order.getDeliveryDate(); // Assuming this is the order date string
+                        Date currentDateObj = null;
+                        Date orderDateObj = null;
+                        try {
+                            currentDateObj = dateFormat.parse(currentDate);
+                            orderDateObj = dateFormat.parse(orderDate);
                         }
-                        else{
-                           db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        DocumentSnapshot document = task.getResult();
-                                        HashMap<String,Object> map= (HashMap<String, Object>) document.getData();
-                                        String address= ((String) map.get("userAdd")).split(",")[0];
-                                        if(order.getAddress().split(",")[0].equals(address))
-                                        {
-                                            orderSameAddress.add(order);
+                        catch (ParseException e) {
+                            throw new RuntimeException(e);
+                        }
+                        if (orderDateObj.compareTo(currentDateObj) > 0) {
+                            db.collection("Orders").document(doc.getId()).delete()
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
                                         }
-                                    } else {
-                                        Log.d("get failed with ", String.valueOf(task.getException()));
-                                    } }});
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+                                            Log.w(TAG, "Error deleting document", e);
+                                        }
+                                    });
+
+                        } else {
+                            if (doc.getId().equals(uid)) {
+                                //the current user is the owner of this order
+                                ownOrder.add(order);
+                            } else {
+                                db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            DocumentSnapshot document = task.getResult();
+                                            HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
+                                            String address = ((String) map.get("userAdd")).split(",")[0];
+                                            if ((order.getAddress().split(",")[0]).equals(address)) {
+                                                orderSameAddress.add(order);
+                                            }
+                                        } else {
+                                            Log.d("get failed with ", String.valueOf(task.getException()));
+                                        }
+                                    }
+                                });
+                            }
                         }
                     }
                 }
             }
         });
-        OrderAdapter orderAdapter=new OrderAdapter(orderSameAddress,ProfileActivity.this);
+        OrderAdapter orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this);
         recOrder.setAdapter(orderAdapter);
 
-        OrderAdapter ownerOrderAdapter=new OrderAdapter(ownOrder,ProfileActivity.this);
+        OrderAdapter ownerOrderAdapter = new OrderAdapter(ownOrder, ProfileActivity.this);
         recOrder.setAdapter(ownerOrderAdapter);
 
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -154,9 +185,9 @@ public class ProfileActivity extends AppCompatActivity {
                         if (doc.getId().equals(uid)) {
                             userName.setText("" + doc.getData().get("userName"));
                             userEmail.setText("" + doc.getData().get("userEmail"));
-                            emailField1= (String) doc.getData().get("userEmail");
+                            emailField1 = (String) doc.getData().get("userEmail");
                             birthDate.setText("" + doc.get("birthdate"));
-                            birthdateField1=(String)doc.get("birthdate");
+                            birthdateField1 = (String) doc.get("birthdate");
                         }
                     }
                 }
@@ -288,7 +319,6 @@ public class ProfileActivity extends AppCompatActivity {
                 // Implement your add order functionality here
             }
         });
-
 
 
     }

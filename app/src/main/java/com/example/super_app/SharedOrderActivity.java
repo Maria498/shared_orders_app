@@ -140,7 +140,7 @@ public class SharedOrderActivity extends AppCompatActivity {
                                 if(!isOpen)
                                 {
                                     String address=spinnerCity.getSelectedItem().toString()+","+userStreet+","+userApart;
-                                    Order order=new Order(userName,phoneNum,address,selectedDate);
+                                    Order order=new Order(userName,phoneNum,selectedDate,address);
                                     db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {
