@@ -118,7 +118,7 @@ public class ProfileActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         Order order = doc.toObject(Order.class);
                         Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.getDefault());
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
                         String currentDate = dateFormat.format(calendar.getTime());
                         String orderDate = order.getDeliveryDate(); // Assuming this is the order date string
                         Date currentDateObj = null;
