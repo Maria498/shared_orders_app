@@ -62,7 +62,7 @@ import java.util.Locale;
 public class ProfileActivity extends AppCompatActivity {
     private ImageView userImg;
     private ImageView iconEdit;
-    private TextView userName;
+    private TextView userName,allOrderMessage,ownOrderMessage;
     private EditText userEmail, birthDate;
     private RecyclerView recOrder;
     private RecyclerView recOwnOrders;
@@ -89,6 +89,8 @@ public class ProfileActivity extends AppCompatActivity {
         recOwnOrders = findViewById(R.id.recYourOrders);
         addOrder = findViewById(R.id.btnOpenOrder);
         menu = findViewById(R.id.menu);
+        ownOrderMessage = findViewById(R.id.ownOrderDefualtText);
+        allOrderMessage = findViewById(R.id.allOrderDefualtText);
 
         userEmail.setEnabled(false);
         userEmail.setFocusable(false);
@@ -130,7 +132,7 @@ public class ProfileActivity extends AppCompatActivity {
                         catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
-                        if (orderDateObj.compareTo(currentDateObj) > 0) {
+                        if (orderDateObj.compareTo(currentDateObj) < 0) {
                             db.collection("Orders").document(doc.getId()).delete()
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -160,6 +162,21 @@ public class ProfileActivity extends AppCompatActivity {
                                             if ((order.getAddress().split(",")[0]).equals(address)) {
                                                 orderSameAddress.add(order);
                                             }
+                                            for(Order order: ownOrder)
+                                            {
+                                                if(orderSameAddress.contains(order))
+                                                {
+                                                    orderSameAddress.remove(order);
+                                                }
+                                            }
+                                            if(!orderSameAddress.isEmpty())
+                                            {
+                                                allOrderMessage.setVisibility(View.GONE);
+                                            }
+
+                                                OrderAdapter orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this);
+                                                recOrder.setAdapter(orderAdapter);
+
                                         } else {
                                             Log.d("get failed with ", String.valueOf(task.getException()));
                                         }
@@ -168,14 +185,22 @@ public class ProfileActivity extends AppCompatActivity {
                             }
                         }
                     }
+
+
+
+                    if(!ownOrder.isEmpty())
+                    {
+                        ownOrderMessage.setVisibility(View.GONE);
+                    }
+
+                        OrderAdapter ownerOrderAdapter = new OrderAdapter(ownOrder, ProfileActivity.this);
+                        recOwnOrders.setAdapter(ownerOrderAdapter);
+
+
                 }
             }
         });
-        OrderAdapter orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this);
-        recOrder.setAdapter(orderAdapter);
 
-        OrderAdapter ownerOrderAdapter = new OrderAdapter(ownOrder, ProfileActivity.this);
-        recOrder.setAdapter(ownerOrderAdapter);
 
         db.collection("users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -316,9 +341,17 @@ public class ProfileActivity extends AppCompatActivity {
         addOrder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // Implement your add order functionality here
+                if(ownOrder.isEmpty())
+                {
+                    Intent i = new Intent(getApplicationContext(), SharedOrderActivity.class);
+                    startActivity(i);
+                }
+                else{
+                    Toast.makeText(getApplicationContext(),"You allready have an open order",Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
 
 
     }

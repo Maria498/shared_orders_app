@@ -139,6 +139,7 @@
     <string name="DeliveryDate">Delivery Date</string>
     <string name="join">Join</string>
     <string name="phone">Phone number\n</string>
+    <string name="noOrderText">you have no orders in this section</string>
 
 
 </resources>
