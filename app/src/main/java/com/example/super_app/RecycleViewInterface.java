@@ -5,4 +5,5 @@ public interface RecycleViewInterface {
     void onDeleteClick(int position);
     void onEditClick(int position);
 
+
 }

@@ -140,6 +140,11 @@
     <string name="join">Join</string>
     <string name="phone">Phone number\n</string>
     <string name="noOrderText">you have no orders in this section</string>
+    <string name="getoutOrder">Are you sure you don\'t want to be part of the invitation?</string>
+    <string name="yourOrders">Your Orders:</string>
+    <string name="AllordersToYourAddress">Orders To Your Address</string>
+    <string name="joinOrder">Do you want to join the invitation?</string>
+
 
 
 </resources>

@@ -264,9 +264,6 @@ public class fragment_products extends Fragment implements RecycleViewInterface 
         b.putSerializable("Product",product);
         frag.setArguments(b);
         frag.show(getFragmentManager(), "dialog");
-
-
-
     }
 
     public void showSimpleAlertDialog(int position) {

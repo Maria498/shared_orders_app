@@ -74,7 +74,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/txtDeliveryDate"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="5dp"
             android:layout_alignParentEnd="true"
             android:src="@drawable/baseline_cancel_24"
             android:text="@string/join"
