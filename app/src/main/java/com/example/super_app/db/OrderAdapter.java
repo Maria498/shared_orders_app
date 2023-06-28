@@ -16,6 +16,7 @@ import com.example.super_app.R;
 import com.example.super_app.RecycleViewInterface;
 import com.example.super_app.db.entity.Order;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
@@ -31,7 +32,26 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         this.typeOfOrder=typeOfOrder;
 
     }
+    public void setItems(List<Order> list)
+    {
+        this.orderList = list;
+    }
 
+    public static List<Order> getOrderList() {
+        return orderList;
+    }
+
+    public static Context getContext() {
+        return context;
+    }
+
+    public DeleteOrderInterface getDeleteOrderInterface() {
+        return deleteOrderInterface;
+    }
+
+    public boolean isTypeOfOrder() {
+        return typeOfOrder;
+    }
 
     @Override
     public OrderAdapter.OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

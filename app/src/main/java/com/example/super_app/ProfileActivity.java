@@ -48,6 +48,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -114,7 +115,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
         recOrder.setLayoutManager(llm);
 
         LinearLayoutManager llm2 = new LinearLayoutManager(this);
-        llm2.setOrientation(LinearLayoutManager.VERTICAL);
+        llm2.setOrientation(LinearLayoutManager.HORIZONTAL);
         recOwnOrders.setLayoutManager(llm2);
 
         orderSameAddress = new ArrayList<>();
@@ -154,60 +155,66 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
 
                         } else
                         {
-                            if(mAuth.getUid().equals(doc.getId())){
-                                yourOrders.add(order);
-                            }
-                            else {
+
 
                                 db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                         if (task.isSuccessful()) {
-                                            DocumentSnapshot document = task.getResult();
-                                            HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
-                                            String city = ((String) map.get("userAdd")).split(",")[0];
-                                            String street = ((String) map.get("userAdd")).split(",")[1];
-                                            if ((order.getAddress().split(",")[0]).equals(city)) {
-                                                if ((order.getAddress().split(",")[1]).equals(street)) {
-                                                    orderSameAddress.add(order);
-                                                    if (order.getProductsOfNeigh() != null) {
-                                                        HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
-                                                        if (list.containsKey(mAuth.getUid())) {
-                                                            yourOrders.add(order);
+                                            if (mAuth.getUid().equals(doc.getId())) {
+                                                yourOrders.add(order);
+                                            } else {
+                                                DocumentSnapshot document = task.getResult();
+                                                HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
+                                                String city = ((String) map.get("userAdd")).split(",")[0];
+                                                String street = ((String) map.get("userAdd")).split(",")[1];
+                                                if ((order.getAddress().split(",")[0]).equals(city)) {
+                                                    if ((order.getAddress().split(",")[1]).equals(street)) {
+                                                        orderSameAddress.add(order);
+                                                        if (order.getProductsOfNeigh() != null) {
+                                                            HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
+                                                            if (list.containsKey(mAuth.getUid())) {
+                                                                yourOrders.add(order);
+                                                            }
                                                         }
-                                                    }
 
+                                                    }
                                                 }
                                             }
-                                        } else {
+                                        }
+                                        else {
                                             Log.d("get failed with ", String.valueOf(task.getException()));
                                         }
+                                        for (Order order : yourOrders) {
+                                            if (orderSameAddress.contains(order)) {
+                                                orderSameAddress.remove(order);
+                                            }
+                                        }
+                                        if (!orderSameAddress.isEmpty()) {
+                                            allOrderMessage.setVisibility(View.GONE);
+                                            orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
+                                            recOrder.setAdapter(orderAdapter);
+                                        }
+                                        else{
+                                            allOrderMessage.setVisibility(View.VISIBLE);
+                                        }
+
+                                        if (!yourOrders.isEmpty()) {
+                                            ownOrderMessage.setVisibility(View.GONE);
+                                            ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
+                                            recOwnOrders.setAdapter(ownerOrderAdapter);
+                                        }
+                                        else{
+                                            ownOrderMessage.setVisibility(View.VISIBLE);
+                                        }
                                     }
+
                                 });
-                            }
+
                         }
                     }
 
-                    for (Order order : yourOrders) {
-                        if (orderSameAddress.contains(order)) {
-                            orderSameAddress.remove(order);
-                        }
-                    }
-                    if (!orderSameAddress.isEmpty()) {
-                        allOrderMessage.setVisibility(View.GONE);
-                    }
-                    else {
-                        orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
-                        recOrder.setAdapter(orderAdapter);
-                    }
 
-                    if (!yourOrders.isEmpty()) {
-                        ownOrderMessage.setVisibility(View.GONE);
-                    }
-                    else {
-                        ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
-                        recOwnOrders.setAdapter(ownerOrderAdapter);
-                    }
 
 
                 }
@@ -387,25 +394,49 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                             for (QueryDocumentSnapshot doc : task.getResult()) {
                                 Order currentOrder = doc.toObject(Order.class);
                                 if (currentOrder.equals(order)) {
-                                    db.collection("Orders").document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void aVoid) {
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                        yourOrders.remove(position);
-                                                        ownerOrderAdapter.notifyDataSetChanged();
-                                                        Toast.makeText(getApplicationContext(), "The Order has been deleted", Toast.LENGTH_SHORT).show();
-                                                    }
+                                    if(order.getProductsOfNeigh() != null) {
+                                        HashMap<String, ArrayList<Product>> neigh = order.getProductsOfNeigh();
 
-                                                }
-                                            })
-                                            .addOnFailureListener(new OnFailureListener() {
+                                        if (neigh.containsKey(mAuth.getUid())) {
+
+                                            neigh.remove(mAuth.getUid());
+                                            db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
-                                                public void onFailure(@NonNull Exception e) {
-                                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                        Toast.makeText(getApplicationContext(), "There is a problem", Toast.LENGTH_SHORT).show();
+                                                public void onSuccess(Void unused) {
+                                                    yourOrders.remove(position);
+                                                    if(ownerOrderAdapter!=null) {
+                                                        ownerOrderAdapter.notifyDataSetChanged();
                                                     }
+                                                    if(orderAdapter!=null) {
+                                                        orderAdapter.notifyDataSetChanged();
+                                                    }
+                                                    Toast.makeText(ProfileActivity.this, "you have been removed from order", Toast.LENGTH_SHORT).show();
                                                 }
                                             });
+                                        }
+                                    }
+                                    else if(doc.getId().equals(mAuth.getUid()))
+                                    {
+                                        order.setFullNameOwner("nobody");
+                                        db.collection("Orders").document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void unused) {
+                                                db.collection("Orders").add(order).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                    @Override
+                                                    public void onSuccess(DocumentReference documentReference) {
+                                                        yourOrders.remove(position);
+                                                        if(ownerOrderAdapter!=null) {
+                                                            ownerOrderAdapter.notifyDataSetChanged();
+                                                        }
+                                                        if(orderAdapter!=null) {
+                                                            orderAdapter.notifyDataSetChanged();
+                                                        }
+                                                        Toast.makeText(ProfileActivity.this,"the order has been deleted",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                 }
 
                             }
@@ -476,8 +507,23 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                                                 yourOrders.add(order);
                                                                 orderSameAddress.remove(position);
-                                                                orderAdapter.notifyDataSetChanged();
-                                                                ownerOrderAdapter.notifyDataSetChanged();
+
+                                                                if(ownerOrderAdapter!=null) {
+                                                                    ownerOrderAdapter.notifyDataSetChanged();
+                                                                }
+                                                                else{
+                                                                    ownOrderMessage.setVisibility(View.GONE);
+                                                                    ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
+                                                                    recOwnOrders.setAdapter(ownerOrderAdapter);
+                                                                }
+                                                                if(orderAdapter!=null) {
+                                                                    orderAdapter.notifyDataSetChanged();
+                                                                }
+                                                                else{
+                                                                    allOrderMessage.setVisibility(View.VISIBLE);
+                                                                    orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
+                                                                    recOrder.setAdapter(orderAdapter);
+                                                                }
                                                                 Toast.makeText(getApplicationContext(), "You have successfully joined the invitation", Toast.LENGTH_SHORT).show();
                                                             }
 
