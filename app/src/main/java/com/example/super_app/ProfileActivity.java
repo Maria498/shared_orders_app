@@ -80,7 +80,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
     private List<Order> orderSameAddress;
     private List<Order> yourOrders;
     OrderAdapter orderAdapter = null;
-    OrderAdapter ownerOrderAdapter = null;
+    OwnerOrderAdapter ownerOrderAdapter = null;
     boolean addcreate = false;
 
 
@@ -194,7 +194,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                         if (!orderSameAddress.isEmpty()) {
                                             allOrderMessage.setVisibility(View.GONE);
                                             orderSameAddress.size();
-                                            orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
+                                            orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this);
                                             recOrder.setAdapter(orderAdapter);
                                         }
                                         else{
@@ -203,7 +203,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
 
                                         if (!yourOrders.isEmpty()) {
                                             ownOrderMessage.setVisibility(View.GONE);
-                                            ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
+                                            ownerOrderAdapter = new OwnerOrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this);
                                             recOwnOrders.setAdapter(ownerOrderAdapter);
                                         }
                                         else{
@@ -508,11 +508,13 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                                                 orderSameAddress.remove(order);
                                                                 if(orderAdapter!=null) {
+                                                                    orderAdapter.setItems(orderSameAddress);
                                                                     orderAdapter.notifyDataSetChanged();
                                                                 }
                                                                 else{
                                                                     allOrderMessage.setVisibility(View.VISIBLE);
-                                                                    orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
+                                                                    orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this);
+
                                                                     recOrder.setAdapter(orderAdapter);
                                                                 }
                                                                 yourOrders.add(order);
@@ -522,7 +524,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                                 }
                                                                 else{
                                                                     ownOrderMessage.setVisibility(View.GONE);
-                                                                    ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
+                                                                    ownerOrderAdapter = new OwnerOrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this);
                                                                     recOwnOrders.setAdapter(ownerOrderAdapter);
                                                                 }
 

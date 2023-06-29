@@ -80,5 +80,14 @@
             android:text="@string/join"
             android:textSize="10sp" />
 
+        <ImageButton
+            android:id="@+id/goShoppingBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/txtDeliveryDate"
+            android:layout_toLeftOf="@+id/Btn"
+            android:layout_marginRight="5dp"
+            android:src="@drawable/outline_shopping_cart_checkout_24"
+            android:textSize="10sp" />
     </RelativeLayout>
 </androidx.cardview.widget.CardView>

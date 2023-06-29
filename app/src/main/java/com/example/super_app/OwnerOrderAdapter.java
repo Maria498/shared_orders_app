@@ -1,6 +1,7 @@
-package com.example.super_app.db;
+package com.example.super_app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,13 +20,13 @@ import com.example.super_app.db.entity.Order;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHolder> {
+public class OwnerOrderAdapter extends RecyclerView.Adapter<OwnerOrderAdapter.OrderViewHolder> {
     private static List<Order> orderList;
     private static Context context;
     private DeleteOrderInterface deleteOrderInterface;
 
 
-    public OrderAdapter(List<Order> orderList, Context context, DeleteOrderInterface deleteOrderInterface) {
+    public OwnerOrderAdapter(List<Order> orderList, Context context, DeleteOrderInterface deleteOrderInterface) {
         this.orderList = orderList;
         this.context = context;
         this.deleteOrderInterface = deleteOrderInterface;
@@ -49,16 +50,15 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     }
 
 
-
     @Override
-    public OrderAdapter.OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public OwnerOrderAdapter.OrderViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.vieworderinfo, parent, false);
         return new OrderViewHolder(itemView);
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull OrderAdapter.OrderViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull OwnerOrderAdapter.OrderViewHolder holder, int position) {
         Order order = orderList.get(position);
         holder.setData(order);
     }
@@ -74,9 +74,8 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
         private TextView vAddress;
         private TextView vDate;
         private ImageButton vBtn;
+        private ImageButton vBtnShopping;
         private Order order = null;
-
-        private ImageButton vShopping;
 
         public OrderViewHolder(View v) {
             super(v);
@@ -85,25 +84,30 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
             vAddress = v.findViewById(R.id.txtAddress);
             vDate = v.findViewById(R.id.txtDeliveryDate);
             vBtn = v.findViewById(R.id.Btn);
-            vBtn.setImageResource(R.drawable.baseline_add_circle_24);
-            vBtn.setColorFilter(Color.GREEN);
-            vShopping = v.findViewById(R.id.goShoppingBtn);
-            vShopping.setVisibility(View.GONE);
+            vBtnShopping=v.findViewById(R.id.goShoppingBtn);
+            vBtn.setImageResource(R.drawable.baseline_cancel_24);
+            vBtn.setColorFilter(Color.RED);
             vBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     if (deleteOrderInterface != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION) {
-                                deleteOrderInterface.onJoinClick(position);
-
-
+                            deleteOrderInterface.onDeleteClick(position);
                         }
                     }
 
                 }
             });
+            vBtnShopping.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(context, SuperCategoryActivity.class);
+                    intent.putExtra("typeOfUser", "Participant");
+                    context.startActivity(intent);             }
+            });
         }
+
 
         public void setData(Order order) {
             this.order = order;
