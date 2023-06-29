@@ -124,6 +124,8 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    orderSameAddress.clear();
+                    yourOrders.clear();
                     for (QueryDocumentSnapshot doc : task.getResult()) {
                         Order order = doc.toObject(Order.class);
                         Calendar calendar = Calendar.getInstance();
@@ -138,6 +140,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                         } catch (ParseException e) {
                             throw new RuntimeException(e);
                         }
+                        //delete orders that delivery date has passed
                         if (orderDateObj.compareTo(currentDateObj) < 0) {
                             db.collection("Orders").document(doc.getId()).delete()
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -155,8 +158,6 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
 
                         } else
                         {
-
-
                                 db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                                     @Override
                                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -175,6 +176,10 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                             HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
                                                             if (list.containsKey(mAuth.getUid())) {
                                                                 yourOrders.add(order);
+                                                                if (orderSameAddress.contains(order)) {
+                                                                    orderSameAddress.remove(order);
+                                                                }
+
                                                             }
                                                         }
 
@@ -185,13 +190,10 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                         else {
                                             Log.d("get failed with ", String.valueOf(task.getException()));
                                         }
-                                        for (Order order : yourOrders) {
-                                            if (orderSameAddress.contains(order)) {
-                                                orderSameAddress.remove(order);
-                                            }
-                                        }
+
                                         if (!orderSameAddress.isEmpty()) {
                                             allOrderMessage.setVisibility(View.GONE);
+                                            orderSameAddress.size();
                                             orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
                                             recOrder.setAdapter(orderAdapter);
                                         }
@@ -441,7 +443,6 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
 
                             }
 
-                        } else {
                         }
                     }
                 });
@@ -505,8 +506,16 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                         @Override
                                                         public void onSuccess(Void aVoid) {
                                                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                                orderSameAddress.remove(order);
+                                                                if(orderAdapter!=null) {
+                                                                    orderAdapter.notifyDataSetChanged();
+                                                                }
+                                                                else{
+                                                                    allOrderMessage.setVisibility(View.VISIBLE);
+                                                                    orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
+                                                                    recOrder.setAdapter(orderAdapter);
+                                                                }
                                                                 yourOrders.add(order);
-                                                                orderSameAddress.remove(position);
 
                                                                 if(ownerOrderAdapter!=null) {
                                                                     ownerOrderAdapter.notifyDataSetChanged();
@@ -516,14 +525,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                                                     ownerOrderAdapter = new OrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this, false);
                                                                     recOwnOrders.setAdapter(ownerOrderAdapter);
                                                                 }
-                                                                if(orderAdapter!=null) {
-                                                                    orderAdapter.notifyDataSetChanged();
-                                                                }
-                                                                else{
-                                                                    allOrderMessage.setVisibility(View.VISIBLE);
-                                                                    orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this, true);
-                                                                    recOrder.setAdapter(orderAdapter);
-                                                                }
+
                                                                 Toast.makeText(getApplicationContext(), "You have successfully joined the invitation", Toast.LENGTH_SHORT).show();
                                                             }
 
