@@ -86,14 +86,12 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         if (b != null) {
             product = (Product) b.getSerializable("Product");
             productNameTextView.setText(product.getName());
-            if(product.getDiscount()!=0)
-            {
-                priceAfterDis = product.getPrice()*(100-product.getDiscount())/100;
-            }
-            else{
+            if (product.getDiscount() != 0) {
+                priceAfterDis = product.getPrice() * (100 - product.getDiscount()) / 100;
+            } else {
                 priceAfterDis = product.getPrice();
             }
-            price.setText(""+priceAfterDis);
+            price.setText("" + priceAfterDis);
 
             if (product.getCategory().equals("Electronics") || product.getCategory().equals("MakeUpAndBrush")) {
                 productDescribeTextView.setText(product.getDescription());
@@ -158,61 +156,47 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-
-                // Retrieve the Intent that started the current Activity
-                Intent intent = getActivity().getIntent();
-                // Check if the Intent has extra parameters
-                if (intent != null /*&& intent.getExtras() != null*/) {
-                   // String type = intent.getStringExtra("typeOfUser");
-                    if (/*type.equals("Owner")*/true) {
-                        String uid = mAuth.getUid();
-                        db.collection("Orders").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot document = task.getResult();
-                                    if (document != null && document.exists()) {
-                                        Order order = document.toObject(Order.class);
-                                        HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
-                                        if (neighProducts == null) {
-                                            neighProducts = new HashMap<>();
-                                            listofProduct = new ArrayList<>();
-                                        } else {
-                                            listofProduct = neighProducts.get(uid);
-                                            if (listofProduct == null) {
-                                                listofProduct = new ArrayList<>();
-                                            }
-                                        }
-                                        listofProduct.add(product);
-                                        neighProducts.put(uid, listofProduct);
-                                        order.setProductsOfNeigh(neighProducts);
-                                        db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                    Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
-                                                }
-                                                dismiss();
-
-                                            }
-                                        });
-                                    }
+                String uid = mAuth.getUid();
+                db.collection("Orders").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful()) {
+                            DocumentSnapshot document = task.getResult();
+                            if (document != null && document.exists()) {
+                                Order order = document.toObject(Order.class);
+                                HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
+                                if (neighProducts == null) {
+                                    neighProducts = new HashMap<>();
+                                    listofProduct = new ArrayList<>();
                                 } else {
-                                    Log.e("Firebase", "Error getting order document: ", task.getException());
+                                    listofProduct = neighProducts.get(uid);
+                                    if (listofProduct == null) {
+                                        listofProduct = new ArrayList<>();
+                                    }
                                 }
-                            }
-                        });
-                    } else {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            Toast.makeText(getContext(), "You must join an open order or create a new order to add products", Toast.LENGTH_SHORT).show();
-                        }
+                                listofProduct.add(product);
+                                neighProducts.put(uid, listofProduct);
+                                order.setProductsOfNeigh(neighProducts);
+                                db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                            Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                        }
+                                        dismiss();
 
+                                    }
+                                });
+                            }
+                        } else {
+                            Log.e("Firebase", "Error getting order document: ", task.getException());
+                        }
                     }
-                }
+                });
+
             }
-        });
+    });
 
         return v;
-    }
+}
 }

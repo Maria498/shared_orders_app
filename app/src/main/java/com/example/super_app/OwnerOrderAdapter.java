@@ -103,7 +103,7 @@ public class OwnerOrderAdapter extends RecyclerView.Adapter<OwnerOrderAdapter.Or
                 @Override
                 public void onClick(View view) {
                     Intent intent = new Intent(context, SuperCategoryActivity.class);
-                    intent.putExtra("typeOfUser", "Participant");
+                  //  intent.putExtra("typeOfUser", "Participant");
                     context.startActivity(intent);             }
             });
         }

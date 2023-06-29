@@ -145,8 +145,8 @@ public class SharedOrderActivity extends AppCompatActivity {
                                         @Override
                                         public void onSuccess(Void unused) {
                                             Toast.makeText(SharedOrderActivity.this, "An order has been opened that you own", Toast.LENGTH_SHORT).show();
-                                            Intent intent=new Intent(SharedOrderActivity.this,SuperCategoryActivity.class);
-                                            intent.putExtra("typeOfUser","Owner");
+                                            Intent intent=new Intent(SharedOrderActivity.this,ProfileActivity.class);
+                                           // intent.putExtra("typeOfUser","Owner");
                                             startActivity(intent);
                                         }
                                     }).addOnFailureListener(new OnFailureListener() {
