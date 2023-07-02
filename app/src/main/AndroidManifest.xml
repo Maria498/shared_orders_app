@@ -16,6 +16,9 @@
         android:theme="@style/Theme.Super_app"
         tools:targetApi="31">
         <activity
+            android:name=".cartActivity"
+            android:exported="false" />
+        <activity
             android:name=".SharedOrderActivity"
             android:exported="false" />
         <activity

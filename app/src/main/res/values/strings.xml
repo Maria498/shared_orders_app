@@ -144,7 +144,9 @@
     <string name="yourOrders">Your Orders:</string>
     <string name="AllordersToYourAddress">Orders To Your Address</string>
     <string name="joinOrder">Do you want to join the invitation?</string>
+    <string name="Shoppingcart">Shopping Cart</string>
+    <string name="count">1</string>
 
-
+    <string name="getoutProduct">Are you sure you don\'t want to delete this product?</string>
 
 </resources>

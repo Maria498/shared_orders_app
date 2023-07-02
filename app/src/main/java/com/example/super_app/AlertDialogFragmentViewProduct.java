@@ -33,6 +33,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -157,37 +159,43 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
             @Override
             public void onClick(View view) {
                 String uid = mAuth.getUid();
-                db.collection("Orders").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
-                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
-                            DocumentSnapshot document = task.getResult();
-                            if (document != null && document.exists()) {
-                                Order order = document.toObject(Order.class);
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                Order order = doc.toObject(Order.class);
                                 HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
-                                if (neighProducts == null) {
-                                    neighProducts = new HashMap<>();
-                                    listofProduct = new ArrayList<>();
-                                } else {
-                                    listofProduct = neighProducts.get(uid);
-                                    if (listofProduct == null) {
+                                if (doc.getId().equals(mAuth.getUid()) || (neighProducts != null && neighProducts.containsKey(uid))) {
+                                    if (neighProducts == null) {
+                                        neighProducts = new HashMap<>();
                                         listofProduct = new ArrayList<>();
-                                    }
-                                }
-                                listofProduct.add(product);
-                                neighProducts.put(uid, listofProduct);
-                                order.setProductsOfNeigh(neighProducts);
-                                db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                            Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        listofProduct = neighProducts.get(uid);
+                                        if (listofProduct == null) {
+                                            listofProduct = new ArrayList<>();
                                         }
-                                        dismiss();
-
                                     }
-                                });
+                                    if(product.getQuantity()==0)
+                                    {
+                                        product.setQuantity(1);
+                                    }
+                                    listofProduct.add(product);
+                                    neighProducts.put(uid, listofProduct);
+                                    order.setProductsOfNeigh(neighProducts);
+                                    db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void unused) {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                            }
+                                            dismiss();
+
+                                        }
+                                    });
+                                }
                             }
+
                         } else {
                             Log.e("Firebase", "Error getting order document: ", task.getException());
                         }

@@ -6,9 +6,6 @@ import java.util.Objects;
 
 public class Product implements Serializable {
     private String name;
-
-
-
     private String img;
 
     private String category;

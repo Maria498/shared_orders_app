@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="5dp"
     card_view:cardCornerRadius="4dp"
-    card_view:cardElevation="10dp">
+    card_view:cardElevation="10dp"
+    android:orientation="horizontal">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        >
 
         <TextView
             android:id="@+id/title"
@@ -22,39 +22,30 @@
             android:textColor="@android:color/white"
             android:textSize="14sp" />
 
-        <ImageView
-            android:id="@+id/productImg"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_below="@+id/title"
-            android:textColor="@color/black"
-            android:layout_marginTop="10dp"/>
-
         <TextView
             android:id="@+id/productName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/title"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
-            android:layout_toRightOf="@+id/productImg"
             android:gravity="center_vertical"
-            android:textColor="@color/black"
             android:text="@string/productName"
-            android:textSize="10sp" />
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/productCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/productName"
-            android:layout_toRightOf="@+id/productImg"
-            android:layout_marginLeft="5dp"
+            android:layout_marginLeft="20dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="20dp"
             android:gravity="center_vertical"
-            android:textColor="@color/black"
             android:text="@string/productCategory"
-            android:textSize="10sp" />
+            android:textColor="@color/black"
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/productQuantity"
@@ -66,7 +57,7 @@
             android:layout_marginRight="150dp"
             android:text="@string/produceQuantity"
             android:textColor="@color/black"
-            android:textSize="10sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/productPrice"
@@ -74,42 +65,60 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@id/productCategory"
             android:layout_alignStart="@id/productQuantity"
-            android:textColor="@color/black"
             android:text="@string/productPrice"
-            android:textSize="10sp" />
-        <LinearLayout
+            android:textColor="@color/black"
+            android:textSize="15sp" />
+
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_below="@+id/productImg"
-            android:gravity="center_vertical|right"
-            >
-
-            <TextView
-                android:id="@+id/priceAfterDiscount"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:textColor="@color/black"
-                android:text="@string/discount"
-                android:textSize="10sp"
-                android:textStyle="bold"/>
+            android:layout_below="@id/productPrice"
+            android:orientation="horizontal">
 
             <ImageButton
-                android:id="@+id/BtnEdit"
+                android:id="@+id/btnRemove"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/baseline_edit_24"
-                android:layout_gravity="right"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
                 android:layout_marginRight="16dp"
-                android:text="chat"
-                android:textSize="10sp" />
+                android:src="@drawable/baseline_delete_24" />
 
+            <ImageButton
+                android:id="@+id/minusButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/shape_circle_btn"
+                android:src="@drawable/baseline_remove_24"
+                android:textColor="#000000" />
 
-        </LinearLayout>
+            <TextView
+                android:id="@+id/digitEditText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="@string/count"
+                android:layout_toRightOf="@+id/minusButton"
+                android:layout_marginLeft="15dp"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
+            <ImageButton
+                android:id="@+id/pluseButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/digitEditText"
+                android:layout_marginLeft="15dp"                android:layout_centerVertical="true"
+                android:background="@drawable/shape_circle_btn"
+                android:src="@drawable/baseline_add_24"
+                android:textColor="#000000"
 
+                />
+        </RelativeLayout>
+        </RelativeLayout>
 
-
-    </RelativeLayout>
-</androidx.cardview.widget.CardView>
+</LinearLayout>
