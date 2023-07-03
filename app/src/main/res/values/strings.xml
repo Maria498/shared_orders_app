@@ -148,5 +148,13 @@
     <string name="count">1</string>
 
     <string name="getoutProduct">Are you sure you don\'t want to delete this product?</string>
+    <string name="paymentpage">Payment Page</string>
+    <string name="deliveryDateTitle">Delivery Date:</string>
+    <string name="OrderDetails">Order Details</string>
+    <string name="cardDetails">Enter Card Details:</string>
+    <string name="cardNumber">Card Number</string>
+    <string name="expirationdate">Expiration Date</string>
+    <string name="CVV">CVV</string>
+    <string name="pay">Pay</string>
 
 </resources>

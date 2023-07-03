@@ -87,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent i = new Intent(getApplicationContext(), cartActivity.class);
+                                    Intent i = new Intent(getApplicationContext(), PaymentActivity.class);
                                     startActivity(i);
                                 } else {
                                     Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
