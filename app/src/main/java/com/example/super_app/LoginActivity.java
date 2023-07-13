@@ -19,6 +19,7 @@ import android.widget.Toast;
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
+import com.facebook.Profile;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -87,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
-                                    Intent i = new Intent(getApplicationContext(), PaymentActivity.class);
+                                    Intent i = new Intent(getApplicationContext(), ProfileActivity.class);
                                     startActivity(i);
                                 } else {
                                     Toast.makeText(LoginActivity.this, "something went wrong", Toast.LENGTH_SHORT).show();
