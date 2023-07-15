@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.Order;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -64,6 +66,10 @@ public class SharedOrderActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
+        Context context = getApplicationContext();
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+
+
         dateCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,7 +91,7 @@ public class SharedOrderActivity extends AppCompatActivity {
                 long tomorrowInMillis = calendar.getTimeInMillis();
 
 
-                    // Set the minimum date to tomorrow
+                // Set the minimum date to tomorrow
                 pickerDialog.getDatePicker().setMinDate(tomorrowInMillis);
 
                 // Set the maximum date to one week from today
@@ -106,6 +112,8 @@ public class SharedOrderActivity extends AppCompatActivity {
                 phoneNum = phoneNumber.getText().toString().trim();
                 userStreet = street.getText().toString().trim();
                 userApart = apartmentNum.getText().toString().trim();
+                //String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address
+
 
                 if (userName.isEmpty() || userName.length() < 3 || !userName.matches("[a-zA-Z\\s]+")) {
                     Toast.makeText(SharedOrderActivity.this, "INVALID NAME", Toast.LENGTH_SHORT).show();
@@ -126,6 +134,7 @@ public class SharedOrderActivity extends AppCompatActivity {
 
                 } else {
                     String uid = mAuth.getUid();
+
                     db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                         @Override
                         public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -141,6 +150,9 @@ public class SharedOrderActivity extends AppCompatActivity {
                                 {
                                     String address=spinnerCity.getSelectedItem().toString()+","+userStreet+","+userApart;
                                     Order order=new Order(userName,phoneNum,selectedDate,address);
+                                    //sqlLite insert new order only if user have not one yet
+                                    dbHelper.insertOrder(order);
+
                                     db.collection("Orders").document(uid).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void unused) {

@@ -9,6 +9,14 @@ import java.util.List;
 import java.util.Objects;
 
 public class Order {
+    public static final String TABLE_ORDER = "orders";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_FULL_NAME = "full_name";
+    public static final String COLUMN_PHONE_NUMBER = "phone_number";
+    public static final String COLUMN_DELIVERY_DATE = "delivery_date";
+    public static final String COLUMN_ADDRESS = "address";
+    public static final String COLUMN_TOTAL_PRICE = "total_price";
+    private long id;
     private String fullNameOwner;
     private String phoneNumberOwner;
     private String deliveryDate;
@@ -16,10 +24,14 @@ public class Order {
     private HashMap<String, ArrayList<Product>> productsOfNeigh;
     private double totalPrice;
 
+
+
     public Order()
     {
 
     }
+
+
 
     public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, ArrayList<Product>> productsOfNeigh, double totalPrice) {
         this.fullNameOwner = fullNameOwner;
@@ -83,6 +95,14 @@ public class Order {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

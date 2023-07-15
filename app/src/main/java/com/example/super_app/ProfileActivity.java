@@ -4,8 +4,10 @@ import static android.content.ContentValues.TAG;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -33,6 +35,7 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 import com.example.super_app.R;
 import com.example.super_app.RecycleViewInterface;
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.OrderAdapter;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
@@ -84,6 +87,8 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
     boolean addcreate = false;
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -109,6 +114,10 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
         mAuth = FirebaseAuth.getInstance();
         String uid = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
+
+        //sqlite instance
+        Context context = getApplicationContext();
+        DatabaseHelper dbHelperSQL = new DatabaseHelper(context);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -142,6 +151,8 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                         }
                         //delete orders that delivery date has passed
                         if (orderDateObj.compareTo(currentDateObj) < 0) {
+                            dbHelperSQL.deleteOrder(order);
+
                             db.collection("Orders").document(doc.getId()).delete()
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
@@ -361,13 +372,14 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                     Intent i = new Intent(getApplicationContext(), SharedOrderActivity.class);
                     startActivity(i);
                 } else {
-                    Toast.makeText(getApplicationContext(), "You allready have an open order", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "You already have an open order", Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
 
     }
+
 
     public void showSimpleAlertDialogDeleteOrder(int position) {
         Order order = yourOrders.get(position);
@@ -557,4 +569,6 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 }

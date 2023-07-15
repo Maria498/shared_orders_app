@@ -25,7 +25,7 @@ public class OwnerOrderAdapter extends RecyclerView.Adapter<OwnerOrderAdapter.Or
     private static Context context;
     private DeleteOrderInterface deleteOrderInterface;
 
-    //profile adater
+    //profile adapter
 
 
     public OwnerOrderAdapter(List<Order> orderList, Context context, DeleteOrderInterface deleteOrderInterface) {

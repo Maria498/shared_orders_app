@@ -5,6 +5,18 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class Product implements Serializable {
+
+    public static final String COLUMN_PRODUCT_NAME = "name";
+    public static final String COLUMN_PRODUCT_PRICE = "price";
+    public static final String COLUMN_PRODUCT_IMAGE = "image";
+    public static final String COLUMN_PRODUCT_CATEGORY = "category";
+    public static final String COLUMN_PRODUCT_DESCRIPTION = "description";
+    public static final String COLUMN_PRODUCT_DISCOUNT = "discount";
+
+    public static final String TABLE_PRODUCT = "products";
+    public static final String COLUMN_ID = "id";
+    public static final String COLUMN_ORDER_ID = "order_id";
+
     private String name;
     private String img;
 
@@ -15,6 +27,8 @@ public class Product implements Serializable {
     private ArrayList<Integer> ratings;
     private int quantity;
     private String description;
+    private long id;
+
     public Product() {}
     public Product(String name,double price,String img,String category)
     {
@@ -44,7 +58,13 @@ public class Product implements Serializable {
         this.quantity = quantity;
         this.description = description;
     }
+    public long getId() {
+        return id;
+    }
 
+    public void setId(long id) {
+        this.id = id;
+    }
     public String getDescription() {
         return description;
     }
