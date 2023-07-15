@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.super_app.db.CartProductAdapter;
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.OrderAdapter;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
@@ -53,6 +55,9 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
+
+        Context context = getApplicationContext();
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
         db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -64,6 +69,8 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
                             if (productsPerUser.containsKey(mAuth.getUid())) {
                                 for (Product product : productsPerUser.get(mAuth.getUid())) {
                                     products.add(product);
+                                    //add product to sql lite
+                                    dbHelper.insertProduct(product, order.getId());
                                 }
                             }
                         }
@@ -118,6 +125,8 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
     private void showSimpleAlertDialogDeleteProduct(int position) {
         Product product = products.get(position);
         AlertDialog.Builder builder = null;
+        Context context = getApplicationContext();
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
         builder = new AlertDialog.Builder(cartActivity.this);
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setMessage(R.string.getoutProduct);
@@ -144,6 +153,7 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
                                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                                         if (cardProductAdapter != null) {
                                                             products.remove(product);
+                                                            dbHelper.deleteProduct(product);
                                                             cardProductAdapter.notifyDataSetChanged();
                                                         }
                                                     }

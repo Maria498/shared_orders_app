@@ -9,6 +9,16 @@ public class Cart {
     private double total;
     private int discount;
     private HashMap< Product, Double> productsQuantity;
+    public static final String TABLE_CART = "carts";
+    public static final String TABLE_CART_ITEM = "cart_items";
+    public static final String COLUMN_CART_ID = "cart_id";
+    public static final String COLUMN_CART_DATE = "date";
+    public static final String COLUMN_CART_TOTAL = "total";
+    public static final String COLUMN_CART_DISCOUNT = "discount";
+    public static final String COLUMN_PRODUCT_NAME = "name";
+    public static final String COLUMN_PRODUCT_QUANTITY = "quantity";
+    private long id;
+
 
 
     public Cart(String cardId, Date date, double price, int discount) {
@@ -57,6 +67,13 @@ public class Cart {
 
     public HashMap<Product, Double> getProductsQuantity() {
         return productsQuantity;
+    }
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override

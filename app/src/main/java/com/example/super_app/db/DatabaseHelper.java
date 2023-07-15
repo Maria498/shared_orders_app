@@ -2,6 +2,14 @@ package com.example.super_app.db;
 
 
 
+import static com.example.super_app.db.entity.Cart.COLUMN_CART_DATE;
+import static com.example.super_app.db.entity.Cart.COLUMN_CART_DISCOUNT;
+import static com.example.super_app.db.entity.Cart.COLUMN_CART_ID;
+import static com.example.super_app.db.entity.Cart.COLUMN_CART_TOTAL;
+import static com.example.super_app.db.entity.Cart.COLUMN_PRODUCT_NAME;
+import static com.example.super_app.db.entity.Cart.COLUMN_PRODUCT_QUANTITY;
+import static com.example.super_app.db.entity.Cart.TABLE_CART;
+import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
 
@@ -18,11 +26,14 @@ import android.widget.Toast;
 
 import com.example.super_app.LoginActivity;
 import com.example.super_app.R;
+import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -49,7 +60,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")";
         sqLiteDatabase.execSQL(CREATE_ORDER_TABLE);
         //create product table
-        String CREATE_PRODUCT_TABLE = "CREATE TABLE " + TABLE_PRODUCT + "("
+        String CREATE_PRODUCT_TABLE = "CREATE TABLE " + Product.TABLE_PRODUCT + "("
                 + Product.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + Product.COLUMN_PRODUCT_NAME + " TEXT,"
                 + Product.COLUMN_PRODUCT_PRICE + " REAL,"
@@ -62,6 +73,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + ")";
         sqLiteDatabase.execSQL(CREATE_PRODUCT_TABLE);
 
+        String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
+                + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_CART_DATE + " TEXT,"
+                + COLUMN_CART_TOTAL + " REAL,"
+                + COLUMN_CART_DISCOUNT + " INTEGER"
+                + ")";
+
+        String CREATE_CART_ITEM_TABLE = "CREATE TABLE " + TABLE_CART_ITEM + "("
+                + COLUMN_CART_ID + " INTEGER,"
+                + COLUMN_PRODUCT_NAME + " TEXT,"
+                + COLUMN_PRODUCT_QUANTITY + " REAL"
+                + ")";
+
+        sqLiteDatabase.execSQL(CREATE_CART_TABLE);
+        sqLiteDatabase.execSQL(CREATE_CART_ITEM_TABLE);
+
 
 
     }
@@ -72,6 +99,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + User.TABLE_NAME);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_ORDER);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCT);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
+        sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CART_ITEM);
         onCreate(sqLiteDatabase);
 
     }
@@ -195,6 +224,66 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     //-----------PRODUCT----------------------------
+    //----------CART--------------------------------
+    public void addCart(Cart cart) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cartValues = new ContentValues();
+        cartValues.put(COLUMN_CART_DATE, cart.getDate().toString());
+        cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
+        cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
+        long cartId = db.insert(TABLE_CART, null, cartValues);
+
+        HashMap<Product, Double> productsQuantity = cart.getProductsQuantity();
+        for (Map.Entry<Product, Double> entry : productsQuantity.entrySet()) {
+            Product product = entry.getKey();
+            double quantity = entry.getValue();
+
+            ContentValues itemValues = new ContentValues();
+            itemValues.put(COLUMN_CART_ID, cartId);
+            itemValues.put(COLUMN_PRODUCT_NAME, product.getName());
+            itemValues.put(COLUMN_PRODUCT_QUANTITY, quantity);
+            db.insert(TABLE_CART_ITEM, null, itemValues);
+        }
+
+        db.close();
+    }
+
+    public void deleteCart(int cartId) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.delete(TABLE_CART, COLUMN_CART_ID + " = ?", new String[]{String.valueOf(cartId)});
+        db.delete(TABLE_CART_ITEM, COLUMN_CART_ID + " = ?", new String[]{String.valueOf(cartId)});
+
+        db.close();
+    }
+
+    public void editCart(Cart cart) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues cartValues = new ContentValues();
+        cartValues.put(COLUMN_CART_DATE, cart.getDate().toString());
+        cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
+        cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
+        db.update(TABLE_CART, cartValues, COLUMN_CART_ID + " = ?",
+                new String[]{String.valueOf(cart.getId())});
+
+        HashMap<Product, Double> productsQuantity = cart.getProductsQuantity();
+        for (Map.Entry<Product, Double> entry : productsQuantity.entrySet()) {
+            Product product = entry.getKey();
+            double quantity = entry.getValue();
+
+            ContentValues itemValues = new ContentValues();
+            itemValues.put(COLUMN_PRODUCT_QUANTITY, quantity);
+            db.update(TABLE_CART_ITEM, itemValues,
+                    COLUMN_CART_ID + " = ? AND " + COLUMN_PRODUCT_NAME + " = ?",
+                    new String[]{String.valueOf(cart.getId()), product.getName()});
+        }
+
+        db.close();
+    }
+    //----------CART--------------------------------
+
 
     // Insert Data into Database
     //-------------------USER-----------------------
