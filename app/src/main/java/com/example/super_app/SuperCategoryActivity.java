@@ -4,15 +4,19 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
+
 public class SuperCategoryActivity extends AppCompatActivity{
-    private CardView cardBrush, cardEle, cardMeat, cardFruVegg;
     LinearLayout layout;
     private ImageView back;
 
@@ -21,15 +25,40 @@ public class SuperCategoryActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_super_category);
+        BottomNavigationView menu = findViewById(R.id.menu);
 
         // Initialize CardViews
-        cardBrush = findViewById(R.id.cardBrush);
-        cardEle = findViewById(R.id.cardEle);
-        cardMeat = findViewById(R.id.cardMeat);
-        cardFruVegg = findViewById(R.id.cardFruVegg);
+        CardView cardBrush = findViewById(R.id.cardBrush);
+        CardView cardEle = findViewById(R.id.cardEle);
+        CardView cardMeat = findViewById(R.id.cardMeat);
+        CardView cardFruVegg = findViewById(R.id.cardFruVegg);
         layout=findViewById(R.id.linearLay);
         back = findViewById(R.id.backButton);
         back.setVisibility(View.GONE);
+        menu.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cart:
+                        startActivity(new Intent(SuperCategoryActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.profile:
+                        startActivity(new Intent(SuperCategoryActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.search:
+                        startActivity(new Intent(SuperCategoryActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.home:
+                        startActivity(new Intent(SuperCategoryActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                }
+                return false;
+            }
+        });
         back.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

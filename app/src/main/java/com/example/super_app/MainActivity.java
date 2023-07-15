@@ -4,55 +4,30 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageButton;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.DatabaseHelper;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
-import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
-//    BottomNavigationView bottomNavigationView;
-//    HomeFragment home = new HomeFragment();
-//    NewOrderFragment newOrder = new NewOrderFragment();
-//    UserFragment userFragment = new UserFragment();
+    BottomNavigationView bottomNavigationView;
+    HomeFragment home = new HomeFragment();
+    OrderFragment newOrder = new OrderFragment();
+    UserFragment profile = new UserFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Intent intent=new Intent(MainActivity.this,LoginActivity.class);
-        startActivity(intent);
-
-
-//        bottomNavigationView = findViewById(R.id.bottomNavigationView);
-//        bottomNavigationView.setOnItemSelectedListener(this);
-//        bottomNavigationView.setSelectedItemId(R.id.home);
-//
-//        if(bottomNavigationView.getSelectedItemId() == R.id.home) {
-//            // System.out.println("In Home: ");
-//        }
-
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.home);
 
 
     }
@@ -60,15 +35,26 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
-//            case R.id.new_order:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, newOrder).commit();
-//                return true;
-//            case R.id.home:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, home).commit();
-//                return true;
-//            case R.id.account:
-//                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, userFragment).commit();
-//                return true;
+            case R.id.new_order:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, newOrder).commit();
+                return true;
+            case R.id.home:
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, home).commit();
+                return true;
+            case R.id.profile:
+                // Navigate to user profile
+                getSupportFragmentManager().beginTransaction().replace(R.id.flFragment, profile).commit();
+                return true;
+            case R.id.cart:
+                // Navigate to cartActivity
+                startActivity(new Intent(MainActivity.this, CartActivity.class));
+                finish();
+                return true;
+            case R.id.search:
+                // Navigate to cartActivity
+                startActivity(new Intent(MainActivity.this, SuperCategoryActivity.class));
+                finish();
+                return true;
 
         }
 

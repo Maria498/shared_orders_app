@@ -8,22 +8,24 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.widget.SearchView;
 
-import android.widget.TextView;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.example.super_app.db.CartProductAdapter;
 import com.example.super_app.db.DatabaseHelper;
-import com.example.super_app.db.OrderAdapter;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -33,7 +35,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class cartActivity extends AppCompatActivity implements DeleteOrderInterface {
+public class CartActivity extends AppCompatActivity implements DeleteOrderInterface {
     private SearchView searchView;
     private RecyclerView recyclerView;
     private FirebaseFirestore db;
@@ -41,13 +43,13 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
     private List<Product> products = new ArrayList<>();
     private CartProductAdapter cardProductAdapter;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         searchView = findViewById(R.id.searchView);
         recyclerView = findViewById(R.id.recyclerView);
+        BottomNavigationView menu = findViewById(R.id.menu);
 
         LinearLayoutManager llm = new LinearLayoutManager(this);
         llm.setOrientation(LinearLayoutManager.VERTICAL);
@@ -58,6 +60,31 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
 
         Context context = getApplicationContext();
         DatabaseHelper dbHelper = new DatabaseHelper(context);
+        menu.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cart:
+                        startActivity(new Intent(CartActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.profile:
+                        startActivity(new Intent(CartActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.search:
+                        startActivity(new Intent(CartActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.home:
+                        startActivity(new Intent(CartActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                }
+                return false;
+            }
+        });
+
         db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -75,7 +102,7 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
                             }
                         }
                     }
-                    cardProductAdapter = new CartProductAdapter(products, cartActivity.this, cartActivity.this);
+                    cardProductAdapter = new CartProductAdapter(products, CartActivity.this, CartActivity.this);
                     recyclerView.setAdapter(cardProductAdapter);
                 }
 
@@ -127,7 +154,7 @@ public class cartActivity extends AppCompatActivity implements DeleteOrderInterf
         AlertDialog.Builder builder = null;
         Context context = getApplicationContext();
         DatabaseHelper dbHelper = new DatabaseHelper(context);
-        builder = new AlertDialog.Builder(cartActivity.this);
+        builder = new AlertDialog.Builder(CartActivity.this);
         // 2. Chain together various setter methods to set the dialog characteristics
         builder.setMessage(R.string.getoutProduct);
         builder.setTitle(R.string.dialog_title);

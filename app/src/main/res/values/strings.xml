@@ -156,5 +156,8 @@
     <string name="expirationdate">Expiration Date</string>
     <string name="CVV">CVV</string>
     <string name="pay">Pay</string>
+    <string name="orders">Orders</string>
+    <string name="create_order">Create Order</string>
+    <string name="open_orders">Open Orders</string>
 
 </resources>
