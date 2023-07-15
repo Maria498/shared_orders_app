@@ -19,7 +19,7 @@
             android:name=".PaymentActivity"
             android:exported="false" />
         <activity
-            android:name=".cartActivity"
+            android:name=".CartActivity"
             android:exported="false" />
         <activity
             android:name=".SharedOrderActivity"

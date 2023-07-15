@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,6 +46,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -112,7 +114,7 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
         birthDate.setFocusableInTouchMode(false);
 
         mAuth = FirebaseAuth.getInstance();
-        String uid = mAuth.getCurrentUser().getUid();
+//        String uid = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
 
         //sqlite instance
@@ -129,6 +131,31 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
 
         orderSameAddress = new ArrayList<>();
         yourOrders = new ArrayList<>();
+
+        menu.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cart:
+                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.profile:
+                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.search:
+                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.home:
+                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                }
+                return false;
+            }
+        });
         db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -168,57 +195,57 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
                                     });
 
                         } else {
-                            db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if (mAuth.getUid().equals(doc.getId())) {
-                                            yourOrders.add(order);
-                                        } else {
-                                            DocumentSnapshot document = task.getResult();
-                                            HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
-                                            String city = ((String) map.get("userAdd")).split(",")[0];
-                                            String street = ((String) map.get("userAdd")).split(",")[1];
-                                            if ((order.getAddress().split(",")[0]).equals(city)) {
-                                                if ((order.getAddress().split(",")[1]).equals(street)) {
-                                                    orderSameAddress.add(order);
-                                                    if (order.getProductsOfNeigh() != null) {
-                                                        HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
-                                                        if (list.containsKey(mAuth.getUid())) {
-                                                            yourOrders.add(order);
-                                                            if (orderSameAddress.contains(order)) {
-                                                                orderSameAddress.remove(order);
-                                                            }
-
-                                                        }
-                                                    }
-
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        Log.d("get failed with ", String.valueOf(task.getException()));
-                                    }
-
-                                    if (!orderSameAddress.isEmpty()) {
-                                        allOrderMessage.setVisibility(View.GONE);
-                                        orderSameAddress.size();
-                                        orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this);
-                                        recOrder.setAdapter(orderAdapter);
-                                    } else {
-                                        allOrderMessage.setVisibility(View.VISIBLE);
-                                    }
-
-                                    if (!yourOrders.isEmpty()) {
-                                        ownOrderMessage.setVisibility(View.GONE);
-                                        ownerOrderAdapter = new OwnerOrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this);
-                                        recOwnOrders.setAdapter(ownerOrderAdapter);
-                                    } else {
-                                        ownOrderMessage.setVisibility(View.VISIBLE);
-                                    }
-                                }
-
-                            });
+//                            db.collection("users").document(uid).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+//                                    if (task.isSuccessful()) {
+//                                        if (mAuth.getUid().equals(doc.getId())) {
+//                                            yourOrders.add(order);
+//                                        } else {
+//                                            DocumentSnapshot document = task.getResult();
+//                                            HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
+//                                            String city = ((String) map.get("userAdd")).split(",")[0];
+//                                            String street = ((String) map.get("userAdd")).split(",")[1];
+//                                            if ((order.getAddress().split(",")[0]).equals(city)) {
+//                                                if ((order.getAddress().split(",")[1]).equals(street)) {
+//                                                    orderSameAddress.add(order);
+//                                                    if (order.getProductsOfNeigh() != null) {
+//                                                        HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
+//                                                        if (list.containsKey(mAuth.getUid())) {
+//                                                            yourOrders.add(order);
+//                                                            if (orderSameAddress.contains(order)) {
+//                                                                orderSameAddress.remove(order);
+//                                                            }
+//
+//                                                        }
+//                                                    }
+//
+//                                                }
+//                                            }
+//                                        }
+//                                    } else {
+//                                        Log.d("get failed with ", String.valueOf(task.getException()));
+//                                    }
+//
+//                                    if (!orderSameAddress.isEmpty()) {
+//                                        allOrderMessage.setVisibility(View.GONE);
+//                                        orderSameAddress.size();
+//                                        orderAdapter = new OrderAdapter(orderSameAddress, ProfileActivity.this, ProfileActivity.this);
+//                                        recOrder.setAdapter(orderAdapter);
+//                                    } else {
+//                                        allOrderMessage.setVisibility(View.VISIBLE);
+//                                    }
+//
+//                                    if (!yourOrders.isEmpty()) {
+//                                        ownOrderMessage.setVisibility(View.GONE);
+//                                        ownerOrderAdapter = new OwnerOrderAdapter(yourOrders, ProfileActivity.this, ProfileActivity.this);
+//                                        recOwnOrders.setAdapter(ownerOrderAdapter);
+//                                    } else {
+//                                        ownOrderMessage.setVisibility(View.VISIBLE);
+//                                    }
+//                                }
+//
+//                            });
 
                         }
                     }
@@ -234,13 +261,13 @@ public class ProfileActivity extends AppCompatActivity implements DeleteOrderInt
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot doc : task.getResult()) {
-                        if (doc.getId().equals(uid)) {
-                            userName.setText("" + doc.getData().get("userName"));
-                            userEmail.setText("" + doc.getData().get("userEmail"));
-                            emailField1 = (String) doc.getData().get("userEmail");
-                            birthDate.setText("" + doc.get("birthdate"));
-                            birthdateField1 = (String) doc.get("birthdate");
-                        }
+//                        if (doc.getId().equals(uid)) {
+//                            userName.setText("" + doc.getData().get("userName"));
+//                            userEmail.setText("" + doc.getData().get("userEmail"));
+//                            emailField1 = (String) doc.getData().get("userEmail");
+//                            birthDate.setText("" + doc.get("birthdate"));
+//                            birthdateField1 = (String) doc.get("birthdate");
+//                        }
                     }
                 }
             }

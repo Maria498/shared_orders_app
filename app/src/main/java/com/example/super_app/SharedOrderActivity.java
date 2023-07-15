@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -24,6 +25,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -47,6 +50,7 @@ public class SharedOrderActivity extends AppCompatActivity {
     private String userStreet, userApart, selectedDate, userName, phoneNum;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
+    private BottomNavigationView menu;
     boolean isOpen=false;
 
     @Override
@@ -62,14 +66,37 @@ public class SharedOrderActivity extends AppCompatActivity {
         street = findViewById(R.id.Street);
         apartmentNum = findViewById(R.id.ApartmentNum);
         continueBtn = findViewById(R.id.continueBtn);
+        menu = findViewById(R.id.menu);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
         Context context = getApplicationContext();
         DatabaseHelper dbHelper = new DatabaseHelper(context);
-
-
+        menu.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.cart:
+                        startActivity(new Intent(SharedOrderActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.profile:
+                        startActivity(new Intent(SharedOrderActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.search:
+                        startActivity(new Intent(SharedOrderActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                    case R.id.home:
+                        startActivity(new Intent(SharedOrderActivity.this, MainActivity.class));
+                        finish(); // Optional: Close the current activity
+                        return true;
+                }
+                return false;
+            }
+        });
         dateCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

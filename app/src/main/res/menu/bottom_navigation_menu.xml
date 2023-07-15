@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-
+    <item
+        android:id="@+id/home"
+        android:enabled="true"
+        android:icon="@drawable/outline_home_24"
+        android:title="Home"/>
     <item
         android:id="@+id/cart"
         android:enabled="true"
-        android:icon="@drawable/outline_shopping_bag_24"
+        android:icon="@drawable/baseline_shopping_cart_24"
         android:title="Cart"/>
 
     <item
@@ -14,22 +18,15 @@
         android:icon="@drawable/outline_person_24"
         android:title="Profile"/>
     <item
-        android:id="@+id/menu"
+        android:id="@+id/new_order"
         android:enabled="true"
-        android:title="Menu"
-        app:showAsAction="always"
+        android:title="Order"
+        android:icon="@drawable/outline_shopping_bag_24"
         />
     <item
-        android:id="@+id/Search"
+        android:id="@+id/search"
         android:enabled="true"
         android:icon="@drawable/outline_search_24"
         android:title="Search"/>
-    <item
-        android:id="@+id/Home"
-        android:enabled="true"
-        android:icon="@drawable/outline_home_24"
-        android:title="Home"/>
-
-
 
 </menu>

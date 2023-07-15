@@ -35,14 +35,11 @@ public class UserFragment extends Fragment {
         backBtn = view.findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-        buttonOrderHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Handle button click for order history
-                // Add your code here
-            }
+        buttonOrderHistory.setOnClickListener(v -> {
+            // Handle button click for order history
+            // Add your code here
         });
-
+        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(ProfileActivity.class));
         DisplaySavedText();
 
         return view;
