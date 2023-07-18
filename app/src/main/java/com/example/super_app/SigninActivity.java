@@ -101,11 +101,24 @@ public class SigninActivity extends AppCompatActivity {
                 DatePickerDialog pickerDialog = new DatePickerDialog(SigninActivity.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-                        dateCal.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
-                        date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        Calendar selectedDate = Calendar.getInstance();
+                        selectedDate.set(Calendar.YEAR, year);
+                        selectedDate.set(Calendar.MONTH, monthOfYear);
+                        selectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                        Calendar currentDate = Calendar.getInstance();
+
+                        if (selectedDate.getTimeInMillis() > currentDate.getTimeInMillis()) {
+                            // Selected date is in the future
+                            Toast.makeText(SigninActivity.this, "Please select a valid birth date.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            dateCal.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            date = dayOfMonth + "/" + (monthOfYear + 1) + "/" + year;
+                        }
                     }
                 }, year, month, day);
                 pickerDialog.show();
+
             }
         });
 

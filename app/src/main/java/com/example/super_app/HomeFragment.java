@@ -134,6 +134,7 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
+        logOutBtn.setVisibility(View.INVISIBLE);
         DisplaySavedText();
         return view;
     }
@@ -170,7 +171,8 @@ public class HomeFragment extends Fragment {
         //-------store data--------
         //String storedUserName = sharedPref.getString(getString(R.string.log_in), null);
     }
-
+    //data store
+    //logout logic
     @SuppressLint("LongLogTag")
     private void DisplaySavedText() {
         //Reading values from shared preference
@@ -203,6 +205,9 @@ public class HomeFragment extends Fragment {
                                     logOutBtn.setVisibility(View.INVISIBLE);
                                     logInBtn.setEnabled(true);
                                     logInBtn.setText("Log In");
+                                    //after logout, go to login
+                                    Intent i = new Intent(getContext(),  LoginActivity.class);
+                                    startActivity(i);
                                 }
                             })
                             .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
