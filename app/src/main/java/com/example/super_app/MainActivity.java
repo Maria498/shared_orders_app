@@ -16,10 +16,10 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
-    BottomNavigationView bottomNavigationView;
-    HomeFragment home = new HomeFragment();
-    OrderFragment newOrder = new OrderFragment();
-    UserFragment profile = new UserFragment();
+    private BottomNavigationView bottomNavigationView;
+    private HomeFragment home = new HomeFragment();
+    private OrderFragment newOrder = new OrderFragment();
+    private UserFragment profile = new UserFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -1,6 +1,13 @@
 package com.example.super_app;
 
+
+
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -11,15 +18,18 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 
 import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.FireBaseHelper;
 
 import java.util.ArrayList;
 
@@ -27,6 +37,7 @@ public class HomeFragment extends Fragment {
 
 
     private Button logInBtn;
+    private Button logOutBtn;
 
     private RecyclerView recyclerViewAddresses;
     private RecyclerView recyclerViewCategories;
@@ -38,11 +49,11 @@ public class HomeFragment extends Fragment {
 
     private ImageButton shoppingCart;
     private FrameLayout fragmentContainer;
-    FragmentTransaction fragmentTransaction = null;
-    shoppingCartFragment fragment = null;
+    private FragmentTransaction fragmentTransaction = null;
+    private shoppingCartFragment fragment = null;
 
     private boolean isFragmentOpen = false;
-    FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -59,6 +70,7 @@ public class HomeFragment extends Fragment {
         recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
         shoppingCart = view.findViewById(R.id.shoppingCartIcon);
         fragmentContainer = view.findViewById(R.id.fragmentContainer);
+        logOutBtn = view.findViewById(R.id.logOutBtn);
 
         cardsList = new ArrayList<>();
         cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
@@ -122,16 +134,99 @@ public class HomeFragment extends Fragment {
                 }
             }
         });
-
+        DisplaySavedText();
         return view;
     }
 
     private void moveToActivity (Class<?> cls) {
-
         Intent i = new Intent(getActivity(),  cls);
         startActivity(i);
+    }
+
+    public void onResume() {
+        super.onResume();
+        Intent intent = getActivity().getIntent();
+        String userName = intent.getStringExtra("USER_NAME");
+
+        if(userName != null && FireBaseHelper.getCurrentUser() != null ){
+            Log.d("i am onResume()", "i am onResume()");
+            DisplayAndSaveUserName(userName);
+        }
 
     }
+
+    @SuppressLint("LongLogTag")
+    private void DisplayAndSaveUserName(String userName) {
+        //Display the text
+        logInBtn.setText("Hey, "+userName);
+
+        //-------store data--------
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        //write data to shared perf
+        SharedPreferences.Editor editor =sharedPref.edit();
+        editor.putString("userName","Hey, "+ userName);
+        editor.commit();
+        Log.d("i am DisplayAndSaveUserName(String userName)", "i am DisplayAndSaveUserName(String userName)");
+        //-------store data--------
+        //String storedUserName = sharedPref.getString(getString(R.string.log_in), null);
+    }
+
+    @SuppressLint("LongLogTag")
+    private void DisplaySavedText() {
+        //Reading values from shared preference
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        String defaultText = sharedPref.getString("userName","Log In");
+        //logInBtn.setEnabled(true);
+        logInBtn.setText(defaultText);
+
+        if(defaultText!="Log In") {
+            logOutBtn.setVisibility(View.VISIBLE);
+            logInBtn.setEnabled(false);
+            Log.d("i am defaultText!=Log In", "i am defaultText!=Log In");
+            logOutBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setTitle("Logout")
+                            .setMessage("Are you sure you want to Log Out?")
+                            .setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    // Remove user name from SharedPreferences
+                                    SharedPreferences preferences = getActivity().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = preferences.edit();
+                                    editor.remove("userName");
+                                    editor.apply();
+                                    FireBaseHelper.logOutUser();
+                                    Toast.makeText(getContext(), "Successfully logged out.",
+                                            Toast.LENGTH_SHORT).show();
+                                    logOutBtn.setVisibility(View.INVISIBLE);
+                                    logInBtn.setEnabled(true);
+                                    logInBtn.setText("Log In");
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Toast.makeText(getContext(), "You are still logged in.",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .setCancelable(false)
+                            .show();
+                }
+            });
+        }
+        else {
+            //Toast.makeText(getContext(),"Hello, Please log in or sign in for using the app :)",Toast.LENGTH_SHORT).show();
+            Intent i = new Intent(getContext(),  LoginActivity.class);
+            String userName=null;
+            i.putExtra("USER_NAME", userName);
+            //startActivity(i);
+        }
+    }
+
+
 
 
 }

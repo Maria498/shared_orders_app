@@ -5,6 +5,7 @@ import static android.content.ContentValues.TAG;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteConstraintException;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,6 +32,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -50,7 +53,7 @@ public class SigninActivity extends AppCompatActivity {
     private EditText email;
     private EditText password;
     private EditText rePassword;
-    TextView dateCal;
+    private TextView dateCal;
     private EditText street;
     private EditText apartmentNum;
     private Spinner city;
@@ -62,6 +65,7 @@ public class SigninActivity extends AppCompatActivity {
     private String userEmail, userPassword, userRePassword, userName1, userAdd, userStreet, userApart,date ;
     private User user;
     private HashMap<String, Object> userMap = new HashMap<>();
+    private SharedPreferences sharedPref;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +84,12 @@ public class SigninActivity extends AppCompatActivity {
         street = findViewById(R.id.Street);
         apartmentNum = findViewById(R.id.ApartmentNum);
         backBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+
+        if (currentUser != null) {
+            currentUser.reload();
+        }
+        sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         dateCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,31 +114,16 @@ public class SigninActivity extends AppCompatActivity {
         signInBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(addUserToDB())
-                {
-                mAuth.createUserWithEmailAndPassword(userEmail,userPassword).addOnSuccessListener(new OnSuccessListener<AuthResult>() {
-                    @Override
-                    public void onSuccess(AuthResult authResult) {
-                        firestore = FirebaseFirestore.getInstance();
-                        firestore.collection("users").document(mAuth.getUid()).set(userMap).addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void unused) {
-                                Toast.makeText(SigninActivity.this, "User created successfully", Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(SigninActivity.this, LoginActivity.class);
-                                startActivity(i);
-                            }
-                        });
-                    }
-                });
-            }
+                saveUserToDB();
+
             }
         });
-
-
-
     }
 
-    private boolean addUserToDB() {
+
+
+
+    private void saveUserToDB() {
         userEmail = email.getText().toString();
         userPassword = password.getText().toString();
         userName1 = userName.getText().toString();
@@ -139,57 +134,101 @@ public class SigninActivity extends AppCompatActivity {
         if (userName1.isEmpty() || userName1.length() < 1 || !userName1.matches("[a-zA-Z\\s]+")) {
             userName.setError("User name is required");
             userName.requestFocus();
-            return false;// Stop further processing
+            return;
+            // Stop further processing
         }
-        else if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
+        if (userEmail.isEmpty() || (!(userEmail.matches("^([a-zA-Z0-9_\\-\\.]+)@([a-zA-Z0-9_\\-\\.]+)\\.([a-zA-Z]{2,5})$")))) {
             email.setError("Email is required");
             email.requestFocus();
-            return false; // Stop further processing
+            return; // Stop further processing
         }
-        else if (userPassword.isEmpty() || userRePassword.isEmpty()&&userPassword.length()<7) {
+        if (userPassword.isEmpty() || userRePassword.isEmpty()&&userPassword.length()<7) {
             password.setError("Password is required and should contain 7 characters");
             password.requestFocus();
-            return false;
+            return;
         }
-        else if (!userRePassword.equals(userPassword)) {
+        if (!userRePassword.equals(userPassword)) {
             rePassword.setError("password dont match!");
             rePassword.requestFocus();
-            return false;
+            return;
         }
-        else if (city == null || city.getSelectedItem() == null ||city.getSelectedItem().equals("Filter By city")|| city.getSelectedItem().toString().isEmpty()) {
+       if (city == null || city.getSelectedItem() == null ||city.getSelectedItem().equals("Filter By city")|| city.getSelectedItem().toString().isEmpty()) {
             Toast.makeText(context, "Please choose a city", Toast.LENGTH_SHORT).show();
-            return false;
+            return;
         }
-       else if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z]+")) {
+       if (userStreet.isEmpty() || !userStreet.matches("[a-zA-Z]+")) {
             street.setError("Street is required");
             street.requestFocus();
-            return false;
+            return;
         }
-        else if (userApart.isEmpty()|| !userApart.matches("\\d+")) {
+        if (userApart.isEmpty()|| !userApart.matches("\\d+")) {
             apartmentNum.setError("Apartment num  is required");
             apartmentNum.requestFocus();
-            return false;
+            return;
         }
-        else if(!checkDate())
+        if(!checkDate())
         {
             dateCal.setError("Invalid Date");
             dateCal.requestFocus();
-            return false;
-        }
-        else {
-            userAdd = city.getSelectedItem().toString() + "," +userStreet + "," + userApart;
-            user = new User(userName1, userEmail, userPassword, userAdd,date);
-            userMap.put("userName", userName1);
-            userMap.put("userEmail", userEmail);
-            userMap.put("userPassword", userPassword);
-            userMap.put("userAdd", userAdd);
-            userMap.put("birthdate",date );
-
-            return true;
+            return;
         }
 
+        userAdd = city.getSelectedItem().toString() + "," +userStreet + "," + userApart;
+        user = new User(userName1, userEmail, userPassword, userAdd,date);
+        userMap.put("userName", userName1);
+        userMap.put("userEmail", userEmail);
+        userMap.put("userPassword", userPassword);
+        userMap.put("userAdd", userAdd);
+        userMap.put("birthdate",date );
+
+
+        mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "createUserWithEmail:success");
+                            Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            //updating name of user
+                            //to-do: add welcome message
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(userName1)
+                                    .build();
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "User profile updated.");
+
+                                            } else
+                                                Log.d(TAG, "User profile update failed.");
+                                        }
+                                    });
+
+                            //email sanding
+                            user.sendEmailVerification()
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Log.d(TAG, "Email sent.");
+//                                                    moveToActivity(MainActivity.class);
+                                                String userName = FireBaseHelper.getCurrentUser();
+                                                Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                                                i.putExtra("USER_NAME", userName);
+                                                startActivity(i);
+                                            } else
+                                                Log.d(TAG, "Email not sent.");
+                                        }
+                                    });
+
+                        }
+                    }
+                });
     }
-
     private void moveToActivity(Class<?> cls) {
 
         Intent i = new Intent(getApplicationContext(), cls);
@@ -198,9 +237,9 @@ public class SigninActivity extends AppCompatActivity {
 
     }
     private String setDate(TextView dateCal) {
-        Date hrini = Calendar.getInstance().getTime();
+        Date date1 = Calendar.getInstance().getTime();
         SimpleDateFormat format = new SimpleDateFormat("d MMM yyyy");
-        String date = format.format(hrini);
+        String date = format.format(date1);
         dateCal.setText(date);
         return date;
 

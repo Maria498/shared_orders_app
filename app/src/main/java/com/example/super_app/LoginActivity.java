@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
 import com.facebook.Profile;
@@ -25,6 +27,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
@@ -37,11 +40,10 @@ public class LoginActivity extends AppCompatActivity {
     private TextView linkSignUp;
     private EditText email;
     private EditText password;
-   private DatabaseHelper db;
+    private DatabaseHelper db;
     private Context context;
-    private ArrayList<User> usersFromDB;
-
     private ProgressDialog mLoadingBar;
+    private SharedPreferences sharedPref;
 
 
     @Override
@@ -55,8 +57,11 @@ public class LoginActivity extends AppCompatActivity {
         linkSignUp = findViewById(R.id.linkSignUp);
         auth = FirebaseAuth.getInstance();
         mLoadingBar = new ProgressDialog(this);
-
-
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if(currentUser != null){
+            currentUser.reload();
+        }
+        sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         logInBtn.setOnClickListener((new View.OnClickListener() {
 
             @Override
@@ -90,8 +95,11 @@ public class LoginActivity extends AppCompatActivity {
                                 if (task.isSuccessful()) {
 //                                    String userName = auth.getCurrentUser().getDisplayName();
 //                                    Log.d("userName",userName);
+                                    //FireBaseHelper
+                                    String userName = FireBaseHelper.getCurrentUser();
                                     Toast.makeText(LoginActivity.this, "Welcome", Toast.LENGTH_SHORT).show();
-                                    Intent i = new Intent(getApplicationContext(), SharedOrderActivity.class);
+                                    Intent i = new Intent(getApplicationContext(),  MainActivity.class);
+                                    i.putExtra("USER_NAME", userName);
                                     startActivity(i);
                                 } else {
                                     mLoadingBar.hide();

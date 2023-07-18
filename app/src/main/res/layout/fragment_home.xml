@@ -19,6 +19,19 @@
         android:textStyle="bold"
         app:backgroundTint="@color/white"
         app:cornerRadius="35dp" />
+
+    <Button
+        android:id="@+id/logOutBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="36dp"
+        android:text="@string/logOut"
+        android:textColor="@color/text"
+        android:textStyle="bold"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="35dp" />
+
     <ImageButton
         android:id="@+id/shoppingCartIcon"
         android:layout_width="wrap_content"
