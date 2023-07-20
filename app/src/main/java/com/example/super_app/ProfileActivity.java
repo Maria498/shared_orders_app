@@ -5,13 +5,11 @@ import static android.content.ContentValues.TAG;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -32,13 +30,11 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -55,8 +51,6 @@ public class ProfileActivity extends AppCompatActivity {
     private TextView allOrderMessage;
     private TextView ownOrderMessage;
     private EditText userEmail, birthDate;
-    private RecyclerView recOrder;
-    private RecyclerView recOwnOrders;
     private List<Order> hostList = new ArrayList<>();
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
@@ -79,8 +73,8 @@ public class ProfileActivity extends AppCompatActivity {
         iconEdit = findViewById(R.id.icon);
         userEmail = findViewById(R.id.userEmail);
         birthDate = findViewById(R.id.birthDateEditTxt);
-        recOrder = findViewById(R.id.recOrders);
-        recOwnOrders = findViewById(R.id.recYourOrders);
+        RecyclerView recOrder = findViewById(R.id.recOrders);
+        RecyclerView recOwnOrders = findViewById(R.id.recYourOrders);
         Button addOrder = findViewById(R.id.btnOpenOrder);
         BottomNavigationView menu = findViewById(R.id.menu);
         ownOrderMessage = findViewById(R.id.ownOrderDefualtText);
@@ -94,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
         birthDate.setFocusableInTouchMode(false);
 
         mAuth = FirebaseAuth.getInstance();
-//        String uid = mAuth.getCurrentUser().getUid();
+        String uid = mAuth.getCurrentUser().getUid();
         db = FirebaseFirestore.getInstance();
 
         //sqlite instance
@@ -112,125 +106,114 @@ public class ProfileActivity extends AppCompatActivity {
         orderSameAddress = new ArrayList<>();
         yourOrders = new ArrayList<>();
 
-        menu.setOnItemSelectedListener(new NavigationBarView.OnItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                switch (item.getItemId()) {
-                    case R.id.cart:
-                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                        finish(); // Optional: Close the current activity
-                        return true;
-                    case R.id.profile:
-                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                        finish(); // Optional: Close the current activity
-                        return true;
-                    case R.id.search:
-                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                        finish(); // Optional: Close the current activity
-                        return true;
-                    case R.id.home:
-                        startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                        finish(); // Optional: Close the current activity
-                        return true;
-                }
-                return false;
+        menu.setOnItemSelectedListener(item -> {
+            switch (item.getItemId()) {
+                case R.id.cart:
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish(); // Optional: Close the current activity
+                    return true;
+                case R.id.profile:
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish(); // Optional: Close the current activity
+                    return true;
+                case R.id.search:
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish(); // Optional: Close the current activity
+                    return true;
+                case R.id.home:
+                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+                    finish(); // Optional: Close the current activity
+                    return true;
             }
+            return false;
         });
-        db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    orderSameAddress.clear();
-                    yourOrders.clear();
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Order order = doc.toObject(Order.class);
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String orderDate = order.getDeliveryDate(); // Assuming this is the order date string
-                        Date currentDateObj = null;
-                        Date orderDateObj = null;
-                        try {
-                            currentDateObj = dateFormat.parse(currentDate);
-                            orderDateObj = dateFormat.parse(orderDate);
-                        } catch (ParseException e) {
-                            throw new RuntimeException(e);
-                        }
-                        //delete orders that delivery date has passed
-                        if (orderDateObj.compareTo(currentDateObj) < 0) {
-                           //todo fix
-                            //dbHelperSQL.deleteOrder(order);
+        db.collection("Orders").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                orderSameAddress.clear();
+                yourOrders.clear();
+                for (QueryDocumentSnapshot doc : task.getResult()) {
+                    Order order = doc.toObject(Order.class);
+                    Calendar calendar = Calendar.getInstance();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+                    String currentDate = dateFormat.format(calendar.getTime());
+                    String orderDate = order.getDeliveryDate(); // Assuming this is the order date string
+                    Date currentDateObj = null;
+                    Date orderDateObj = null;
+                    try {
+                        currentDateObj = dateFormat.parse(currentDate);
+                        orderDateObj = dateFormat.parse(orderDate);
+                    } catch (ParseException e) {
+                        throw new RuntimeException(e);
+                    }
+                    //delete orders that delivery date has passed
+                    if (orderDateObj.compareTo(currentDateObj) < 0) {
+                       //todo fix
+                        //dbHelperSQL.deleteOrder(order);
 
-                            db.collection("Orders").document(doc.getId()).delete()
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Log.d(TAG, "DocumentSnapshot successfully deleted!");
-                                        }
-                                    })
-                                    .addOnFailureListener(new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            Log.w(TAG, "Error deleting document", e);
-                                        }
-                                    });
+                        db.collection("Orders").document(doc.getId()).delete()
+                                .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully deleted!"))
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w(TAG, "Error deleting document", e);
+                                    }
+                                });
 
-                        } else {
-                            db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                                    if (task.isSuccessful()) {
-                                        if (mAuth.getUid().equals(doc.getId())) {
-                                            yourOrders.add(order);
-                                        } else {
-                                            DocumentSnapshot document = task.getResult();
-                                            HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
-                                            String city = ((String) map.get("userAdd")).split(",")[0];
-                                            String street = ((String) map.get("userAdd")).split(",")[1];
-                                            if ((order.getAddress().split(",")[0]).equals(city)) {
-                                                if ((order.getAddress().split(",")[1]).equals(street)) {
-                                                    orderSameAddress.add(order);
-                                                    if (order.getProductsOfNeigh() != null) {
-                                                        HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
-                                                        if (list.containsKey(mAuth.getUid())) {
-                                                            yourOrders.add(order);
-                                                            if (orderSameAddress.contains(order)) {
-                                                                orderSameAddress.remove(order);
-                                                            }
-
+                    } else {
+                        db.collection("users").document(mAuth.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if (task.isSuccessful()) {
+                                    if (mAuth.getUid().equals(doc.getId())) {
+                                        yourOrders.add(order);
+                                    } else {
+                                        DocumentSnapshot document = task.getResult();
+                                        HashMap<String, Object> map = (HashMap<String, Object>) document.getData();
+                                        String city = ((String) map.get("userAdd")).split(",")[0];
+                                        String street = ((String) map.get("userAdd")).split(",")[1];
+                                        if ((order.getAddress().split(",")[0]).equals(city)) {
+                                            if ((order.getAddress().split(",")[1]).equals(street)) {
+                                                orderSameAddress.add(order);
+                                                if (order.getProductsOfNeigh() != null) {
+                                                    HashMap<String, ArrayList<Product>> list = order.getProductsOfNeigh();
+                                                    if (list.containsKey(mAuth.getUid())) {
+                                                        yourOrders.add(order);
+                                                        if (orderSameAddress.contains(order)) {
+                                                            orderSameAddress.remove(order);
                                                         }
-                                                    }
 
+                                                    }
                                                 }
+
                                             }
                                         }
-                                    } else {
-                                        Log.d("get failed with ", String.valueOf(task.getException()));
                                     }
-
-                                    if (!orderSameAddress.isEmpty()) {
-                                        allOrderMessage.setVisibility(View.GONE);
-                                        orderSameAddress.size();
-
-                                    } else {
-                                        allOrderMessage.setVisibility(View.VISIBLE);
-                                    }
-
-                                    if (!yourOrders.isEmpty()) {
-                                        ownOrderMessage.setVisibility(View.GONE);
-
-                                    } else {
-                                        ownOrderMessage.setVisibility(View.VISIBLE);
-                                    }
+                                } else {
+                                    Log.d("get failed with ", String.valueOf(task.getException()));
                                 }
 
-                            });
+                                if (!orderSameAddress.isEmpty()) {
+                                    allOrderMessage.setVisibility(View.GONE);
+                                    orderSameAddress.size();
 
-                        }
+                                } else {
+                                    allOrderMessage.setVisibility(View.VISIBLE);
+                                }
+
+                                if (!yourOrders.isEmpty()) {
+                                    ownOrderMessage.setVisibility(View.GONE);
+
+                                } else {
+                                    ownOrderMessage.setVisibility(View.VISIBLE);
+                                }
+                            }
+
+                        });
+
                     }
-
-
                 }
+
+
             }
         });
 
@@ -310,12 +293,7 @@ public class ProfileActivity extends AppCompatActivity {
                                         db.collection("users").document(mAuth.getUid()).update(
                                                 "userEmail", userEmail.getText().toString(),
                                                 "birthdate", birthDate.getText().toString()
-                                        ).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                Toast.makeText(ProfileActivity.this, "User information has changed", Toast.LENGTH_SHORT).show();
-                                            }
-                                        }).addOnFailureListener(new OnFailureListener() {
+                                        ).addOnSuccessListener(unused -> Toast.makeText(ProfileActivity.this, "User information has changed", Toast.LENGTH_SHORT).show()).addOnFailureListener(new OnFailureListener() {
                                             @SuppressLint("LongLogTag")
                                             @Override
                                             public void onFailure(@NonNull Exception e) {
@@ -361,58 +339,49 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle(R.string.dialog_title);
 
         // Add the buttons
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                Order currentOrder = doc.toObject(Order.class);
-                                if (currentOrder.equals(order)) {
-                                    if (order.getProductsOfNeigh() != null) {
-                                        HashMap<String, ArrayList<Product>> neigh = order.getProductsOfNeigh();
+        builder.setPositiveButton(R.string.yes, (dialog, id) -> db.collection("Orders").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (QueryDocumentSnapshot doc : task.getResult()) {
+                    Order currentOrder = doc.toObject(Order.class);
+                    if (currentOrder.equals(order)) {
+                        if (order.getProductsOfNeigh() != null) {
+                            HashMap<String, ArrayList<Product>> neigh = order.getProductsOfNeigh();
 
-                                        if (neigh.containsKey(mAuth.getUid())) {
+                            if (neigh.containsKey(mAuth.getUid())) {
 
-                                            neigh.remove(mAuth.getUid());
-                                            db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                @Override
-                                                public void onSuccess(Void unused) {
-                                                    Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
+                                neigh.remove(mAuth.getUid());
+                                db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
 
-                                                }
-                                            });
-                                        }
-                                    } else if (doc.getId().equals(mAuth.getUid())) {
-                                        order.setFullNameOwner("nobody");
-                                        db.collection("Orders").document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                            @Override
-                                            public void onSuccess(Void unused) {
-                                                db.collection("Orders").add(order).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                                    @Override
-                                                    public void onSuccess(DocumentReference documentReference) {
-                                                        Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
-
-                                                    }
-                                                });
-                                            }
-                                        });
                                     }
-                                }
-
+                                });
                             }
+                        } else if (doc.getId().equals(mAuth.getUid())) {
+                            order.setFullNameOwner("nobody");
+                            db.collection("Orders").document(doc.getId()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    db.collection("Orders").add(order).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                        @Override
+                                        public void onSuccess(DocumentReference documentReference) {
+                                            Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
 
+                                        }
+                                    });
+                                }
+                            });
                         }
                     }
-                });
-            }
-        });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Toast.makeText(getApplicationContext(), "Users cancelled the dialog", Toast.LENGTH_SHORT).show();
+
                 }
+
+            }
+        }));
+        builder.setNegativeButton(R.string.no, (dialog, id) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Toast.makeText(getApplicationContext(), "Users cancelled the dialog", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -437,64 +406,54 @@ public class ProfileActivity extends AppCompatActivity {
         builder.setTitle(R.string.dialog_title);
 
         // Add the buttons
-        builder.setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if(!yourOrders.isEmpty())
-                {
-                    Toast.makeText(getApplicationContext(), "You allready have an open order", Toast.LENGTH_SHORT).show();
-                }else {
-                    db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            if (task.isSuccessful()) {
-                                for (QueryDocumentSnapshot doc : task.getResult()) {
-                                    Order currentOrder = doc.toObject(Order.class);
-                                    if (currentOrder.equals(order)) {
-                                        HashMap<String, ArrayList<Product>> participants;
-                                        if (order.getProductsOfNeigh() == null) {
-                                            participants = new HashMap<>();
-                                        } else {
-                                            participants = order.getProductsOfNeigh();
-                                        }
-                                        participants.put(mAuth.getUid(), new ArrayList<>());
-                                        db.collection("Orders").document(doc.getId()).update("productsOfNeigh", participants).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void aVoid) {
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                            orderSameAddress.remove(order);
-                                                            //todo fix
-                                                            yourOrders.add(order);
-
-
-                                                            Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
-
-                                                        }
-
-                                                    }
-                                                })
-                                                .addOnFailureListener(new OnFailureListener() {
-                                                    @Override
-                                                    public void onFailure(@NonNull Exception e) {
-                                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                            Toast.makeText(getApplicationContext(), "There is a problem", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
-                                    }
+        builder.setPositiveButton(R.string.yes, (dialog, id) -> {
+            if(!yourOrders.isEmpty())
+            {
+                Toast.makeText(getApplicationContext(), "You allready have an open order", Toast.LENGTH_SHORT).show();
+            }else {
+                db.collection("Orders").get().addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot doc : task.getResult()) {
+                            Order currentOrder = doc.toObject(Order.class);
+                            if (currentOrder.equals(order)) {
+                                HashMap<String, ArrayList<Product>> participants;
+                                if (order.getProductsOfNeigh() == null) {
+                                    participants = new HashMap<>();
+                                } else {
+                                    participants = order.getProductsOfNeigh();
                                 }
+                                participants.put(mAuth.getUid(), new ArrayList<>());
+                                db.collection("Orders").document(doc.getId()).update("productsOfNeigh", participants).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                            @Override
+                                            public void onSuccess(Void aVoid) {
+                                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                    orderSameAddress.remove(order);
+                                                    //todo fix
+                                                    yourOrders.add(order);
 
 
+                                                    Toast.makeText(ProfileActivity.this, "unused func", Toast.LENGTH_SHORT).show();
+
+                                                }
+
+                                            }
+                                        })
+                                        .addOnFailureListener(e -> {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                                Toast.makeText(getApplicationContext(), "There is a problem", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
                             }
                         }
-                    });
-                }
+
+
+                    }
+                });
             }
         });
-        builder.setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    Toast.makeText(getApplicationContext(), "Users cancelled the dialog", Toast.LENGTH_SHORT).show();
-                }
+        builder.setNegativeButton(R.string.no, (dialog, id) -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Toast.makeText(getApplicationContext(), "Users cancelled the dialog", Toast.LENGTH_SHORT).show();
             }
         });
 
