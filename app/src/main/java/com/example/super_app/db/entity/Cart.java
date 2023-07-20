@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.HashMap;
 
 public class Cart {
-    private String cardId;
+    private String cartId;
     private Date date;
     private double total;
     private int discount;
@@ -21,16 +21,16 @@ public class Cart {
 
 
 
-    public Cart(String cardId, Date date, double price, int discount) {
-        this.cardId = cardId;
+    public Cart(String cartId, Date date, double price, int discount) {
+        this.cartId = cartId;
         this.date = date;
         this.total = price;
         this.discount = discount;
         this.productsQuantity = new HashMap<>();
     }
 
-    public void setCardId(String cardId) {
-        this.cardId = cardId;
+    public void setCartId(String cartId) {
+        this.cartId = cartId;
     }
 
     public void setDate(Date date) {
@@ -50,7 +50,7 @@ public class Cart {
     }
 
     public String getCardId() {
-        return cardId;
+        return cartId;
     }
 
     public Date getDate() {
@@ -79,7 +79,7 @@ public class Cart {
     @Override
     public String toString() {
         return "Cart{" +
-                "cardId='" + cardId + '\'' +
+                "cartId='" + cartId + '\'' +
                 ", date=" + date +
                 ", total=" + total +
                 ", discount=" + discount +

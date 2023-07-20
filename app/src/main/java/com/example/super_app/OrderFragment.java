@@ -26,7 +26,7 @@ public class OrderFragment extends Fragment {
         Button buttonCreateOrder = view.findViewById(R.id.buttonCreateOrder);
 
         backBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
-        buttonCreateOrder.setOnClickListener(v -> moveToActivity(SharedOrderActivity.class));
+        buttonCreateOrder.setOnClickListener(v -> moveToActivity(CreateNewOrderActivity.class));
         RecyclerView recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
         ArrayList<MenuModel> cardsListOrders = new ArrayList<>();
         cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
