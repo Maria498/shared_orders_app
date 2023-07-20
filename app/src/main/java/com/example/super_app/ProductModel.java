@@ -81,13 +81,5 @@ public class ProductModel {
         this.productPrice = productPrice;
     }
 
-    public Map<String, Object> toMap() {
-        Map<String, Object> map = new HashMap<>();
-        map.put("productId", productId);
-        map.put("productName", productName);
-        map.put("productImage", productImage);
-        map.put("productPrice", productPrice);
-        map.put("imageUrl", imageUrl); // Store the image URL in Firestore
-        return map;
-    }
+
 }
