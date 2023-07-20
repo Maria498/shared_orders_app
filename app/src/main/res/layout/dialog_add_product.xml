@@ -1,6 +1,6 @@
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<!-- dialog_add_product.xml -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -9,32 +9,33 @@
     <EditText
         android:id="@+id/productNameEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Name"/>
+        android:layout_height="60dp"
+        android:hint="@string/product_name" />
 
     <EditText
         android:id="@+id/productPriceEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Price"
-        android:inputType="numberDecimal"/>
+        android:layout_height="60dp"
+        android:hint="@string/product_price"
+        android:inputType="numberDecimal" />
 
     <EditText
         android:id="@+id/productCategoryEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Category"/>
+        android:layout_height="60dp"
+        android:hint="@string/product_category" />
 
     <EditText
         android:id="@+id/productDescriptionEditText"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Product Description"/>
+        android:layout_height="60dp"
+        android:hint="@string/product_description" />
 
-    <EditText
-        android:id="@+id/productImageUrlEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Image URL"/>
-
+    <ImageView
+        android:id="@+id/productImageView"
+        android:layout_width="128dp"
+        android:layout_height="127dp"
+        android:layout_gravity="center"
+        android:src="@drawable/default_image"
+        android:onClick="showImageSelection" />
 </LinearLayout>
