@@ -2,6 +2,8 @@ package com.example.super_app.db.entity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Product implements Serializable {
@@ -28,35 +30,34 @@ public class Product implements Serializable {
     private int quantity;
     private String description;
     private long id;
+    private String imageUrl;
 
-    public Product() {}
-    public Product(String name,double price,String img,String category)
-    {
-        this.name=name;
-        this.price=price;
-        this.img=img;
-        this.category=category;
-
-    }
-    public Product(String name,double price,String img,String category,String description,int discount)
-    {
-        this.name=name;
-        this.price=price;
-        this.img=img;
-        this.category=category;
-        this.description=description;
-        this.discount = discount;
-
+    public Product() {
     }
 
-    public Product( String name, String imageResId, String category, double price, int discount, int quantity,String description) {
+    public Product(String name, double price, String img, String category) {
         this.name = name;
-        this.img = imageResId;
-        this.category = category;
         this.price = price;
+        this.img = img;
+        this.category = category;
+
+    }
+
+    public Product(String name, double price, String imageUrl, String category, int discount, String description) {
+        this.name = name;
+        this.price = price;
+        this.imageUrl = imageUrl;
+        this.category = category;
         this.discount = discount;
-        this.quantity = quantity;
         this.description = description;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
     public long getId() {
         return id;
@@ -65,6 +66,7 @@ public class Product implements Serializable {
     public void setId(long id) {
         this.id = id;
     }
+
     public String getDescription() {
         return description;
     }
@@ -96,6 +98,7 @@ public class Product implements Serializable {
     public void setImg(String img) {
         this.img = img;
     }
+
     public boolean isHealthy_tag() {
         return healthy_tag;
     }
@@ -135,6 +138,7 @@ public class Product implements Serializable {
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
+
     @Override
     public String toString() {
         return "Product{" +
@@ -156,8 +160,24 @@ public class Product implements Serializable {
         return Double.compare(product.price, price) == 0 && Objects.equals(name, product.name) && Objects.equals(img, product.img) && Objects.equals(category, product.category) && Objects.equals(description, product.description);
     }
 
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(COLUMN_PRODUCT_NAME, name);
+        map.put(COLUMN_PRODUCT_PRICE, price);
+        map.put(COLUMN_PRODUCT_IMAGE, img);
+        map.put(COLUMN_PRODUCT_CATEGORY, category);
+        map.put(COLUMN_PRODUCT_DESCRIPTION, description);
+        map.put(COLUMN_PRODUCT_DISCOUNT, discount);
+        map.put("quantity", quantity); // Add the quantity attribute
+        map.put("healthy_tag", healthy_tag); // Add the healthy_tag attribute
+        map.put("ratings", ratings); // Add the ratings attribute
+        // Add other attributes if needed
+        return map;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(name, img, category, price, description);
     }
 }
+

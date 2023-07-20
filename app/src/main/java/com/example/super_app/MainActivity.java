@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 return true;
             case R.id.search:
                 // Navigate to cartActivity
-                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 finish();
                 return true;
 
