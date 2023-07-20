@@ -50,7 +50,7 @@ public class HomeFragment extends Fragment {
     private ImageButton shoppingCart;
     private FrameLayout fragmentContainer;
     private FragmentTransaction fragmentTransaction = null;
-    private shoppingCartFragment fragment = null;
+
 
     private boolean isFragmentOpen = false;
     private FragmentManager fragmentManager;
@@ -83,7 +83,7 @@ public class HomeFragment extends Fragment {
         cardsListCath = new ArrayList<>();
         cardsListCath.add(new MenuModel("Fruits", "", R.drawable.fruit));
         cardsListCath.add(new MenuModel("Veggies","", R.drawable.veggi));
-  //      cardsListCath.add(new MenuModel("Meat", "", R.drawable.meatCategory));
+        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meat));
         adapter = new MenuCardsAdapter(this.getContext(), cardsListCath);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(layoutManager1);
@@ -101,37 +101,34 @@ public class HomeFragment extends Fragment {
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
 //        DisplaySavedText();
 
-        shoppingCart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        shoppingCart.setOnClickListener(v -> {
 
-                if (isFragmentOpen) {
-                    fragmentContainer.setVisibility(View.GONE);
-                    isFragmentOpen = false;
-                } else {
-                    fragmentContainer.setVisibility(View.VISIBLE);
-                    ArrayList<ProductModel> shoppingList = new ArrayList<>();
-                    String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
-                    Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
+            if (isFragmentOpen) {
+                fragmentContainer.setVisibility(View.GONE);
+                isFragmentOpen = false;
+            } else {
+                fragmentContainer.setVisibility(View.VISIBLE);
+                ArrayList<ProductModel> shoppingList = new ArrayList<>();
+                String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
+                Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
 
 // Iterate over the cursor to retrieve all items
-                    while (cursor.moveToNext()) {
-                        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                        String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-                        int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
-                        int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
-                        shoppingList.add(new ProductModel(name, pic, price, quantity));
-                    }
+                while (cursor.moveToNext()) {
+                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+                    String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
+                    int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
+                    int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
+                    shoppingList.add(new ProductModel(name, pic, price, quantity));
+                }
 
 // Close the cursor and database connection when done
-                    fragment = new shoppingCartFragment();
-                    fragment.setItemList(shoppingList);
-                   // fragmentManager = getSupportFragmentManager();
-                    fragmentTransaction = fragmentManager.beginTransaction();
-                    fragmentTransaction.add(R.id.fragmentContainer, fragment);
-                    fragmentTransaction.commit();
-                    isFragmentOpen = true;
-                }
+//                    fragment = new shoppingCartFragment();
+//                    fragment.setItemList(shoppingList);
+//                   // fragmentManager = getSupportFragmentManager();
+//                    fragmentTransaction = fragmentManager.beginTransaction();
+//                    fragmentTransaction.add(R.id.fragmentContainer, fragment);
+//                    fragmentTransaction.commit();
+//                    isFragmentOpen = true;
             }
         });
         logOutBtn.setVisibility(View.INVISIBLE);

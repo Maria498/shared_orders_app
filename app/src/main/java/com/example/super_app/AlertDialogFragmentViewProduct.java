@@ -2,7 +2,6 @@ package com.example.super_app;
 
 import android.app.Activity;
 import android.app.DialogFragment;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,14 +23,12 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.super_app.AlertDialogFragmentListener;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -40,15 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AlertDialogFragmentViewProduct extends DialogFragment {
-    private ImageView imageView;
-    private TextView productNameTextView;
-    private TextView descriptionTextView;
-    private TextView productDescribeTextView;
     private TextView price;
-    private ImageButton plusButton;
     private TextView quantityTextView;
-    private ImageButton minusButton;
-    private Button addButton;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
     private AlertDialogFragmentListener mListener;
@@ -72,15 +62,15 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle b = getArguments();
         View v = inflater.inflate(R.layout.activity_alert_dialog_fragment_view_product, container, false);
-        imageView = v.findViewById(R.id.imgPro);
-        productNameTextView = v.findViewById(R.id.productNameTextView);
-        descriptionTextView = v.findViewById(R.id.descriptionTextView);
-        productDescribeTextView = v.findViewById(R.id.productDescribeTextView);
+        ImageView imageView = v.findViewById(R.id.imgPro);
+        TextView productNameTextView = v.findViewById(R.id.productNameTextView);
+        TextView descriptionTextView = v.findViewById(R.id.descriptionTextView);
+        TextView productDescribeTextView = v.findViewById(R.id.productDescribeTextView);
         price = v.findViewById(R.id.price);
-        plusButton = v.findViewById(R.id.pluseButton);
+        ImageButton plusButton = v.findViewById(R.id.pluseButton);
         quantityTextView = v.findViewById(R.id.digitEditText);
-        minusButton = v.findViewById(R.id.minusButton);
-        addButton = v.findViewById(R.id.addbtn);
+        ImageButton minusButton = v.findViewById(R.id.minusButton);
+        Button addButton = v.findViewById(R.id.addbtn);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -124,86 +114,71 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
                         .into(imageView);
             }
 
-            plusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int quantity = Integer.parseInt(quantityTextView.getText().toString());
-                    if (quantity < 100) {
-                        quantity++;
-                        quantityTextView.setText(String.valueOf(quantity));
-                        double newPrice = priceAfterDis * quantity;
-                        price.setText(String.valueOf(newPrice));
-                        product.setQuantity(quantity);
-                        product.setPrice(newPrice);
-                    }
+            plusButton.setOnClickListener(v1 -> {
+                int quantity = Integer.parseInt(quantityTextView.getText().toString());
+                if (quantity < 100) {
+                    quantity++;
+                    quantityTextView.setText(String.valueOf(quantity));
+                    double newPrice = priceAfterDis * quantity;
+                    price.setText(String.valueOf(newPrice));
+                    product.setQuantity(quantity);
+                    product.setPrice(newPrice);
                 }
             });
 
-            minusButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int quantity = Integer.parseInt(quantityTextView.getText().toString());
-                    if (quantity > 0) {
-                        quantity--;
-                        quantityTextView.setText(String.valueOf(quantity));
-                        double newPrice = priceAfterDis * quantity;
-                        price.setText(String.valueOf(newPrice));
-                        product.setQuantity(quantity);
-                        product.setPrice(newPrice);
-                    }
+            minusButton.setOnClickListener(v12 -> {
+                int quantity = Integer.parseInt(quantityTextView.getText().toString());
+                if (quantity > 0) {
+                    quantity--;
+                    quantityTextView.setText(String.valueOf(quantity));
+                    double newPrice = priceAfterDis * quantity;
+                    price.setText(String.valueOf(newPrice));
+                    product.setQuantity(quantity);
+                    product.setPrice(newPrice);
                 }
             });
         }
 
-        addButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String uid = mAuth.getUid();
-                db.collection("Orders").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                Order order = doc.toObject(Order.class);
-                                HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
-                                if (doc.getId().equals(mAuth.getUid()) || (neighProducts != null && neighProducts.containsKey(uid))) {
-                                    if (neighProducts == null) {
-                                        neighProducts = new HashMap<>();
-                                        listofProduct = new ArrayList<>();
-                                    } else {
-                                        listofProduct = neighProducts.get(uid);
-                                        if (listofProduct == null) {
-                                            listofProduct = new ArrayList<>();
-                                        }
-                                    }
-                                    if(product.getQuantity()==0)
-                                    {
-                                        product.setQuantity(1);
-                                    }
-                                    listofProduct.add(product);
-                                    neighProducts.put(uid, listofProduct);
-                                    order.setProductsOfNeigh(neighProducts);
-                                    db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void unused) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                                Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
-                                            }
-                                            dismiss();
-
-                                        }
-                                    });
+        addButton.setOnClickListener(view -> {
+            String uid = mAuth.getUid();
+            db.collection("Orders").get().addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot doc : task.getResult()) {
+                        Order order = doc.toObject(Order.class);
+                        HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
+                        if (doc.getId().equals(mAuth.getUid()) || (neighProducts != null && neighProducts.containsKey(uid))) {
+                            if (neighProducts == null) {
+                                neighProducts = new HashMap<>();
+                                listofProduct = new ArrayList<>();
+                            } else {
+                                listofProduct = neighProducts.get(uid);
+                                if (listofProduct == null) {
+                                    listofProduct = new ArrayList<>();
                                 }
                             }
+                            if(product.getQuantity()==0)
+                            {
+                                product.setQuantity(1);
+                            }
+                            listofProduct.add(product);
+                            neighProducts.put(uid, listofProduct);
+                            order.setProductsOfNeigh(neighProducts);
+                            db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(unused -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                    Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+                                }
+                                dismiss();
 
-                        } else {
-                            Log.e("Firebase", "Error getting order document: ", task.getException());
+                            });
                         }
                     }
-                });
 
-            }
-    });
+                } else {
+                    Log.e("Firebase", "Error getting order document: ", task.getException());
+                }
+            });
+
+        });
 
         return v;
 }

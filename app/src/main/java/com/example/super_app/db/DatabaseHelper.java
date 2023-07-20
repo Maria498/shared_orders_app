@@ -72,7 +72,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY(" + Product.COLUMN_ORDER_ID + ") REFERENCES " + TABLE_ORDER + "(" + Product.COLUMN_ID + ")"
                 + ")";
         sqLiteDatabase.execSQL(CREATE_PRODUCT_TABLE);
-
+        //todo - history orders can be extracted from here
         String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
                 + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
                 + COLUMN_CART_DATE + " TEXT,"

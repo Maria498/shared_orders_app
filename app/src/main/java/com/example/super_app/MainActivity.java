@@ -16,7 +16,6 @@ import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
-    private BottomNavigationView bottomNavigationView;
     private HomeFragment home = new HomeFragment();
     private OrderFragment newOrder = new OrderFragment();
     private UserFragment profile = new UserFragment();
@@ -25,7 +24,8 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        //todo Sql lite load
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.home);
 
@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 return true;
             case R.id.search:
                 // Navigate to cartActivity
-                startActivity(new Intent(MainActivity.this, SuperCategoryActivity.class));
+                startActivity(new Intent(MainActivity.this, MainActivity.class));
                 finish();
                 return true;
 

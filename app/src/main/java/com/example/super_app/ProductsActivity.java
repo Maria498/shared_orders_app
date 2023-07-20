@@ -1,5 +1,6 @@
 package com.example.super_app;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,9 +21,6 @@ import java.util.Objects;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
-    private ArrayList<ProductModel> productList;
-    private ProductAdapter productAdapter;
-    private Button backBtn;
     Cart cart;
 
     @Override
@@ -31,7 +29,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         setContentView(R.layout.activity_products);
         Intent intent = getIntent();
         TextView categoryName = findViewById(R.id.categoryName);
-        productList = new ArrayList<>();
+        ArrayList<ProductModel> productList = new ArrayList<>();
         if(intent.hasExtra("msg")) {
             if (Objects.equals(intent.getStringExtra("msg"), "Fruits")) {
                 categoryName.setText(R.string.fruits);
@@ -53,7 +51,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
                 productList.add(new ProductModel(2, "chicken", R.drawable.chicken, 55.99));
             }
         }
-        backBtn = findViewById(R.id.backBtn);
+        Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
 
@@ -61,7 +59,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
 
-        productAdapter = new ProductAdapter(this, productList);
+        ProductAdapter productAdapter = new ProductAdapter(this, productList);
         productAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(productAdapter);
 
@@ -73,6 +71,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         showProductDialog(product);
     }
 
+    @SuppressLint("DefaultLocale")
     private void showProductDialog(ProductModel product) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_product);
