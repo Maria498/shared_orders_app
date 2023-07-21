@@ -1,10 +1,12 @@
 <!-- dialog_add_product.xml -->
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="16dp">
+    android:padding="16dp"
+    tools:context=".AdminActivity">
 
     <EditText
         android:id="@+id/productNameEditText"
@@ -19,23 +21,25 @@
         android:hint="@string/product_price"
         android:inputType="numberDecimal" />
 
-    <EditText
-        android:id="@+id/productCategoryEditText"
+    <Spinner
+        android:id="@+id/productCategorySpinner"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:hint="@string/product_category" />
 
-    <EditText
-        android:id="@+id/productDescriptionEditText"
+    <CheckBox
+        android:id="@+id/healthyTagCheckBox"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:hint="@string/product_description" />
+        android:layout_height="86dp"
+        android:checked="false"
+        android:padding="8dp"
+        android:text="Healthy Tag" />
 
     <ImageView
         android:id="@+id/productImageView"
         android:layout_width="128dp"
         android:layout_height="127dp"
         android:layout_gravity="center"
-        android:src="@drawable/default_image"
-        android:onClick="showImageSelection" />
+        android:onClick="showImageSelection"
+        android:src="@drawable/default_image" />
 </LinearLayout>

@@ -6,9 +6,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 
 import com.example.super_app.db.FireBaseHelper;
 
@@ -17,9 +21,10 @@ public class AdminActivity extends Activity {
     private static final int REQUEST_IMAGE_SELECT = 1;
     private EditText productNameEditText;
     private EditText productPriceEditText;
-    private EditText productCategoryEditText;
-    private EditText productDescriptionEditText;
     private ImageView productImageView;
+    String selectedImageUrl = "drawable://" + R.drawable.default_image;
+    private String selectedCategory;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,20 +45,32 @@ public class AdminActivity extends Activity {
 
         productNameEditText = dialogView.findViewById(R.id.productNameEditText);
         productPriceEditText = dialogView.findViewById(R.id.productPriceEditText);
-        productCategoryEditText = dialogView.findViewById(R.id.productCategoryEditText);
-        productDescriptionEditText = dialogView.findViewById(R.id.productDescriptionEditText);
+        Spinner productCategorySpinner = dialogView.findViewById(R.id.productCategorySpinner);
         productImageView = dialogView.findViewById(R.id.productImageView);
+        CheckBox healthyTagCheckBox = dialogView.findViewById(R.id.healthyTagCheckBox);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.categoryArray, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        productCategorySpinner.setAdapter(adapter);
+        productCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                selectedCategory = parent.getItemAtPosition(position).toString();
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                selectedCategory = "Category";
+            }
+        });
 
         builder.setPositiveButton("Add", (dialog, which) -> {
             String name = productNameEditText.getText().toString().trim();
             String priceStr = productPriceEditText.getText().toString().trim();
-            String category = productCategoryEditText.getText().toString().trim();
-            String description = productDescriptionEditText.getText().toString().trim();
-
-            if (!name.isEmpty() && !priceStr.isEmpty() && !category.isEmpty() && !description.isEmpty()) {
+            boolean isHealthyTag = healthyTagCheckBox.isChecked();
+            if (!name.isEmpty() && !priceStr.isEmpty() && !selectedCategory.isEmpty()) {
                 double price = Double.parseDouble(priceStr);
                 int discount = 1; // by default no discount
-                fireBaseHelper.addProductToFirestore(name, category, price, discount, description, "defaultImageResourceId");
+                fireBaseHelper.addProductToFirestore(name, selectedCategory, price, discount, isHealthyTag, selectedImageUrl, name);
             } else {
                 // Handle case when any of the fields are empty
             }
@@ -76,17 +93,9 @@ public class AdminActivity extends Activity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_IMAGE_SELECT && resultCode == RESULT_OK && data != null) {
-            productImageView.setImageResource(data.getIntExtra("imageResourceId", R.drawable.default_image));
-            String selectedImageUrl = data.getStringExtra("imageUrl");
-            if (selectedImageUrl != null) {
-                String name = productNameEditText.getText().toString().trim();
-                String priceStr = productPriceEditText.getText().toString().trim();
-                String category = productCategoryEditText.getText().toString().trim();
-                String description = productDescriptionEditText.getText().toString().trim();
-                double price = Double.parseDouble(priceStr);
-                int discount = 1; // by default no discount
-                fireBaseHelper.addProductToFirestore(name, category, price, discount, description, selectedImageUrl);
-            }
+            int selectedImageResourceId = data.getIntExtra("imageResourceId", R.drawable.default_image);
+            productImageView.setImageResource(selectedImageResourceId); // Set the chosen image to the productImageView
+            selectedImageUrl = "drawable://" + selectedImageResourceId;
         }
     }
 

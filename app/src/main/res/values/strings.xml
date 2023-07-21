@@ -3,10 +3,10 @@
 
     <string-array name="categoryArray">
         <item>Category</item>
+        <item>Fruits</item>
         <item>Electronics</item>
         <item>Meat</item>
-        <item>MakeUpAndBrush</item>
-        <item>FruitsAndVeg</item>
+        <item>Veggies</item>
     </string-array>
     <string name="app_name">super_app</string>
     <string name="enter_your_e_mail">enter your e-mail</string>
