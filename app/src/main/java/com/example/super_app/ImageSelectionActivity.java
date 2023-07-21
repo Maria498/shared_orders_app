@@ -28,6 +28,12 @@ public class ImageSelectionActivity extends Activity {
         drawableResourceIds.add(R.drawable.pepper);
         drawableResourceIds.add(R.drawable.chicken);
         drawableResourceIds.add(R.drawable.steak);
+        drawableResourceIds.add(R.drawable.coke);
+        drawableResourceIds.add(R.drawable.pepper);
+        drawableResourceIds.add(R.drawable.sprite);
+        drawableResourceIds.add(R.drawable.croissant);
+        drawableResourceIds.add(R.drawable.reeses);
+        drawableResourceIds.add(R.drawable.fridge);
 
         ImageAdapter adapter = new ImageAdapter(this, drawableResourceIds);
         listView.setAdapter(adapter);

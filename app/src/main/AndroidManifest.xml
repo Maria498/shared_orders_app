@@ -54,8 +54,9 @@
             </intent-filter>
 
             <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
+                android:name="com.bumptech.glide.integration.firebase.FirebaseGlideModule"
+                android:value="com.example.super_app.FirebaseStorageImageLoader"
+ />
         </activity>
         <activity
             android:name=".SigninActivity"

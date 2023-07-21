@@ -14,7 +14,6 @@ public class UserProfileActivity extends AppCompatActivity {
     private TextView textViewWelcome;
     private Button buttonOrderHistory;
     private Button buttonUpdateUserData;
-    private Button backBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +27,7 @@ public class UserProfileActivity extends AppCompatActivity {
         //todo - change navigation
         buttonOrderHistory.setOnClickListener(v -> moveToActivity(MainActivity.class));
         buttonUpdateUserData.setOnClickListener(v -> moveToActivity(MainActivity.class));
-        backBtn = findViewById(R.id.backBtn);
+        Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
         buttonOrderHistory.setOnClickListener(v -> {
