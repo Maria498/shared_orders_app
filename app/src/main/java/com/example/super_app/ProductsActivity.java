@@ -13,66 +13,76 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
+import com.example.super_app.db.entity.Product;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Objects;
+import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
     Cart cart;
+    private String selectedCategory;
+    private ArrayList<Product> productList = new ArrayList<>();
+    private ProductAdapter productAdapter;
+    FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_products);
-        Intent intent = getIntent();
-        TextView categoryName = findViewById(R.id.categoryName);
-        ArrayList<ProductModel> productList = new ArrayList<>();
-        if(intent.hasExtra("msg")) {
-            if (Objects.equals(intent.getStringExtra("msg"), "Fruits")) {
-                categoryName.setText(R.string.fruits);
-                productList.add(new ProductModel(1, "apples", R.drawable.apple, 10.99));
-                productList.add(new ProductModel(2, "limes", R.drawable.lime, 10.99));
-                productList.add(new ProductModel(3, "strawberry", R.drawable.strawberry, 20.99));
-                productList.add(new ProductModel(4, "oranges", R.drawable.orange, 5.99));
-                productList.add(new ProductModel(5, "bananas", R.drawable.banana, 8.99));
-            }
-            else if (Objects.equals(intent.getStringExtra("msg"), "Veggies")) {
-                categoryName.setText(R.string.veggie);
-                productList.add(new ProductModel(1, "pepper", R.drawable.pepper, 10.99));
-                productList.add(new ProductModel(2, "cabbage", R.drawable.cabbage, 15.99));
-                productList.add(new ProductModel(3, "broccoli", R.drawable.broccoli, 20.99));
-            }
-            else if (Objects.equals(intent.getStringExtra("msg"), "Meat")) {
-                categoryName.setText(R.string.meat);
-                productList.add(new ProductModel(1, "steak", R.drawable.steak, 130.99));
-                productList.add(new ProductModel(2, "chicken", R.drawable.chicken, 55.99));
-            }
-        }
         Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-
+        Intent intent = getIntent();
+        TextView categoryName = findViewById(R.id.categoryName);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewProducts);
+
         GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
         recyclerView.setLayoutManager(layoutManager);
 
-        ProductAdapter productAdapter = new ProductAdapter(this, productList);
+        productAdapter = new ProductAdapter(this, productList);
         productAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(productAdapter);
 
-        cart = new Cart("my_first_cart", Calendar.getInstance().getTime(),0,0);
+        if (intent.hasExtra("msg")) {
+            String category = intent.getStringExtra("msg");
+            categoryName.setText(category);
+
+            // Fetch products from Firestore for the selected category
+            fireBaseHelper.getProductsByCategory(category, new FireBaseHelper.ProductFetchListener() {
+                @Override
+                public void onProductFetch(List<Product> products) {
+                    // Update the productList with the retrieved products
+                    productList.clear();
+                    productList.addAll(products);
+                    productAdapter.notifyDataSetChanged();
+                }
+
+                @Override
+                public void onFailure(String errorMessage) {
+                    // Handle any error that occurred during product fetch
+                }
+            });
+        }
+
+        cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0);
     }
 
+
     @Override
-    public void onItemClick(ProductModel product) {
+    public void onItemClick(Product product) {
         showProductDialog(product);
     }
 
     @SuppressLint("DefaultLocale")
-    private void showProductDialog(ProductModel product) {
+    private void showProductDialog(Product product) {
         Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.dialog_product);
         dialog.setCancelable(true);
@@ -83,9 +93,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         EditText quantityEditText = dialog.findViewById(R.id.quantityEditText);
         Button addToCartButton = dialog.findViewById(R.id.addToCartButton);
 
-        productImage.setImageResource(product.getProductImage());
-        productName.setText(product.getProductName());
-        productPrice.setText(String.format("$%.2f", product.getProductPrice()));
+        productPrice.setText(String.format("$%.2f", product.getPrice()));
 
         addToCartButton.setOnClickListener(v -> {
             String quantityString = quantityEditText.getText().toString().trim();
@@ -94,7 +102,6 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
                 int quantity = Integer.parseInt(quantityString);
                 //todo add the product to the cart logic
 
-
             } else {
                 // case when the quantity is empty
             }
@@ -102,6 +109,31 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         });
 
         dialog.show();
+    }
+    interface FireStoreCallback {
+        void onProductsFetched(ArrayList<Product> products);
+
+        void onError(String errorMessage);
+    }
+
+    // Method to fetch products from Firestore
+    private void fetchProductsFromFirestore(String category, FireStoreCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference productsRef = db.collection("Product");
+
+        productsRef.whereEqualTo("category", category)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    ArrayList<Product> productsList = new ArrayList<>();
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Product product = documentSnapshot.toObject(Product.class);
+                        productsList.add(product);
+                    }
+                    callback.onProductsFetched(productsList);
+                })
+                .addOnFailureListener(e -> {
+                    callback.onError(e.getMessage());
+                });
     }
 
     private void moveToActivity (Class<?> cls) {

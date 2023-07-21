@@ -3,6 +3,8 @@
 
     <string-array name="categoryArray">
         <item>Category</item>
+        <item>Beverages</item>
+        <item>Bakery</item>
         <item>Fruits</item>
         <item>Electronics</item>
         <item>Meat</item>

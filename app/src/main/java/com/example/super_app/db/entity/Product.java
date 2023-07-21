@@ -32,15 +32,13 @@ public class Product implements Serializable {
     private long id;
     private String imageUrl;
 
-    public Product() {
-    }
+    public Product() {}
 
     public Product(String name, double price, String img, String category) {
         this.name = name;
         this.price = price;
         this.img = img;
         this.category = category;
-
     }
 
     public Product(String name, double price, String imageUrl, String category, int discount, boolean healthy_tag) {
@@ -50,6 +48,9 @@ public class Product implements Serializable {
         this.category = category;
         this.discount = discount;
         this.healthy_tag = healthy_tag;
+    }
+    public boolean isHealthy_tag() {
+        return healthy_tag;
     }
 
     public String getImageUrl() {
@@ -99,7 +100,7 @@ public class Product implements Serializable {
         this.img = img;
     }
 
-    public boolean isHealthy_tag() {
+    public boolean isHealthyTag() {
         return healthy_tag;
     }
 
@@ -143,14 +144,18 @@ public class Product implements Serializable {
     public String toString() {
         return "Product{" +
                 "name='" + name + '\'' +
+                ", img='" + img + '\'' +
                 ", category='" + category + '\'' +
                 ", price=" + price +
                 ", discount=" + discount +
                 ", healthy_tag=" + healthy_tag +
                 ", ratings=" + ratings +
+                ", quantity=" + quantity +
+                ", description='" + description + '\'' +
+                ", id=" + id +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -168,8 +173,7 @@ public class Product implements Serializable {
         map.put(COLUMN_PRODUCT_CATEGORY, category);
         map.put(COLUMN_PRODUCT_DISCOUNT, discount);
         map.put("healthy_tag", healthy_tag);
-        //map.put("ratings", ratings); // Add the ratings attribute
-
+        //map.put("ratings", ratings); // Add the ratings attribute if needed
         return map;
     }
 

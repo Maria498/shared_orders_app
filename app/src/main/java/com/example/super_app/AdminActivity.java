@@ -70,7 +70,7 @@ public class AdminActivity extends Activity {
             if (!name.isEmpty() && !priceStr.isEmpty() && !selectedCategory.isEmpty()) {
                 double price = Double.parseDouble(priceStr);
                 int discount = 1; // by default no discount
-                fireBaseHelper.addProductToFirestore(name, selectedCategory, price, discount, isHealthyTag, selectedImageUrl, name);
+                fireBaseHelper.handleProductToFirestore(name, selectedCategory, price, discount, isHealthyTag, selectedImageUrl, name);
             } else {
                 // Handle case when any of the fields are empty
             }

@@ -1,23 +1,14 @@
 package com.example.super_app;
 
 
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +18,10 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
@@ -39,21 +34,11 @@ public class HomeFragment extends Fragment {
     private Button logInBtn;
     private Button logOutBtn;
 
-    private RecyclerView recyclerViewAddresses;
-    private RecyclerView recyclerViewCategories;
-    private RecyclerView recyclerViewOrders;
-    private MenuCardsAdapter adapter;
-    private ArrayList<MenuModel> cardsList;
-    private ArrayList<MenuModel> cardsListCath;
-    private ArrayList<MenuModel> cardsListOrders;
-
-    private ImageButton shoppingCart;
-    private FrameLayout fragmentContainer;
     private FragmentTransaction fragmentTransaction = null;
 
 
     private boolean isFragmentOpen = false;
-    private FragmentManager fragmentManager;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -65,31 +50,34 @@ public class HomeFragment extends Fragment {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         dbHelper.createShopping(db);
 
-        recyclerViewAddresses = view.findViewById(R.id.recyclerViewAddresses);
-        recyclerViewCategories = view.findViewById(R.id.recyclerViewCategories);
-        recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
-        shoppingCart = view.findViewById(R.id.shoppingCartIcon);
-        fragmentContainer = view.findViewById(R.id.fragmentContainer);
+        RecyclerView recyclerViewAddresses = view.findViewById(R.id.recyclerViewAddresses);
+        RecyclerView recyclerViewCategories = view.findViewById(R.id.recyclerViewCategories);
+        RecyclerView recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
+        ImageButton shoppingCart = view.findViewById(R.id.shoppingCartIcon);
+        FrameLayout fragmentContainer = view.findViewById(R.id.fragmentContainer);
         logOutBtn = view.findViewById(R.id.logOutBtn);
 
-        cardsList = new ArrayList<>();
+        ArrayList<MenuModel> cardsList = new ArrayList<>();
         cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
         cardsList.add(new MenuModel("Recently used","Herzel str. 4", R.drawable.map_small));
-        adapter = new MenuCardsAdapter(this.getContext(), cardsList);
+        MenuCardsAdapter adapter = new MenuCardsAdapter(this.getContext(), cardsList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewAddresses.setLayoutManager(layoutManager);
         recyclerViewAddresses.setAdapter(adapter);
 
-        cardsListCath = new ArrayList<>();
-        cardsListCath.add(new MenuModel("Fruits", "", R.drawable.fruit));
-        cardsListCath.add(new MenuModel("Veggies","", R.drawable.veggi));
-        cardsListCath.add(new MenuModel("Meat", "", R.drawable.meat));
+        ArrayList<MenuModel> cardsListCath = new ArrayList<>();
+        cardsListCath.add(new MenuModel("Fruits", "", R.drawable.orange));
+        cardsListCath.add(new MenuModel("Veggies","", R.drawable.cabbage));
+        cardsListCath.add(new MenuModel("Meat", "", R.drawable.steak));
+        cardsListCath.add(new MenuModel("Beverages", "", R.drawable.coke));
+        cardsListCath.add(new MenuModel("Bakery","", R.drawable.croissant));
+        cardsListCath.add(new MenuModel("Electronics", "", R.drawable.fridge));
         adapter = new MenuCardsAdapter(this.getContext(), cardsListCath);
         RecyclerView.LayoutManager layoutManager1 = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewCategories.setLayoutManager(layoutManager1);
         recyclerViewCategories.setAdapter(adapter);
 
-        cardsListOrders = new ArrayList<>();
+        ArrayList<MenuModel> cardsListOrders = new ArrayList<>();
         cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
         cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
         adapter = new MenuCardsAdapter(this.getContext(), cardsListOrders);
@@ -99,38 +87,6 @@ public class HomeFragment extends Fragment {
 
         logInBtn = view.findViewById(R.id.logInBtn);
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
-//        DisplaySavedText();
-
-        shoppingCart.setOnClickListener(v -> {
-
-            if (isFragmentOpen) {
-                fragmentContainer.setVisibility(View.GONE);
-                isFragmentOpen = false;
-            } else {
-                fragmentContainer.setVisibility(View.VISIBLE);
-                ArrayList<ProductModel> shoppingList = new ArrayList<>();
-                String selectAllItemsQuery = "SELECT * FROM shoppingCart;";
-                Cursor cursor = db.rawQuery(selectAllItemsQuery, null);
-
-// Iterate over the cursor to retrieve all items
-                while (cursor.moveToNext()) {
-                    String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-                    String price = cursor.getString(cursor.getColumnIndexOrThrow("price"));
-                    int quantity = cursor.getInt(cursor.getColumnIndexOrThrow("quantity"));
-                    int pic = cursor.getInt(cursor.getColumnIndexOrThrow("pic"));
-                    shoppingList.add(new ProductModel(name, pic, price, quantity));
-                }
-
-// Close the cursor and database connection when done
-//                    fragment = new shoppingCartFragment();
-//                    fragment.setItemList(shoppingList);
-//                   // fragmentManager = getSupportFragmentManager();
-//                    fragmentTransaction = fragmentManager.beginTransaction();
-//                    fragmentTransaction.add(R.id.fragmentContainer, fragment);
-//                    fragmentTransaction.commit();
-//                    isFragmentOpen = true;
-            }
-        });
         logOutBtn.setVisibility(View.INVISIBLE);
         DisplaySavedText();
         return view;
