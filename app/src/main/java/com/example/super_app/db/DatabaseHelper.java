@@ -1,7 +1,5 @@
 package com.example.super_app.db;
 
-
-
 import static com.example.super_app.db.entity.Cart.COLUMN_CART_DATE;
 import static com.example.super_app.db.entity.Cart.COLUMN_CART_DISCOUNT;
 import static com.example.super_app.db.entity.Cart.COLUMN_CART_ID;
@@ -12,26 +10,17 @@ import static com.example.super_app.db.entity.Cart.TABLE_CART;
 import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
-
-import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteConstraintException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
-
-
-import com.example.super_app.LoginActivity;
 import com.example.super_app.R;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
-import com.example.super_app.db.entity.User;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,7 +33,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public DatabaseHelper(Context context){
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-
 
 
     @Override
@@ -88,9 +76,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(CREATE_CART_TABLE);
         sqLiteDatabase.execSQL(CREATE_CART_ITEM_TABLE);
-
-
-
     }
 
     @Override
@@ -102,9 +87,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CART);
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_CART_ITEM);
         onCreate(sqLiteDatabase);
-
     }
-
 
     public void createShopping(SQLiteDatabase sqLiteDatabase)
     {

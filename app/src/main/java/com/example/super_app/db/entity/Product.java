@@ -43,13 +43,13 @@ public class Product implements Serializable {
 
     }
 
-    public Product(String name, double price, String imageUrl, String category, int discount, String description) {
+    public Product(String name, double price, String imageUrl, String category, int discount, boolean healthy_tag) {
         this.name = name;
         this.price = price;
         this.imageUrl = imageUrl;
         this.category = category;
         this.discount = discount;
-        this.description = description;
+        this.healthy_tag = healthy_tag;
     }
 
     public String getImageUrl() {
@@ -164,14 +164,12 @@ public class Product implements Serializable {
         Map<String, Object> map = new HashMap<>();
         map.put(COLUMN_PRODUCT_NAME, name);
         map.put(COLUMN_PRODUCT_PRICE, price);
-        map.put(COLUMN_PRODUCT_IMAGE, img);
+        map.put("imageUrl", imageUrl);
         map.put(COLUMN_PRODUCT_CATEGORY, category);
-        map.put(COLUMN_PRODUCT_DESCRIPTION, description);
         map.put(COLUMN_PRODUCT_DISCOUNT, discount);
-        map.put("quantity", quantity); // Add the quantity attribute
-        map.put("healthy_tag", healthy_tag); // Add the healthy_tag attribute
-        map.put("ratings", ratings); // Add the ratings attribute
-        // Add other attributes if needed
+        map.put("healthy_tag", healthy_tag);
+        //map.put("ratings", ratings); // Add the ratings attribute
+
         return map;
     }
 
