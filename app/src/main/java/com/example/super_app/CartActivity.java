@@ -1,22 +1,22 @@
 package com.example.super_app;
-
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.entity.Cart;
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
-public class CartActivity extends AppCompatActivity {
-
-    private RecyclerView recyclerView;
+public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener {
+    private DatabaseHelper dbHelper;
+    private List<Product> cartProductsList = new ArrayList<>();
     private CartAdapter cartAdapter;
 
     @Override
@@ -24,37 +24,46 @@ public class CartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
 
-        recyclerView = findViewById(R.id.cartRecyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        Button backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-        cartAdapter = new CartAdapter(this);
-        recyclerView.setAdapter(cartAdapter);
+        RecyclerView recyclerViewCart = findViewById(R.id.recyclerViewCart);
+        TextView cartTotalPrice = findViewById(R.id.cartTotalPrice);
 
-        // Replace this with your actual cart data from the database
-        List<Cart> cartList = createDummyCartList();
-        cartAdapter.setCartList(cartList);
+        // Set up RecyclerView
+        cartAdapter = new CartAdapter(this, cartProductsList);
+        cartAdapter.setOnItemClickListener(this);
+        recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewCart.setAdapter(cartAdapter);
+
+        // Retrieve cart data from the SQLite database
+        dbHelper = new DatabaseHelper(this);
+        cartProductsList.addAll(dbHelper.getAllProductsInCart());
+
+        // Calculate and display the total price
+        double totalPrice = calculateTotalPrice(cartProductsList);
+        cartTotalPrice.setText(String.format("$%.2f", totalPrice));
+        cartAdapter.updateCartProductsList(cartProductsList);
     }
 
-    // Replace this method with your actual data retrieval from the database
-    private List<Cart> createDummyCartList() {
-        List<Cart> cartList = new ArrayList<>();
+    private double calculateTotalPrice(List<Product> products) {
+        double totalPrice = 0;
+        for (Product product : products) {
+            totalPrice += (product.getPrice() * product.getQuantity());
+        }
+        return totalPrice;
+    }
 
-        // Sample data for demonstration purposes
-        Cart cart1 = new Cart("CART-001", new Date(), 100.0, 10);
-        HashMap<Product, Double> products1 = new HashMap<>();
-//        products1.put(new Product("Product A"), 2.0);
-//        products1.put(new Product("Product B"), 1.5);
-        cart1.setProductsQuantity(products1);
+    @Override
+    public void onItemClick(Product product) {
+        // Handle the click event for the cart item, if needed.
+        // You can add logic here to edit or remove the product from the cart.
+    }
 
-        Cart cart2 = new Cart("CART-002", new Date(), 75.0, 5);
-        HashMap<Product, Double> products2 = new HashMap<>();
-//        products2.put(new Product("Product C"), 3.0);
-//        products2.put(new Product("Product D"), 2.0);
-        cart2.setProductsQuantity(products2);
-
-        cartList.add(cart1);
-        cartList.add(cart2);
-
-        return cartList;
+    private void moveToActivity(Class<?> cls) {
+        Intent i = new Intent(getApplicationContext(), cls);
+        i.putExtra("msg", "msg");
+        startActivity(i);
     }
 }
+

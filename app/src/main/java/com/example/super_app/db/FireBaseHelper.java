@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.widget.Toast;
 
+import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,6 +20,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class FireBaseHelper {
@@ -26,11 +28,14 @@ public class FireBaseHelper {
     private static final FirebaseFirestore db = FirebaseFirestore.getInstance();
     private static final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private final FirebaseStorage mStorage = FirebaseStorage.getInstance();
+    private static  Cart cart;
 
     private Context context;
 
     public FireBaseHelper() {
+
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        initializeCart();
     }
 
     public static String getCurrentUser()
@@ -41,6 +46,24 @@ public class FireBaseHelper {
         }
         return null;
     }
+
+    public static Cart getCart() {
+        return cart;
+    }
+
+     public void initializeCart() {
+        if (cart == null) {
+            cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0);
+        }
+    }
+
+
+    public void updateCartQuantity(Product product, int newQuantity) {
+        if (cart != null) {
+            cart.getProductsQuantity().put(product, newQuantity);
+        }
+    }
+
 
     public static void logOutUser(){
         mAuth.signOut();

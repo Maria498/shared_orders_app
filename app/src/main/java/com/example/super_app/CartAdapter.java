@@ -1,91 +1,99 @@
 package com.example.super_app;
 
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.entity.Cart;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.super_app.db.entity.Product;
 
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
-public class CartAdapter extends RecyclerView.Adapter<CartAdapter.CartViewHolder> {
-
-    private List<Cart> cartList;
+public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
+    private List<Product> productList;
     private Context context;
 
-    public CartAdapter(Context context) {
+    public CartAdapter(Context context, List<Product> productList) {
+        this.productList = productList;
         this.context = context;
-        this.cartList = new ArrayList<>();
     }
-
-    public void setCartList(List<Cart> cartList) {
-        this.cartList = cartList;
+    public void updateCartProductsList(List<Product> products) {
+        this.productList = products;
         notifyDataSetChanged();
     }
-
     @NonNull
     @Override
-    public CartViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
-        return new CartViewHolder(itemView);
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_cart, parent, false);
+        return new ViewHolder(view);
+    }
+    // Inside CartAdapter
+    private void loadImage(String imageUrl, ImageView imageView) {
+        RequestOptions requestOptions = new RequestOptions()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .priority(Priority.HIGH)
+                .placeholder(R.drawable.default_image)
+                .error(R.drawable.default_image);
+
+        Glide.with(context)
+                .load(imageUrl)
+                .apply(requestOptions)
+                .into(imageView);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CartViewHolder holder, int position) {
-        Cart cart = cartList.get(position);
-        holder.bind(cart);
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        Product product = productList.get(position);
+        holder.productName.setText(product.getName());
+        holder.productQuantity.setText("Quantity: " + product.getQuantity());
+        holder.productTotalPrice.setText("Total Price: $" + (product.getQuantity() * product.getPrice()));
+
+        // Load the product image using Glide
+        loadImage(product.getImageUrl(), holder.cartProductImage);
+    }
+
+
+    // Define an interface to handle item clicks
+    public interface OnItemClickListener {
+        void onItemClick(Product product);
+    }
+
+    // Member variable to hold the click listener
+    private OnItemClickListener itemClickListener;
+
+    // Method to set the click listener from the outside
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.itemClickListener = listener;
     }
 
     @Override
     public int getItemCount() {
-        return cartList.size();
+        return productList.size();
     }
 
-    class CartViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
+        public TextView productName;
+        public TextView productQuantity;
+        public TextView productTotalPrice;
+        public ImageView cartProductImage;
 
-        private TextView cartIdTextView;
-        private TextView dateTextView;
-        private TextView totalTextView;
-        private TextView discountTextView;
-        private TextView productsTextView;
 
-        CartViewHolder(@NonNull View itemView) {
+        public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            cartIdTextView = itemView.findViewById(R.id.cartIdTextView);
-            dateTextView = itemView.findViewById(R.id.dateTextView);
-            totalTextView = itemView.findViewById(R.id.totalTextView);
-            discountTextView = itemView.findViewById(R.id.discountTextView);
-            productsTextView = itemView.findViewById(R.id.productsTextView);
-        }
+            productName = itemView.findViewById(R.id.cartProductName);
+            productQuantity = itemView.findViewById(R.id.cartProductQuantity);
+            productTotalPrice = itemView.findViewById(R.id.cartProductTotalPrice);
+            cartProductImage = itemView.findViewById(R.id.cartProductImage); // <-- Initialize it here
 
-        void bind(Cart cart) {
-            cartIdTextView.setText("Cart ID: " + cart.getCardId());
-
-            SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
-            dateTextView.setText("Date: " + dateFormat.format(cart.getDate()));
-
-            DecimalFormat decimalFormat = new DecimalFormat("#.##");
-            totalTextView.setText("Total: $" + decimalFormat.format(cart.getTotal()));
-
-            discountTextView.setText("Discount: " + cart.getDiscount() + "%");
-
-            StringBuilder productsText = new StringBuilder();
-            for (Product product : cart.getProductsQuantity().keySet()) {
-                double quantity = cart.getProductsQuantity().get(product);
-                productsText.append(product.getName()).append(" (Quantity: ").append(quantity).append("), ");
-            }
-            productsTextView.setText("Products: " + productsText.toString());
         }
     }
 }

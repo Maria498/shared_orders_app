@@ -8,7 +8,7 @@ public class Cart {
     private Date date;
     private double total;
     private int discount;
-    private HashMap< Product, Double> productsQuantity;
+    private HashMap< Product, Integer> productsQuantity;
     public static final String TABLE_CART = "carts";
     public static final String TABLE_CART_ITEM = "cart_items";
     public static final String COLUMN_CART_ID = "cart_id";
@@ -45,7 +45,7 @@ public class Cart {
         this.discount = discount;
     }
 
-    public void setProductsQuantity(HashMap<Product, Double> productsQuantity) {
+    public void setProductsQuantity(HashMap<Product, Integer> productsQuantity) {
         this.productsQuantity = productsQuantity;
     }
 
@@ -65,7 +65,7 @@ public class Cart {
         return discount;
     }
 
-    public HashMap<Product, Double> getProductsQuantity() {
+    public HashMap<Product, Integer> getProductsQuantity() {
         return productsQuantity;
     }
     public long getId() {

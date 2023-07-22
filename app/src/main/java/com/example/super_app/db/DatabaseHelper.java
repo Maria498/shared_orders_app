@@ -9,6 +9,7 @@ import static com.example.super_app.db.entity.Cart.COLUMN_PRODUCT_QUANTITY;
 import static com.example.super_app.db.entity.Cart.TABLE_CART;
 import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
+import static com.example.super_app.db.entity.Product.COLUMN_PRODUCT_PRICE;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
 
 import android.annotation.SuppressLint;
@@ -25,7 +26,9 @@ import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.OrderProduct;
 import com.example.super_app.db.entity.Product;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
@@ -169,8 +172,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
         long cartId = db.insert(TABLE_CART, null, cartValues);
         //insert product to cart
-        HashMap<Product, Double> productsQuantity = cart.getProductsQuantity();
-        for (Map.Entry<Product, Double> entry : productsQuantity.entrySet()) {
+        HashMap<Product, Integer> productsQuantity = cart.getProductsQuantity();
+        for (Map.Entry<Product, Integer> entry : productsQuantity.entrySet()) {
             Product product = entry.getKey();
             double quantity = entry.getValue();
 
@@ -183,6 +186,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         db.close();
     }
+
+    // Update the getAllProductsInCart method in the DatabaseHelper class
+    public List<Product> getAllProductsInCart() {
+        List<Product> cartProducts = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        // Query to retrieve all products in the cart along with their quantities
+        String query = "SELECT " + TABLE_CART_ITEM + "." + COLUMN_PRODUCT_NAME + ", " +
+                TABLE_CART_ITEM + "." + COLUMN_PRODUCT_QUANTITY + ", " +
+                TABLE_PRODUCT + ".* " +
+                "FROM " + TABLE_CART_ITEM +
+                " JOIN " + TABLE_PRODUCT +
+                " ON " + TABLE_CART_ITEM + "." + COLUMN_PRODUCT_NAME + " = " + TABLE_PRODUCT + "." + COLUMN_PRODUCT_NAME;
+
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            int nameIndex = cursor.getColumnIndex(COLUMN_PRODUCT_NAME);
+            int quantityIndex = cursor.getColumnIndex(COLUMN_PRODUCT_QUANTITY);
+            int priceIndex = cursor.getColumnIndex(COLUMN_PRODUCT_PRICE);
+
+            do {
+                String productName = cursor.getString(nameIndex);
+                double productQuantity = 0;
+                if (quantityIndex >= 0) {
+                    productQuantity = cursor.getDouble(quantityIndex);
+                }
+                double productPrice = 0;
+                if (priceIndex >= 0) {
+                    productPrice = cursor.getDouble(priceIndex);
+                }
+                // ... and other product details
+
+                // Create a new Product object and set its properties
+                Product product = new Product();
+                product.setName(productName);
+                product.setPrice(productPrice);
+                // ... and other product details
+
+                // Set the quantity of the product in the cart
+                product.setQuantity((int)productQuantity);
+
+                cartProducts.add(product);
+            } while (cursor.moveToNext());
+        }
+
+
+        cursor.close();
+        db.close();
+
+        return cartProducts;
+    }
+
+
 
     public void deleteCart(int cartId) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -200,8 +257,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_CART, cartValues, COLUMN_CART_ID + " = ?",
                 new String[]{String.valueOf(cart.getId())});
 
-        HashMap<Product, Double> productsQuantity = cart.getProductsQuantity();
-        for (Map.Entry<Product, Double> entry : productsQuantity.entrySet()) {
+        HashMap<Product, Integer> productsQuantity = cart.getProductsQuantity();
+        for (Map.Entry<Product, Integer> entry : productsQuantity.entrySet()) {
             Product product = entry.getKey();
             double quantity = entry.getValue();
 
