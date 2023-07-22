@@ -5,22 +5,25 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -28,7 +31,7 @@ import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
-    private Cart cart;
+    private Cart cart = FireBaseHelper.getCart();
     private String selectedCategory;
     private ArrayList<Product> productList = new ArrayList<>();
     private ProductAdapter productAdapter;
@@ -43,6 +46,8 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
+        fireBaseHelper.initializeCart();
+        cart = fireBaseHelper.getCart();
         Intent intent = getIntent();
         TextView categoryName = findViewById(R.id.categoryName);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewProducts);
@@ -53,6 +58,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         productAdapter = new ProductAdapter(this, productList);
         productAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(productAdapter);
+
         //sqlite
 
         dbHelper = new DatabaseHelper(getApplicationContext());
@@ -78,8 +84,6 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
                 }
             });
         }
-
-        cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0);
     }
 
 
@@ -87,7 +91,6 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
     public void onItemClick(Product product) {
         showProductDialog(product);
     }
-
     @SuppressLint("DefaultLocale")
     private void showProductDialog(Product product) {
         Dialog dialog = new Dialog(this);
@@ -99,9 +102,25 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         TextView productPrice = dialog.findViewById(R.id.popupProductPrice);
         EditText quantityEditText = dialog.findViewById(R.id.quantityEditText);
         Button addToCartButton = dialog.findViewById(R.id.addToCartButton);
-
+        productName.setText(product.getName());
         productPrice.setText(String.format("$%.2f", product.getPrice()));
+        // Load the product image using Glide
+        if (product.getImageUrl() != null) {
+            RequestOptions requestOptions = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .priority(Priority.HIGH)
+                    .placeholder(R.drawable.default_image)
+                    .error(R.drawable.default_image);
 
+            Glide.with(this)
+                    .load(product.getImageUrl()) // Use the image URL here
+                    .apply(requestOptions)
+                    .into(productImage);
+        } else {
+            // If the image URL is null, load a default image
+            productImage.setImageResource(R.drawable.default_image);
+        }
+        // Inside showProductDialog method after adding the product to the cart
         addToCartButton.setOnClickListener(v -> {
             String quantityString = quantityEditText.getText().toString().trim();
 
@@ -111,67 +130,37 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
                 // Check if the product is already in the cart
                 if (cart.getProductsQuantity().containsKey(product)) {
                     // If the product already exists in the cart, update the quantity
-                    double existingQuantity = cart.getProductsQuantity().get(product);
+                    int existingQuantity = cart.getProductsQuantity().get(product);
                     cart.getProductsQuantity().put(product, existingQuantity + quantity);
                 } else {
                     // If the product is not in the cart, add it with the given quantity
-                    cart.getProductsQuantity().put(product, (double) quantity);
+                    cart.getProductsQuantity().put(product, quantity);
                 }
-
                 // Calculate the updated total price of the cart
                 double updatedTotal = cart.getTotal() + (product.getPrice() * quantity);
                 cart.setTotal(updatedTotal);
+                fireBaseHelper.updateCartQuantity(product, quantity);
 
                 // sqllite
                 dbHelper.addCart(cart);
+                Toast.makeText(this, "Item added to cart!", Toast.LENGTH_SHORT).show();
+                Log.w("ProductsActivity", "++++++++++HashMap: " + cart.getProductsQuantity());
 
-
-                // Close the dialog after adding the product to the cart
                 dialog.dismiss();
             } else {
                 // Show an error message or handle the case when the quantity is empty
             }
         });
 
-
         dialog.show();
     }
-    interface FireStoreCallback {
-        void onProductsFetched(ArrayList<Product> products);
 
-        void onError(String errorMessage);
-    }
 
-    // Method to fetch products from Firestore
-    private void fetchProductsFromFirestore(String category, FireStoreCallback callback) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        CollectionReference productsRef = db.collection("Product");
-
-        productsRef.whereEqualTo("category", category)
-                .get()
-                .addOnSuccessListener(queryDocumentSnapshots -> {
-                    ArrayList<Product> productsList = new ArrayList<>();
-                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        Product product = documentSnapshot.toObject(Product.class);
-                        productsList.add(product);
-                    }
-                    callback.onProductsFetched(productsList);
-                })
-                .addOnFailureListener(e -> {
-                    callback.onError(e.getMessage());
-                });
-    }
 
     private void moveToActivity (Class<?> cls) {
-
         Intent i = new Intent(getApplicationContext(),  cls);
         i.putExtra("msg", "msg");
         startActivity(i);
-
     }
-
-
-
-
 
 }

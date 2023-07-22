@@ -16,28 +16,14 @@
         android:text="@string/back"
         android:textColor="@color/text"
         android:textStyle="bold"
+        android:textSize="18sp"
         app:backgroundTint="@color/white"
         app:cornerRadius="35dp"
-        app:layout_constraintBottom_toTopOf="@+id/cart"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerViewCart"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.08" />
 
-    <Button
-        android:id="@+id/backBtn2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="36dp"
-        android:layout_marginEnd="40dp"
-        android:text="@string/back"
-        android:textColor="@color/text"
-        android:textStyle="bold"
-        app:backgroundTint="@color/white"
-        app:cornerRadius="35dp"
-        app:layout_constraintBottom_toTopOf="@+id/cart"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.08" />
 
     <TextView
         android:id="@+id/cart"
@@ -51,44 +37,72 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.163" />
 
-    <!-- RecyclerView to display cart items -->
+
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cartRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/cartTotal"/>
+        android:id="@+id/recyclerViewCart"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        app:layout_constraintBottom_toTopOf="@+id/cartLayout"
+        app:layout_constraintTop_toBottomOf="@+id/cart"
+        tools:listitem="@layout/item_product" />
 
-    <!-- Total price label -->
-    <TextView
-        android:id="@+id/cartTotal"
-        android:layout_width="wrap_content"
+    <!-- Linear layout to hold Checkout, cartTotal, and cartTotalPrice -->
+    <LinearLayout
+        android:id="@+id/cartLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/totalPrice"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:layout_margin="16dp"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cartRecyclerView"
-        app:layout_constraintStart_toStartOf="parent"/>
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        app:layout_constraintTop_toBottomOf="@+id/recyclerViewCart">
 
-    <Button
-        android:id="@+id/Checkout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="608dp"
-        android:layout_marginEnd="156dp"
-        android:text="@string/Checkout"
-        android:textColor="@color/text"
-        android:textStyle="bold"
-        app:backgroundTint="@color/white"
-        app:cornerRadius="35dp"
+        <TextView
+            android:id="@+id/cartTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:text="@string/totalPrice"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/cartTotalPrice"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="30dp"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+        <!-- Checkout Button -->
+
+        <Button
+            android:id="@+id/Checkout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:text="@string/Checkout"
+            android:textColor="@color/text"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:backgroundTint="@color/white"
+            app:cornerRadius="35dp" />
+
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        app:itemBackground="@color/cardview_dark_background"
+        app:itemIconTint="@color/white"
+        app:itemPaddingTop="15dp"
+        app:itemTextColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <!-- Checkout button -->
-
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_navigation_menu" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

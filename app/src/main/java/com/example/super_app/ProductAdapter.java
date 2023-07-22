@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.super_app.db.entity.Product;
 
@@ -46,6 +47,12 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         // Load the image using Glide and Firebase Storage
         String imageUrl = product.getImageUrl();
         if (imageUrl != null) {
+            RequestOptions requestOptions = new RequestOptions()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL) // Enable caching both original and transformed images
+                    .centerCrop() // Apply center crop transformation if necessary
+                    .placeholder(R.drawable.default_image) // Placeholder image while loading
+                    .error(R.drawable.default_image); // Error image if loading fails
+
             Glide.with(context)
                     .load(imageUrl)
                     .into(holder.productImage);
