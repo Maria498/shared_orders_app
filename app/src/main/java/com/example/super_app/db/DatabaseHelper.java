@@ -10,15 +10,18 @@ import static com.example.super_app.db.entity.Cart.TABLE_CART;
 import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
 import com.example.super_app.R;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
+import com.example.super_app.db.entity.OrderProduct;
 import com.example.super_app.db.entity.Product;
 
 import java.util.HashMap;
@@ -56,10 +59,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Product.COLUMN_PRODUCT_CATEGORY + " TEXT,"
                 + Product.COLUMN_PRODUCT_DESCRIPTION + " TEXT,"
                 + Product.COLUMN_PRODUCT_DISCOUNT + " INTEGER,"
-                + Product.COLUMN_ORDER_ID + " INTEGER,"
-                + "FOREIGN KEY(" + Product.COLUMN_ORDER_ID + ") REFERENCES " + TABLE_ORDER + "(" + Product.COLUMN_ID + ")"
+                + Product.COLUMN_PRODUCT_QUANTITY + " INTEGER,"
+                + Product.COLUMN_ORDER_ID + " INTEGER"
                 + ")";
+
         sqLiteDatabase.execSQL(CREATE_PRODUCT_TABLE);
+        // CREATE OrderProduct table
+        String CREATE_ORDER_PRODUCT_TABLE = "CREATE TABLE " + OrderProduct.TABLE_ORDER_PRODUCT + "("
+                + OrderProduct.COLUMN_ORDER_ID + " INTEGER,"
+                + OrderProduct.COLUMN_PRODUCT_ID + " INTEGER,"
+                + "PRIMARY KEY (" + OrderProduct.COLUMN_ORDER_ID + ", " + OrderProduct.COLUMN_PRODUCT_ID + "),"
+                + "FOREIGN KEY(" + OrderProduct.COLUMN_ORDER_ID + ") REFERENCES " + Order.TABLE_ORDER + "(" + Order.COLUMN_ID + "),"
+                + "FOREIGN KEY(" + OrderProduct.COLUMN_PRODUCT_ID + ") REFERENCES " + Product.TABLE_PRODUCT + "(" + Product.COLUMN_ID + ")"
+                + ")";
+
+        sqLiteDatabase.execSQL(CREATE_ORDER_PRODUCT_TABLE);
+
         //todo - history orders can be extracted from here
         String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
                 + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -142,69 +157,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     //------------ORDER-----------------------------
 
-    //-----------PRODUCT----------------------------
-    public void insertProduct(Product product, long orderId) {
-        SQLiteDatabase db = this.getWritableDatabase();
 
-        // Check if the product already exists
-        if (isProductExist(product)) {
-            db.close();
-        } else {
-            // Product does not exist, insert a new product
-            ContentValues values = new ContentValues();
-            values.put(Product.COLUMN_PRODUCT_NAME, product.getName());
-            values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
-            values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImg());
-            values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
-            values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
-            values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
-            values.put(Product.COLUMN_ORDER_ID, orderId);
-            long id = db.insert(TABLE_PRODUCT, null, values);
-            db.close();
-            product.setId(id);
-        }
-    }
 
-    public void deleteProduct(Product product) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // Check if the product exists before deleting
-        if (isProductExist(product)) {
-            db.delete(TABLE_PRODUCT, Product.COLUMN_PRODUCT_NAME + " = ?",
-                    new String[]{product.getName()});
-        }
-
-        db.close();
-    }
-
-    public void editProduct(Product product) {
-        SQLiteDatabase db = this.getWritableDatabase();
-
-        // Check if the product exists before editing
-        if (isProductExist(product)) {
-            ContentValues values = new ContentValues();
-            values.put(Product.COLUMN_PRODUCT_NAME, product.getName());
-            values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
-            values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImg());
-            values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
-            values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
-            values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
-            db.update(TABLE_PRODUCT, values, Product.COLUMN_PRODUCT_NAME + " = ?",
-                    new String[]{product.getName()});
-        }
-
-        db.close();
-    }
-    //isProductExist method queries the table to check if the product already exists based on its name.
-    //It returns a boolean value indicating whether the product exists or not.
-    private boolean isProductExist(Product product) {
-        SQLiteDatabase db = this.getReadableDatabase();
-        String query = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + Product.COLUMN_PRODUCT_NAME + " = ?";
-        Cursor cursor = db.rawQuery(query, new String[]{product.getName()});
-        boolean exists = cursor.getCount() > 0;
-        cursor.close();
-        return exists;
-    }
 
     //-----------PRODUCT----------------------------
     //----------CART--------------------------------
@@ -216,7 +170,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
         cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
         long cartId = db.insert(TABLE_CART, null, cartValues);
-
+        //insert product to cart
         HashMap<Product, Double> productsQuantity = cart.getProductsQuantity();
         for (Map.Entry<Product, Double> entry : productsQuantity.entrySet()) {
             Product product = entry.getKey();
@@ -266,6 +220,104 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
     //----------CART--------------------------------
+    //-----------PRODUCT----------------------------
+    public long insertProductToProductDB(Product product) {
+        if (isProductExist(product)) {
+            // Product already exists in the database, so return -1 (an error code) to indicate that the insertion was not successful.
+            return -1;
+        }
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Product.COLUMN_PRODUCT_NAME, product.getName());
+        values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
+        values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImageUrl());
+        values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
+        values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
+        values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
+        values.put(Product.COLUMN_PRODUCT_QUANTITY, product.getQuantity());
+
+        return db.insert(Product.TABLE_PRODUCT, null, values);
+    }
+
+    // Method to delete a product from the Product table
+    public int deleteProductFromProductDB(Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = Product.COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(product.getId())};
+
+        return db.delete(Product.TABLE_PRODUCT, selection, selectionArgs);
+    }
+
+    // Method to update a product in the Product table
+    public int editProductFromProductDB(Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(Product.COLUMN_PRODUCT_NAME, product.getName());
+        values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
+        values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImageUrl());
+        values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
+        values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
+        values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
+        values.put(Product.COLUMN_PRODUCT_QUANTITY, product.getQuantity());
+
+        String selection = Product.COLUMN_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(product.getId())};
+
+        return db.update(Product.TABLE_PRODUCT, values, selection, selectionArgs);
+    }
+    //isProductExist method queries the table to check if the product already exists based on its name.
+    //It returns a boolean value indicating whether the product exists or not.
+    private boolean isProductExist(Product product) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_PRODUCT + " WHERE " + Product.COLUMN_PRODUCT_NAME + " = ?";
+        Cursor cursor = db.rawQuery(query, new String[]{product.getName()});
+        boolean exists = cursor.getCount() > 0;
+        cursor.close();
+        return exists;
+    }
+    //-----------PRODUCT----------------------------
+    //-----------PRODUCT&ORDER----------------------
+    // Method to insert a product into an order in the OrderProduct table
+    public long insertProductToOrder(Cart cart, Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(OrderProduct.COLUMN_ORDER_ID, cart.getId());
+        values.put(OrderProduct.COLUMN_PRODUCT_ID, product.getId());
+
+        return db.insert(OrderProduct.TABLE_ORDER_PRODUCT, null, values);
+    }
+
+    // Method to delete a product from an order in the OrderProduct table
+    public int deleteProductFromOrder(Cart cart, Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        String selection = OrderProduct.COLUMN_ORDER_ID + " = ? AND " + OrderProduct.COLUMN_PRODUCT_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(cart.getId()), String.valueOf(product.getId())};
+
+        return db.delete(OrderProduct.TABLE_ORDER_PRODUCT, selection, selectionArgs);
+    }
+
+    // Method to update a product in an order in the OrderProduct table
+    public int editProductInOrder(Cart cart, Product product) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        // Add any specific order-product related data to be updated (if any)
+
+        String selection = OrderProduct.COLUMN_ORDER_ID + " = ? AND " + OrderProduct.COLUMN_PRODUCT_ID + " = ?";
+        String[] selectionArgs = {String.valueOf(cart.getId()), String.valueOf(product.getId())};
+
+        return db.update(OrderProduct.TABLE_ORDER_PRODUCT, values, selection, selectionArgs);
+    }
+    //-----------PRODUCT&ORDER----------------------
+
+
+
+
+
+    // Method to edit the quantity of a product in the cart in the CartItem table
 
 
     // Insert Data into Database

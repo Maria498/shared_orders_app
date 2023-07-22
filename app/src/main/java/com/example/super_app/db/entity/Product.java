@@ -18,6 +18,7 @@ public class Product implements Serializable {
     public static final String TABLE_PRODUCT = "products";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_ORDER_ID = "order_id";
+    public static final String COLUMN_PRODUCT_QUANTITY = "product_quantity" ;
 
     private String name;
     private String img;
