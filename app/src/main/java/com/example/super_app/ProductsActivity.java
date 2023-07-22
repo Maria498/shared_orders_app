@@ -3,6 +3,7 @@ package com.example.super_app;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
@@ -26,11 +28,12 @@ import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
-    Cart cart;
+    private Cart cart;
     private String selectedCategory;
     private ArrayList<Product> productList = new ArrayList<>();
     private ProductAdapter productAdapter;
-    FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private DatabaseHelper dbHelper;
 
 
     @Override
@@ -50,6 +53,10 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         productAdapter = new ProductAdapter(this, productList);
         productAdapter.setOnItemClickListener(this);
         recyclerView.setAdapter(productAdapter);
+        //sqlite
+
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         if (intent.hasExtra("msg")) {
             String category = intent.getStringExtra("msg");
@@ -97,16 +104,35 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
 
         addToCartButton.setOnClickListener(v -> {
             String quantityString = quantityEditText.getText().toString().trim();
-            //todo add the product to the cart logic
+
             if (!quantityString.isEmpty()) {
                 int quantity = Integer.parseInt(quantityString);
-                //todo add the product to the cart logic
 
+                // Check if the product is already in the cart
+                if (cart.getProductsQuantity().containsKey(product)) {
+                    // If the product already exists in the cart, update the quantity
+                    double existingQuantity = cart.getProductsQuantity().get(product);
+                    cart.getProductsQuantity().put(product, existingQuantity + quantity);
+                } else {
+                    // If the product is not in the cart, add it with the given quantity
+                    cart.getProductsQuantity().put(product, (double) quantity);
+                }
+
+                // Calculate the updated total price of the cart
+                double updatedTotal = cart.getTotal() + (product.getPrice() * quantity);
+                cart.setTotal(updatedTotal);
+
+                // sqllite
+                dbHelper.addCart(cart);
+
+
+                // Close the dialog after adding the product to the cart
+                dialog.dismiss();
             } else {
-                // case when the quantity is empty
+                // Show an error message or handle the case when the quantity is empty
             }
-            dialog.dismiss();
         });
+
 
         dialog.show();
     }
@@ -143,4 +169,9 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         startActivity(i);
 
     }
+
+
+
+
+
 }
