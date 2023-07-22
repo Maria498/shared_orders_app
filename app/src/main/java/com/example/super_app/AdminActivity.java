@@ -3,6 +3,7 @@ package com.example.super_app;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +15,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Product;
 
 public class AdminActivity extends Activity {
     FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
@@ -24,6 +27,9 @@ public class AdminActivity extends Activity {
     private ImageView productImageView;
     String selectedImageUrl = "drawable://" + R.drawable.default_image;
     private String selectedCategory;
+    private Product product;
+    private DatabaseHelper dbHelper;
+
 
 
     @Override
@@ -34,6 +40,9 @@ public class AdminActivity extends Activity {
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         Button createProductBtn = findViewById(R.id.createProductBtn);
         createProductBtn.setOnClickListener( v -> showAddProductDialog());
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        dbHelper.printAllProducts();
     }
 
     private void showAddProductDialog() {
@@ -52,6 +61,7 @@ public class AdminActivity extends Activity {
                 R.array.categoryArray, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         productCategorySpinner.setAdapter(adapter);
+
         productCategorySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -71,6 +81,11 @@ public class AdminActivity extends Activity {
                 double price = Double.parseDouble(priceStr);
                 int discount = 1; // by default no discount
                 fireBaseHelper.handleProductToFirestore(name, selectedCategory, price, discount, isHealthyTag, selectedImageUrl, name);
+                //  Product(String name, String img, String category, double price, int discount, int quantity, String description)
+                product = new Product(name, selectedImageUrl, selectedCategory, price, discount, 1);
+                dbHelper.insertProductToProductDB(product);
+
+
             } else {
                 // Handle case when any of the fields are empty
             }

@@ -11,6 +11,7 @@ import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -30,7 +31,7 @@ import java.util.Map;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "ShoppingApp1";
+    private static final String DATABASE_NAME = "ShoppingApp2.db";
 
 
     public DatabaseHelper(Context context){
@@ -57,7 +58,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + Product.COLUMN_PRODUCT_PRICE + " REAL,"
                 + Product.COLUMN_PRODUCT_IMAGE + " TEXT,"
                 + Product.COLUMN_PRODUCT_CATEGORY + " TEXT,"
-                + Product.COLUMN_PRODUCT_DESCRIPTION + " TEXT,"
                 + Product.COLUMN_PRODUCT_DISCOUNT + " INTEGER,"
                 + Product.COLUMN_PRODUCT_QUANTITY + " INTEGER,"
                 + Product.COLUMN_ORDER_ID + " INTEGER"
@@ -159,8 +159,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
 
 
-
-    //-----------PRODUCT----------------------------
     //----------CART--------------------------------
     public void addCart(Cart cart) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -188,16 +186,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteCart(int cartId) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         db.delete(TABLE_CART, COLUMN_CART_ID + " = ?", new String[]{String.valueOf(cartId)});
         db.delete(TABLE_CART_ITEM, COLUMN_CART_ID + " = ?", new String[]{String.valueOf(cartId)});
-
         db.close();
     }
 
     public void editCart(Cart cart) {
         SQLiteDatabase db = this.getWritableDatabase();
-
         ContentValues cartValues = new ContentValues();
         cartValues.put(COLUMN_CART_DATE, cart.getDate().toString());
         cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
@@ -233,7 +228,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
         values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImageUrl());
         values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
-        values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
         values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
         values.put(Product.COLUMN_PRODUCT_QUANTITY, product.getQuantity());
 
@@ -258,7 +252,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(Product.COLUMN_PRODUCT_PRICE, product.getPrice());
         values.put(Product.COLUMN_PRODUCT_IMAGE, product.getImageUrl());
         values.put(Product.COLUMN_PRODUCT_CATEGORY, product.getCategory());
-        values.put(Product.COLUMN_PRODUCT_DESCRIPTION, product.getDescription());
         values.put(Product.COLUMN_PRODUCT_DISCOUNT, product.getDiscount());
         values.put(Product.COLUMN_PRODUCT_QUANTITY, product.getQuantity());
 
@@ -276,6 +269,24 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         boolean exists = cursor.getCount() > 0;
         cursor.close();
         return exists;
+    }
+
+    public void printAllProducts() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + Product.TABLE_PRODUCT, null);
+        if (cursor.moveToFirst()) {
+            do {
+                // Retrieve data from the cursor
+                @SuppressLint("Range") long id = cursor.getLong(cursor.getColumnIndex(Product.COLUMN_ID));
+                @SuppressLint("Range") String name = cursor.getString(cursor.getColumnIndex(Product.COLUMN_PRODUCT_NAME));
+                @SuppressLint("Range") double price = cursor.getDouble(cursor.getColumnIndex(Product.COLUMN_PRODUCT_PRICE));
+                // ... and so on for other columns
+
+                // Print the data to the console or logcat
+                Log.d("ProductData", "ID: " + id + ", Name: " + name + ", Price: " + price);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
     }
     //-----------PRODUCT----------------------------
     //-----------PRODUCT&ORDER----------------------

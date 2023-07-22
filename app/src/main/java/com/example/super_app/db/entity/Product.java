@@ -12,7 +12,6 @@ public class Product implements Serializable {
     public static final String COLUMN_PRODUCT_PRICE = "price";
     public static final String COLUMN_PRODUCT_IMAGE = "image";
     public static final String COLUMN_PRODUCT_CATEGORY = "category";
-    public static final String COLUMN_PRODUCT_DESCRIPTION = "description";
     public static final String COLUMN_PRODUCT_DISCOUNT = "discount";
 
     public static final String TABLE_PRODUCT = "products";
@@ -40,6 +39,15 @@ public class Product implements Serializable {
         this.price = price;
         this.img = img;
         this.category = category;
+    }
+
+    public Product(String name, String img, String category, double price, int discount, int quantity) {
+        this.name = name;
+        this.img = img;
+        this.category = category;
+        this.price = price;
+        this.discount = discount;
+        this.quantity = quantity;
     }
 
     public Product(String name, double price, String imageUrl, String category, int discount, boolean healthy_tag) {

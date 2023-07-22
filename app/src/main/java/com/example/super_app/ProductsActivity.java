@@ -3,6 +3,7 @@ package com.example.super_app;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,7 +55,8 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         recyclerView.setAdapter(productAdapter);
         //sqlite
 
-        dbHelper = new DatabaseHelper(this);
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         if (intent.hasExtra("msg")) {
             String category = intent.getStringExtra("msg");
