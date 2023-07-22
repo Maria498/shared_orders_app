@@ -1,7 +1,6 @@
 package com.example.super_app;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,13 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.super_app.db.entity.Product;
 
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
 
 import java.util.List;
 
@@ -50,23 +45,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product product = productList.get(position);
         // Load the image using Glide and Firebase Storage
         String imageUrl = product.getImageUrl();
-        Log.d("ProductAdapter", "========= ImageUrl for " + product.getName() + ": " + product.getImageUrl()); // Add this log to check the imageUrl value
-
         if (imageUrl != null) {
-            // Create a Firebase Storage reference from the image path
-            StorageReference storageReference = FirebaseStorage.getInstance().getReference().child(imageUrl);
-
-// Load the image using Glide
             Glide.with(context)
-                    .load(storageReference)
-                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .priority(Priority.HIGH)
-                    .placeholder(R.drawable.default_image)
-                    .error(R.drawable.default_image)
+                    .load(imageUrl)
                     .into(holder.productImage);
 
         } else {
-            // If imageUrl is null, you can handle it accordingly, e.g., show a default image
+            // If imageUrl is null, show a default image
             holder.productImage.setImageResource(R.drawable.default_image);
         }
 
