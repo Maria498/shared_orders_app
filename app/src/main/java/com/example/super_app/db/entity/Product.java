@@ -28,7 +28,7 @@ public class Product implements Serializable {
     private ArrayList<Integer> ratings;
     private int quantity;
     private String description;
-    private long id;
+    private String id;
     private String imageUrl;
 
     public Product() {}
@@ -68,11 +68,11 @@ public class Product implements Serializable {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

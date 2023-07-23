@@ -8,14 +8,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener {
-    private DatabaseHelper dbHelper;
+    private Cart cart;
     private List<Product> cartProductsList = new ArrayList<>();
     private CartAdapter cartAdapter;
 
@@ -36,20 +38,27 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCart.setAdapter(cartAdapter);
 
-        // Retrieve cart data from the SQLite database
-        dbHelper = new DatabaseHelper(this);
-        cartProductsList.addAll(dbHelper.getAllProductsInCart());
+        // Retrieve the cart instance from the FireBaseHelper
+        cart = FireBaseHelper.getCart();
+        if (cart != null) {
+            // Add products from the cart HashMap to the cartProductsList
+            cartProductsList.addAll(cart.getProductsQuantity().keySet());
 
-        // Calculate and display the total price
-        double totalPrice = calculateTotalPrice(cartProductsList);
-        cartTotalPrice.setText(String.format("$%.2f", totalPrice));
-        cartAdapter.updateCartProductsList(cartProductsList);
+            // Calculate and display the total price
+            double totalPrice = calculateTotalPrice(cart.getProductsQuantity());
+            cartTotalPrice.setText(String.format("$%.2f", totalPrice));
+
+            // Update the RecyclerView with the cartProductsList
+            cartAdapter.updateCartProductsList(cartProductsList);
+        }
     }
 
-    private double calculateTotalPrice(List<Product> products) {
+    private double calculateTotalPrice(Map<Product, Integer> cartHashMap) {
         double totalPrice = 0;
-        for (Product product : products) {
-            totalPrice += (product.getPrice() * product.getQuantity());
+        for (Map.Entry<Product, Integer> entry : cartHashMap.entrySet()) {
+            Product product = entry.getKey();
+            int quantity = entry.getValue();
+            totalPrice += (product.getPrice() * quantity);
         }
         return totalPrice;
     }
@@ -66,4 +75,3 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         startActivity(i);
     }
 }
-

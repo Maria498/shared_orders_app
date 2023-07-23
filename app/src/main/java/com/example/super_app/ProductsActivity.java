@@ -26,7 +26,6 @@ import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
@@ -120,12 +119,19 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
             // If the image URL is null, load a default image
             productImage.setImageResource(R.drawable.default_image);
         }
+        if (cart.getProductsQuantity().containsKey(product)) {
+            int existingQuantity = cart.getProductsQuantity().get(product);
+            quantityEditText.setText(String.valueOf(existingQuantity));
+        }
         // Inside showProductDialog method after adding the product to the cart
         addToCartButton.setOnClickListener(v -> {
             String quantityString = quantityEditText.getText().toString().trim();
 
             if (!quantityString.isEmpty()) {
                 int quantity = Integer.parseInt(quantityString);
+
+                // Set the quantity in the product object
+                product.setQuantity(quantity);
 
                 // Check if the product is already in the cart
                 if (cart.getProductsQuantity().containsKey(product)) {

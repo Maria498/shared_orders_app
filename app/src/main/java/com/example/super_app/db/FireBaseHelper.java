@@ -139,6 +139,7 @@ public class FireBaseHelper {
                     // Loop through the query results and create ProductModel objects
                     for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
                         Product product = documentSnapshot.toObject(Product.class);
+                        product.setId(documentSnapshot.getId());
                         products.add(product);
                     }
                     // Call the listener's onProductFetch method with the list of products

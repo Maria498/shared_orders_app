@@ -55,7 +55,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.ViewHolder> {
         Product product = productList.get(position);
         holder.productName.setText(product.getName());
         holder.productQuantity.setText("Quantity: " + product.getQuantity());
-        holder.productTotalPrice.setText("Total Price: $" + (product.getQuantity() * product.getPrice()));
+        holder.productTotalPrice.setText("Total Price: $" + String.format("%.2f", product.getQuantity() * product.getPrice()));
 
         // Load the product image using Glide
         loadImage(product.getImageUrl(), holder.cartProductImage);
