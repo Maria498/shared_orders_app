@@ -2,6 +2,8 @@ package com.example.super_app.db.entity;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Cart {
     private String cartId;
@@ -19,14 +21,38 @@ public class Cart {
     public static final String COLUMN_PRODUCT_QUANTITY = "quantity";
     private long id;
 
+    private String orderId;
+    private HashMap<String, Integer> productsIDQuantity;
 
-
-    public Cart(String cartId, Date date, double price, int discount) {
+    public Cart(String cartId, Date date, double price, int discount, String orderId) {
         this.cartId = cartId;
         this.date = date;
         this.total = price;
         this.discount = discount;
+        this.orderId = orderId;
         this.productsQuantity = new HashMap<>();
+        this.productsIDQuantity = new HashMap<>();
+    }
+
+    public String getCartId() {
+        return cartId;
+    }
+
+    public String getOrderId() {
+        return orderId;
+    }
+
+
+    public HashMap<String, Integer> getProductsIDQuantity() {
+        return productsIDQuantity;
+    }
+
+    public void setProductsIDQuantity(HashMap<String, Integer> productsIDQuantity) {
+        this.productsIDQuantity = productsIDQuantity;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
     }
 
     public void setCartId(String cartId) {

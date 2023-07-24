@@ -1,11 +1,7 @@
 package com.example.super_app.db.entity;
 
-import com.example.super_app.db.entity.Product;
-import com.example.super_app.db.entity.User;
-
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Objects;
 
 public class Order {
@@ -22,23 +18,20 @@ public class Order {
     private String deliveryDate;
     private String address;
     private HashMap<String, ArrayList<Product>> productsOfNeigh;
+    private HashMap<String, ArrayList<Cart>> cartsOfNeigh;
+
     private double totalPrice;
+    private boolean isOpen;
 
 
+    public Order() {}
 
-    public Order()
-    {
-
-    }
-
-
-
-    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, ArrayList<Product>> productsOfNeigh, double totalPrice) {
+    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, ArrayList<Cart>> cartsOfNeigh, double totalPrice) {
         this.fullNameOwner = fullNameOwner;
         this.phoneNumberOwner = phoneNumberOwner;
         this.deliveryDate = deliveryDate;
         this.address = address;
-        this.productsOfNeigh = productsOfNeigh;
+        this.cartsOfNeigh = cartsOfNeigh;
         this.totalPrice = totalPrice;
     }
 
@@ -49,8 +42,24 @@ public class Order {
         this.address = address;
     }
 
+    public void setOpen(boolean open) {
+        isOpen = open;
+    }
+
+    public boolean isOpen() {
+        return isOpen;
+    }
+
     public String getFullNameOwner() {
         return fullNameOwner;
+    }
+
+    public void setCartsOfNeigh(HashMap<String, ArrayList<Cart>> cartsOfNeigh) {
+        this.cartsOfNeigh = cartsOfNeigh;
+    }
+
+    public HashMap<String, ArrayList<Cart>> getCartsOfNeigh() {
+        return cartsOfNeigh;
     }
 
     public void setFullNameOwner(String fullNameOwner) {

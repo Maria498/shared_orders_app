@@ -128,12 +128,12 @@
     <string name="appDescription">Welocme to the sharedSal app, ome to you from shufersal. \n\nJoin yor neighborse and order food supliies toghether, saving costs and aloowing you to order items you wouldnt be able to when orderdering delivery alone!</string>
     <string name="productPriceAfterDiscount">price after discount</string>
     <string name="createNewOrder">Create New Order</string>
-    <string name="deliveryDate">choose a Delivery date</string>
+    <string name="deliveryDate">Delivery date</string>
     <string name="Continue">Continue</string>
-    <string name="AddaddressForDelivery">Your address for Delivery</string>
+    <string name="AddaddressForDelivery">Delivery address</string>
     <string name="ContactDetails">Contact Details:</string>
     <string name="phoneNum">05********</string>
-    <string name="fullname">full Name</string>
+    <string name="fullname">Full Name</string>
     <string name="countOfProduct">0</string>
     <string name="Ordersyouown">Orders you own</string>
     <string name="CreatorName">Full name of owner</string>

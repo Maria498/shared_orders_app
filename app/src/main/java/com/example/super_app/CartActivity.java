@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener {
-    private Cart cart;
     private List<Product> cartProductsList = new ArrayList<>();
-    private CartAdapter cartAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +31,13 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         TextView cartTotalPrice = findViewById(R.id.cartTotalPrice);
 
         // Set up RecyclerView
-        cartAdapter = new CartAdapter(this, cartProductsList);
+        CartAdapter cartAdapter = new CartAdapter(this, cartProductsList);
         cartAdapter.setOnItemClickListener(this);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCart.setAdapter(cartAdapter);
 
         // Retrieve the cart instance from the FireBaseHelper
-        cart = FireBaseHelper.getCart();
+        Cart cart = FireBaseHelper.getCart();
         if (cart != null) {
             // Add products from the cart HashMap to the cartProductsList
             cartProductsList.addAll(cart.getProductsQuantity().keySet());
