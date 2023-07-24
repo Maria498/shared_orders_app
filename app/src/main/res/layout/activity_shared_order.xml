@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:background="@color/white"
     tools:context=".CreateNewOrderActivity">
 
-    <ImageView
-        android:id="@+id/backgroundImageView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:scaleType="centerCrop"
-        android:src="@drawable/food_bag" />
 
     <RelativeLayout
         android:id="@+id/orderRelativeLayout"
@@ -26,27 +22,68 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="72dp"
             android:text="@string/createNewOrder"
-            android:textColor="@color/black"
+            android:textColor="@color/text"
             android:textSize="30sp"
             android:textStyle="bold" />
+
+
+        <TextView
+            android:id="@+id/ContactDetails"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="16dp"
+            android:layout_below="@+id/textView"
+            android:layout_marginTop="30dp"
+            android:text="@string/ContactDetails"
+            android:textColor="@color/text"
+            android:textSize="22sp"
+            />
+
+        <EditText
+            android:id="@+id/fullName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/ContactDetails"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="16dp"
+            android:drawableLeft="@drawable/baseline_person_24"
+            android:hint="@string/fullname"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/phoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_below="@id/fullName"
+            android:hint="Phone"
+            android:drawableLeft="@drawable/baseline_local_phone_24"
+            android:inputType="phone"
+            />
+
         <LinearLayout
             android:id="@+id/linear"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/textView"
-            android:layout_marginTop="20dp"
+            android:layout_below="@+id/phoneNumber"
+            android:layout_marginTop="30dp"
             android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/textViewDeliveryDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="left"
-                android:layout_marginLeft="20dp"
+                android:layout_gravity="start"
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="40dp"
                 android:layout_marginTop="10dp"
                 android:text="@string/deliveryDate"
                 android:textSize="20sp"
-                android:textColor="@color/black"
+                android:textColor="@color/text"
                 />
 
             <TextView
@@ -55,54 +92,19 @@
                 android:layout_height="32dp"
                 android:layout_gravity="left"
                 android:layout_marginStart="8dp"
+                android:layout_marginEnd="20dp"
                 android:drawableLeft="@drawable/baseline_calendar_today_24" />
         </LinearLayout>
-        <TextView
-            android:id="@+id/ContactDetails"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linear"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="15dp"
-            android:text="@string/ContactDetails"
-            android:textStyle="bold"
-            android:textColor="@color/black"
-            android:textSize="22sp"
-            />
-        <EditText
-            android:id="@+id/fullName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="10dp"
-            android:layout_below="@id/ContactDetails"
-            android:drawableLeft="@drawable/baseline_person_24"
-            android:inputType="text"
-            android:hint="@string/fullname"
-            />
-        <EditText
-            android:id="@+id/phoneNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginLeft="16dp"
-            android:layout_below="@id/fullName"
-            android:drawableLeft="@drawable/baseline_local_phone_24"
-            android:inputType="phone"
-            />
         <TextView
             android:id="@+id/txtAddAddress"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/phoneNumber"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="16dp"
+            android:layout_below="@+id/linear"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="16dp"
             android:layout_marginTop="10dp"
             android:text="@string/AddaddressForDelivery"
-            android:textColor="@color/black"
+            android:textColor="@color/text"
             android:textSize="20sp"
             />
 
@@ -111,17 +113,19 @@
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_gravity="left"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:layout_below="@+id/txtAddAddress"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
+            android:textColor="@color/text"
             android:entries="@array/israeliCities" />
+
         <LinearLayout
             android:id="@+id/linearLay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/spinnerCity"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="20dp"
             android:orientation="horizontal">
 
             <EditText
@@ -152,19 +156,32 @@
                 android:background="@drawable/input_bg"
                 android:ems="10"
                 android:hint="@string/Apartment"
+                android:inputType="numberDecimal"
                 android:paddingLeft="20dp" />
         </LinearLayout>
 
-
+        <CheckBox
+            android:id="@+id/addCartCheckBox"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:checked="false"
+            android:padding="8dp"
+            android:textColor="@color/text"
+            android:textSize="20sp"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="10dp"
+            android:layout_below="@+id/linearLay"
+            android:text="Checkout my cart" />
 
 
         <Button
-            android:id="@+id/continueBtn"
+            android:id="@+id/createOrderBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_below="@+id/linearLay"
-            android:backgroundTint="#404040"
+            android:layout_below="@+id/addCartCheckBox"
+            android:backgroundTint="@color/button"
             android:layout_marginTop="15dp"
             android:text="@string/Continue" />
 

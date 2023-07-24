@@ -30,7 +30,8 @@ public class AdminActivity extends Activity {
     private Product product;
     private DatabaseHelper dbHelper;
 
-
+    //todo - add deletion logic
+    //todo - add edit logic
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
