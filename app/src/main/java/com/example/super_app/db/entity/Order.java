@@ -1,5 +1,6 @@
 package com.example.super_app.db.entity;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Objects;
 
@@ -21,17 +22,28 @@ public class Order {
     private double totalPrice;
     private boolean isOpen;
 
+    private Date creationDate;
+
 
     public Order() {}
 
 
 
-    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address) {
+    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, Date creationDate) {
         this.fullNameOwner = fullNameOwner;
         this.phoneNumberOwner = phoneNumberOwner;
         this.deliveryDate = deliveryDate;
         this.address = address;
         this.productsIDQuantity = new HashMap<>();
+        this.creationDate = creationDate;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
     }
 
     public void setOpen(boolean open) {
@@ -107,6 +119,6 @@ public class Order {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fullNameOwner, phoneNumberOwner, deliveryDate, address, totalPrice, isOpen);
+        return Objects.hash(id, fullNameOwner, phoneNumberOwner, deliveryDate, address, productsIDQuantity, totalPrice, isOpen, creationDate);
     }
 }

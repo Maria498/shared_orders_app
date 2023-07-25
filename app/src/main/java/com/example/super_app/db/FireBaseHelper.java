@@ -29,6 +29,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -212,7 +213,8 @@ public class FireBaseHelper {
                     Toast.makeText(context, "You already have an open order", Toast.LENGTH_SHORT).show();
                 } else {
                     // Create a new order and add it to Firestore
-                    Order newOrder = new Order(userName, phoneNum, selectedDate, address);
+                    Date orderCreationDate = currentCart.getDate();
+                    Order newOrder = new Order(userName, phoneNum, selectedDate, address, orderCreationDate);
                     newOrder.setOpen(true);
                     db.collection("Orders").document(uid).set(newOrder)
                             .addOnSuccessListener(unused -> {
@@ -251,17 +253,8 @@ public class FireBaseHelper {
             }
             cart.setProductsIDQuantity(productsIDQuantityStrings);
             order.setProductsIDQuantity(productsIDQuantityStrings);
+            order.setTotalPrice(cart.getTotal());
 
-//            DocumentReference orderDocRef = db.collection("Orders").document(orderId);
-//            orderDocRef.set(productsIDQuantityStrings, SetOptions.merge())
-//                    .addOnSuccessListener(aVoid -> {
-//                        Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
-//                        // Do something
-//                    })
-//                    .addOnFailureListener(e -> {
-//                        Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
-//                        Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
-//                    });
 
             // Add the cart to Firestore
             db.collection("Orders").document(orderId)
