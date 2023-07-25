@@ -243,10 +243,11 @@ public class FireBaseHelper {
 
             // Convert the keys of productsIDQuantity to strings
             HashMap<String, Integer> productsIDQuantityStrings = new HashMap<>();
-            for (Map.Entry<String, Integer> entry : cart.getProductsIDQuantity().entrySet()) {
-                String productId = entry.getKey();
+            for (Map.Entry<Product, Integer> entry : cart.getProductsQuantity().entrySet()) {
+                Product product = entry.getKey();
+                String productName= product.getName(); // Assuming getName() returns the unique identifier of the product
                 int quantity = entry.getValue();
-                productsIDQuantityStrings.put(productId, quantity);
+                productsIDQuantityStrings.put(productName, quantity);
             }
             cart.setProductsIDQuantity(productsIDQuantityStrings);
 
@@ -267,11 +268,6 @@ public class FireBaseHelper {
                                     Toast.makeText(context, "Failed to update Order with the cart information", Toast.LENGTH_SHORT).show();
                                     Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
                                 });
-                    })
-                    .addOnFailureListener(e -> {
-                        // Failed to add cart to Firestore
-                        Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
-                        Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
                     });
         }
     }
