@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 public class Cart {
     private String cartId;
+    private static Cart instance;
     private Date date;
     private double total;
     private int discount;
@@ -31,6 +32,12 @@ public class Cart {
         this.productsQuantity = new HashMap<>();
         this.productsIDQuantity = new HashMap<>();
     }
+//    public static Cart getInstance(String cartId, Date date, double price, int discount, String orderId) {
+//        if (instance == null) {
+//            instance = new Cart(cartId, date, price, discount, orderId);
+//        }
+//        return instance;
+//    }
 
     public String getCartId() {
         return cartId;
@@ -46,6 +53,12 @@ public class Cart {
     }
 
     public void setProductsIDQuantity(HashMap<String, Integer> productsIDQuantity) {
+//        HashMap<Product, Integer> productMap = getProductsQuantity();
+//        if(!productMap.isEmpty()) {
+//            for(Product p: productMap.keySet()) {
+//                productsIDQuantity.put(p.getName(), p.getQuantity());
+//            }
+//        }
         this.productsIDQuantity = productsIDQuantity;
     }
 

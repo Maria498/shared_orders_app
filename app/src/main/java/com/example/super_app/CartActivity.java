@@ -35,7 +35,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         setContentView(R.layout.activity_cart);
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
-
+        fireBaseHelper.initializeCart();
 
         backBtn = findViewById(R.id.backBtn);
         checkout = findViewById(R.id.Checkout);
@@ -50,7 +50,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         cartAdapter.setOnItemClickListener(this);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCart.setAdapter(cartAdapter);
-        fireBaseHelper.initializeCart();
+
         // Retrieve the cart instance from the FireBaseHelper
         Cart cart = FireBaseHelper.getCart();
         if (cart != null) {

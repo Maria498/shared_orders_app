@@ -76,7 +76,7 @@ public class FireBaseHelper {
     public void initializeCart() {
         if (cart == null) {
             cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0, null);
-            cart.setProductsIDQuantity(new HashMap<>());
+            //cart.setProductsIDQuantity(new HashMap<>());
         }
     }
     public void initializeOrder() {
@@ -88,8 +88,14 @@ public class FireBaseHelper {
 
     public void updateCartQuantity(Product product, int newQuantity) {
         if (cart != null) {
-            cart.getProductsQuantity().put(product, newQuantity);
-            cart.getProductsIDQuantity().put(product.getId(), newQuantity);
+            HashMap<Product, Integer> productsQuantity = new HashMap<>();
+            productsQuantity.put(product, newQuantity);
+
+            HashMap<String, Integer> productsQuantity1 = new HashMap<>();
+            productsQuantity1.put(product.getName(), newQuantity);
+            cart.setProductsIDQuantity(productsQuantity1);
+            cart.setProductsQuantity(productsQuantity);
+
         }
     }
 
@@ -232,7 +238,7 @@ public class FireBaseHelper {
 
     public void addCartToFirestore(Context context, Order order, String orderId, Cart cart) {
         if (cart != null) {
-            cart.setCartId(orderId);
+            cart.setOrderId(orderId);
             cart.setDate(Calendar.getInstance().getTime());
 
             // Convert the keys of productsIDQuantity to strings
@@ -248,7 +254,7 @@ public class FireBaseHelper {
             db.collection("Carts").document(orderId).set(cart)
                     .addOnSuccessListener(unused -> {
                         // Cart added successfully to Firestore
-                        Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, "Cart added to FireStore", Toast.LENGTH_SHORT).show();
 
                         // Update the Order document with the new "cartsOfNeigh" HashMap
                         db.collection("Orders").document(orderId).set(order)
