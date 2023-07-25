@@ -55,6 +55,7 @@ public class SigninActivity extends AppCompatActivity {
     private User user;
     private HashMap<String, Object> userMap = new HashMap<>();
     private SharedPreferences sharedPref;
+    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,12 +165,11 @@ public class SigninActivity extends AppCompatActivity {
         }
 
         String userAdd = city.getSelectedItem().toString() + "," + userStreet + "," + userApart;
-        user = new User(userName1, userEmail, userPassword, userAdd,date);
-        userMap.put("userName", userName1);
-        userMap.put("userEmail", userEmail);
-        userMap.put("userPassword", userPassword);
-        userMap.put("userAdd", userAdd);
-        userMap.put("birthdate",date );
+        User user2 = new User(userName1, userAdd,date);
+//        userMap.put("userName", userName1);
+//        userMap.put("userEmail", userEmail);
+//        userMap.put("userPassword", userPassword);
+
 
 
         mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
@@ -196,6 +196,7 @@ public class SigninActivity extends AppCompatActivity {
                                     }
                                 });
 
+                        fireBaseHelper.addUserData(user2);
                         //email sanding
                         user.sendEmailVerification()
                                 .addOnCompleteListener(task1 -> {
@@ -209,6 +210,8 @@ public class SigninActivity extends AppCompatActivity {
                                     } else
                                         Log.d(TAG, "Email not sent.");
                                 });
+
+
 
                     }
                 });

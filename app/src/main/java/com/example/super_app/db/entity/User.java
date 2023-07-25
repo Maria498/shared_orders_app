@@ -29,6 +29,11 @@ public class User {
         this.userAdd = userAdd;
         this.birthdate = birthdate;
     }
+    public User(String userName,String userAdd, String birthdate) {
+        this.userName = userName;
+        this.userAdd = userAdd;
+        this.birthdate = birthdate;
+    }
 
     public String getUserName() {
         return userName;
