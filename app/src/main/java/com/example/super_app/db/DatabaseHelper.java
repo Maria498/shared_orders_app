@@ -20,13 +20,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.example.super_app.R;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.OrderProduct;
 import com.example.super_app.db.entity.Product;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,7 +83,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         //todo - history orders can be extracted from here
         String CREATE_CART_TABLE = "CREATE TABLE " + TABLE_CART + "("
                 + COLUMN_CART_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + COLUMN_CART_DATE + " TEXT,"
+                + COLUMN_CART_DATE + " DATE,"
                 + COLUMN_CART_TOTAL + " REAL,"
                 + COLUMN_CART_DISCOUNT + " INTEGER"
                 + ")";
@@ -112,7 +114,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         sqLiteDatabase.execSQL("DROP TABLE IF EXISTS shoppingCart");
         String createTableQuery = "CREATE TABLE shoppingCart (name TEXT PRIMARY KEY, price TEXT,quantity INTEGER, pic INTEGER)";
         sqLiteDatabase.execSQL(createTableQuery);
-        int apple = R.drawable.apple;
+        //int apple = R.drawable.apple;
 
     }
 
@@ -167,7 +169,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues cartValues = new ContentValues();
-        cartValues.put(COLUMN_CART_DATE, cart.getDate().toString());
+        cartValues.put(String.valueOf(COLUMN_CART_DATE), cart.getDate().toString());
         cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
         cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
         long cartId = db.insert(TABLE_CART, null, cartValues);
@@ -231,11 +233,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 cartProducts.add(product);
             } while (cursor.moveToNext());
         }
-
-
         cursor.close();
         db.close();
-
         return cartProducts;
     }
 
@@ -251,7 +250,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void editCart(Cart cart) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues cartValues = new ContentValues();
-        cartValues.put(COLUMN_CART_DATE, cart.getDate().toString());
+        cartValues.put(String.valueOf(COLUMN_CART_DATE), cart.getDate().toString());
         cartValues.put(COLUMN_CART_TOTAL, cart.getTotal());
         cartValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
         db.update(TABLE_CART, cartValues, COLUMN_CART_ID + " = ?",
@@ -270,6 +269,62 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
 
         db.close();
+    }
+    public Cart getCartById(String cartId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_CART + " WHERE " + COLUMN_CART_ID + " = ?";
+        String[] selectionArgs = {cartId};
+        Cursor cursor = db.rawQuery(query, selectionArgs);
+
+        Cart cart = null;
+
+        if (cursor.moveToFirst()) {
+            @SuppressLint("SimpleDateFormat")
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd"); // Replace this pattern with your actual date pattern
+
+            Date cartDate = null;
+            try {
+                @SuppressLint("Range") String dateString = cursor.getString(cursor.getColumnIndex(String.valueOf(COLUMN_CART_DATE)));
+                cartDate = dateFormat.parse(dateString);
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+
+// Now you have the cartDate as a Date object
+
+            @SuppressLint("Range") double cartTotal = cursor.getDouble(cursor.getColumnIndex(COLUMN_CART_TOTAL));
+            @SuppressLint("Range") int cartDiscount = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_DISCOUNT));
+
+            cart = new Cart(cartId, cartDate, cartTotal, cartDiscount,"");
+        }
+
+        cursor.close();
+        return cart;
+    }
+
+    public void printAllCarts() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        String query = "SELECT * FROM " + TABLE_CART;
+        Cursor cursor = db.rawQuery(query, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") long cartId = cursor.getLong(cursor.getColumnIndex(COLUMN_CART_ID));
+                @SuppressLint("Range") String cartDate = cursor.getString(cursor.getColumnIndex(String.valueOf(COLUMN_CART_DATE)));
+                @SuppressLint("Range") double cartTotal = cursor.getDouble(cursor.getColumnIndex(COLUMN_CART_TOTAL));
+                @SuppressLint("Range") int cartDiscount = cursor.getInt(cursor.getColumnIndex(COLUMN_CART_DISCOUNT));
+
+                // You can print or process the cart details as needed
+                System.out.println("Cart ID: " + cartId);
+                System.out.println("Cart Date: " + cartDate);
+                System.out.println("Cart Total: " + cartTotal);
+                System.out.println("Cart Discount: " + cartDiscount);
+                System.out.println("---------------");
+
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
     }
     //----------CART--------------------------------
     //-----------PRODUCT----------------------------

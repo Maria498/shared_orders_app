@@ -12,11 +12,13 @@ import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -55,6 +57,14 @@ public class FireBaseHelper {
         }
         return null;
     }
+    public static Task<DocumentSnapshot> getUserData() {
+        String userId = mAuth.getCurrentUser().getUid();
+        DocumentReference userRef = db.collection("users").document(userId);
+
+        return userRef.get();
+    }
+
+
 
     public static Cart getCart() {
         return cart;
@@ -181,7 +191,7 @@ public class FireBaseHelper {
     }
 
 
-    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart) {
+    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart, Cart currentCart) {
         String uid = mAuth.getUid();
         if (uid == null) {
             // User not logged in, show a message or handle accordingly
@@ -206,7 +216,7 @@ public class FireBaseHelper {
 
                                 // Check if the cart should be added
                                 if (shouldAddCart) {
-                                    addCartToFirestore(context, newOrder, uid, cart); // Pass the current cart here
+                                    addCartToFirestore(context, newOrder, uid, currentCart); // Pass the current cart here
                                 }
                             })
                             .addOnFailureListener(e -> {

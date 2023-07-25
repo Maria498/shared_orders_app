@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,18 +22,11 @@ import com.bumptech.glide.load.DataSource;
 import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
-import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AlertDialogFragmentViewProduct extends DialogFragment {
     private TextView price;
@@ -139,46 +131,46 @@ public class AlertDialogFragmentViewProduct extends DialogFragment {
             });
         }
 
-        addButton.setOnClickListener(view -> {
-            String uid = mAuth.getUid();
-            db.collection("Orders").get().addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot doc : task.getResult()) {
-                        Order order = doc.toObject(Order.class);
-                        HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
-                        if (doc.getId().equals(mAuth.getUid()) || (neighProducts != null && neighProducts.containsKey(uid))) {
-                            if (neighProducts == null) {
-                                neighProducts = new HashMap<>();
-                                listofProduct = new ArrayList<>();
-                            } else {
-                                listofProduct = neighProducts.get(uid);
-                                if (listofProduct == null) {
-                                    listofProduct = new ArrayList<>();
-                                }
-                            }
-                            if(product.getQuantity()==0)
-                            {
-                                product.setQuantity(1);
-                            }
-                            listofProduct.add(product);
-                            neighProducts.put(uid, listofProduct);
-                            order.setProductsOfNeigh(neighProducts);
-                            db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(unused -> {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
-                                }
-                                dismiss();
-
-                            });
-                        }
-                    }
-
-                } else {
-                    Log.e("Firebase", "Error getting order document: ", task.getException());
-                }
-            });
-
-        });
+//        addButton.setOnClickListener(view -> {
+//            String uid = mAuth.getUid();
+//            db.collection("Orders").get().addOnCompleteListener(task -> {
+//                if (task.isSuccessful()) {
+//                    for (QueryDocumentSnapshot doc : task.getResult()) {
+//                        Order order = doc.toObject(Order.class);
+//                        HashMap<String, ArrayList<Product>> neighProducts = order.getProductsOfNeigh();
+//                        if (doc.getId().equals(mAuth.getUid()) || (neighProducts != null && neighProducts.containsKey(uid))) {
+//                            if (neighProducts == null) {
+//                                neighProducts = new HashMap<>();
+//                                listofProduct = new ArrayList<>();
+//                            } else {
+//                                listofProduct = neighProducts.get(uid);
+//                                if (listofProduct == null) {
+//                                    listofProduct = new ArrayList<>();
+//                                }
+//                            }
+//                            if(product.getQuantity()==0)
+//                            {
+//                                product.setQuantity(1);
+//                            }
+//                            listofProduct.add(product);
+//                            neighProducts.put(uid, listofProduct);
+//                            order.setProductsOfNeigh(neighProducts);
+//                            db.collection("Orders").document(doc.getId()).set(order).addOnSuccessListener(unused -> {
+//                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                                    Toast.makeText(getContext(), "Added to cart", Toast.LENGTH_SHORT).show();
+//                                }
+//                                dismiss();
+//
+//                            });
+//                        }
+//                    }
+//
+//                } else {
+//                    Log.e("Firebase", "Error getting order document: ", task.getException());
+//                }
+//            });
+//
+//        });
 
         return v;
 }

@@ -2,10 +2,9 @@ package com.example.super_app;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -17,11 +16,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
-import com.example.super_app.db.entity.Order;
+import com.example.super_app.db.entity.Cart;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -37,8 +33,8 @@ public class CreateNewOrderActivity extends AppCompatActivity {
     private EditText street;
     private EditText apartmentNum;
     private String userStreet, userApart, selectedDate, userName, phoneNum;
-    boolean isOpen=false;
-    FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private boolean isOpen=false;
+    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
 
 
     @SuppressLint("NonConstantResourceId")
@@ -55,6 +51,8 @@ public class CreateNewOrderActivity extends AppCompatActivity {
         apartmentNum = findViewById(R.id.ApartmentNum);
         Button createOrderBtn = findViewById(R.id.createOrderBtn);
         BottomNavigationView menu = findViewById(R.id.menu);
+        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
 
         menu.setOnItemSelectedListener(item -> {
             switch (item.getItemId()) {
@@ -124,11 +122,15 @@ public class CreateNewOrderActivity extends AppCompatActivity {
                 Toast.makeText(CreateNewOrderActivity.this, "Please select a valid date within one week", Toast.LENGTH_SHORT).show();
 
             } else {
+                Intent intent = getIntent();
+                String cartId = intent.getStringExtra("cart_id");
+                Cart currentCart = dbHelper.getCartById(cartId);
+
                 String address = spinnerCity.getSelectedItem().toString() + ", " + userStreet + ", " + userApart;
                 boolean shouldAddCart = addCartCheckBox.isChecked();
 
                 // Add the new order to Firebase
-                fireBaseHelper.addNewOrderToFirebase(CreateNewOrderActivity.this, userName, phoneNum, selectedDate, address, shouldAddCart);
+                fireBaseHelper.addNewOrderToFirebase(CreateNewOrderActivity.this, userName, phoneNum, selectedDate, address, shouldAddCart,currentCart);
             }
 
 

@@ -1,7 +1,5 @@
 package com.example.super_app.db.entity;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Objects;
 
 public class Order {
@@ -17,23 +15,13 @@ public class Order {
     private String phoneNumberOwner;
     private String deliveryDate;
     private String address;
-    private HashMap<String, ArrayList<Product>> productsOfNeigh;
-    private HashMap<String, ArrayList<Cart>> cartsOfNeigh;
+
 
     private double totalPrice;
     private boolean isOpen;
 
 
     public Order() {}
-
-    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, ArrayList<Cart>> cartsOfNeigh, double totalPrice) {
-        this.fullNameOwner = fullNameOwner;
-        this.phoneNumberOwner = phoneNumberOwner;
-        this.deliveryDate = deliveryDate;
-        this.address = address;
-        this.cartsOfNeigh = cartsOfNeigh;
-        this.totalPrice = totalPrice;
-    }
 
     public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address) {
         this.fullNameOwner = fullNameOwner;
@@ -52,14 +40,6 @@ public class Order {
 
     public String getFullNameOwner() {
         return fullNameOwner;
-    }
-
-    public void setCartsOfNeigh(HashMap<String, ArrayList<Cart>> cartsOfNeigh) {
-        this.cartsOfNeigh = cartsOfNeigh;
-    }
-
-    public HashMap<String, ArrayList<Cart>> getCartsOfNeigh() {
-        return cartsOfNeigh;
     }
 
     public void setFullNameOwner(String fullNameOwner) {
@@ -90,14 +70,6 @@ public class Order {
         this.address = address;
     }
 
-    public HashMap<String, ArrayList<Product>> getProductsOfNeigh() {
-        return productsOfNeigh;
-    }
-
-    public void setProductsOfNeigh(HashMap<String, ArrayList<Product>> productsOfNeigh) {
-        this.productsOfNeigh = productsOfNeigh;
-    }
-
     public double getTotalPrice() {
         return totalPrice;
     }
@@ -119,11 +91,11 @@ public class Order {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Double.compare(order.totalPrice, totalPrice) == 0 && Objects.equals(fullNameOwner, order.fullNameOwner) && Objects.equals(phoneNumberOwner, order.phoneNumberOwner) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(address, order.address) && Objects.equals(productsOfNeigh, order.productsOfNeigh);
+        return id == order.id && Double.compare(order.totalPrice, totalPrice) == 0 && isOpen == order.isOpen && Objects.equals(fullNameOwner, order.fullNameOwner) && Objects.equals(phoneNumberOwner, order.phoneNumberOwner) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(address, order.address);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullNameOwner, phoneNumberOwner, deliveryDate, address, productsOfNeigh, totalPrice);
+        return Objects.hash(id, fullNameOwner, phoneNumberOwner, deliveryDate, address, totalPrice, isOpen);
     }
 }
