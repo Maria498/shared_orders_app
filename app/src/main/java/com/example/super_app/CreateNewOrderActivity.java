@@ -124,7 +124,8 @@ public class CreateNewOrderActivity extends AppCompatActivity {
             } else {
                 Intent intent = getIntent();
                 String cartId = intent.getStringExtra("cart_id");
-                Cart currentCart = dbHelper.getCartById(cartId);
+                //Cart currentCart = dbHelper.getCartById(cartId);
+                Cart currentCart = FireBaseHelper.getCart();
 
                 String address = spinnerCity.getSelectedItem().toString() + ", " + userStreet + ", " + userApart;
                 boolean shouldAddCart = addCartCheckBox.isChecked();
