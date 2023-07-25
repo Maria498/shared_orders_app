@@ -1,5 +1,6 @@
 package com.example.super_app.db.entity;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Order {
@@ -15,7 +16,7 @@ public class Order {
     private String phoneNumberOwner;
     private String deliveryDate;
     private String address;
-
+    private HashMap<String, Integer> productsIDQuantity;
 
     private double totalPrice;
     private boolean isOpen;
@@ -23,11 +24,14 @@ public class Order {
 
     public Order() {}
 
+
+
     public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address) {
         this.fullNameOwner = fullNameOwner;
         this.phoneNumberOwner = phoneNumberOwner;
         this.deliveryDate = deliveryDate;
         this.address = address;
+        this.productsIDQuantity = new HashMap<>();
     }
 
     public void setOpen(boolean open) {
@@ -68,6 +72,13 @@ public class Order {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+    public HashMap<String, Integer> getProductsIDQuantity() {
+        return productsIDQuantity;
+    }
+
+    public void setProductsIDQuantity(HashMap<String, Integer> productsIDQuantity) {
+        this.productsIDQuantity = productsIDQuantity;
     }
 
     public double getTotalPrice() {

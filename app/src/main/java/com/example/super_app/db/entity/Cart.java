@@ -1,15 +1,17 @@
 package com.example.super_app.db.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 
-public class Cart {
+public class Cart implements Serializable {
     private String cartId;
     private static Cart instance;
     private Date date;
     private double total;
     private int discount;
-    private HashMap< Product, Integer> productsQuantity;
+    private transient  HashMap< Product, Integer> productsQuantity;
     public static final String TABLE_CART = "carts";
     public static final String TABLE_CART_ITEM = "cart_items";
     public static final String COLUMN_CART_ID = "cart_id";
@@ -29,9 +31,10 @@ public class Cart {
         this.total = price;
         this.discount = discount;
         this.orderId = orderId;
-        this.productsQuantity = new HashMap<>();
         this.productsIDQuantity = new HashMap<>();
+        this.productsQuantity = new HashMap<>();
     }
+
 //    public static Cart getInstance(String cartId, Date date, double price, int discount, String orderId) {
 //        if (instance == null) {
 //            instance = new Cart(cartId, date, price, discount, orderId);
@@ -102,7 +105,7 @@ public class Cart {
         return discount;
     }
 
-    public HashMap<Product, Integer> getProductsQuantity() {
+    public Map<Product, Integer> getProductsQuantity() {
         return productsQuantity;
     }
     public long getId() {
@@ -120,7 +123,10 @@ public class Cart {
                 ", date=" + date +
                 ", total=" + total +
                 ", discount=" + discount +
-                ", productsQuantity=" + productsQuantity +
+//                ", productsQuantity=" + productsQuantity +
+//                ", id=" + id +
+                ", orderId='" + orderId + '\'' +
+                ", productsIDQuantity=" + productsIDQuantity +
                 '}';
     }
 }

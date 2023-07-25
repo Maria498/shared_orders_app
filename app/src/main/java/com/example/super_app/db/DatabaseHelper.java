@@ -186,7 +186,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         //db.insert(TABLE_CART, null, cartValues);
         //insert product to cart
-        HashMap<Product, Integer> productsQuantity = cart.getProductsQuantity();
+        HashMap<Product, Integer> productsQuantity = (HashMap<Product, Integer>) cart.getProductsQuantity();
         for (Map.Entry<Product, Integer> entry : productsQuantity.entrySet()) {
             Product product = entry.getKey();
             double quantity = entry.getValue();
@@ -268,7 +268,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.update(TABLE_CART, cartValues, COLUMN_CART_ID + " = ?",
                 new String[]{String.valueOf(cart.getId())});
 
-        HashMap<Product, Integer> productsQuantity = cart.getProductsQuantity();
+        HashMap<Product, Integer> productsQuantity = (HashMap<Product, Integer>) cart.getProductsQuantity();
         for (Map.Entry<Product, Integer> entry : productsQuantity.entrySet()) {
             Product product = entry.getKey();
             double quantity = entry.getValue();
