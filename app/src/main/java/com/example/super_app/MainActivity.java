@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         if(userName != null){
             Log.d("i am onResume()", "i am onResume()");
             DisplayAndSaveUserName(userName);
-
         }
     }
     @SuppressLint("LongLogTag")

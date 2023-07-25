@@ -28,13 +28,14 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
     private Button backBtn;
     private Button checkout;
     private HashMap<String, ArrayList<Product>> productsInOrder = new HashMap<>();
-
+    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
         DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
+
 
         backBtn = findViewById(R.id.backBtn);
         checkout = findViewById(R.id.Checkout);
@@ -49,12 +50,13 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         cartAdapter.setOnItemClickListener(this);
         recyclerViewCart.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCart.setAdapter(cartAdapter);
-
+        fireBaseHelper.initializeCart();
         // Retrieve the cart instance from the FireBaseHelper
         Cart cart = FireBaseHelper.getCart();
         if (cart != null) {
             // Add products from the cart HashMap to the cartProductsList
             cartProductsList.addAll(cart.getProductsQuantity().keySet());
+            //dbHelper.deleteCart(cart.getCartId());
             dbHelper.addCart(cart);
             dbHelper.printAllCarts();
 

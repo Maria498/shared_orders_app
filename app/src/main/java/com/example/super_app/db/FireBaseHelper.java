@@ -43,7 +43,6 @@ public class FireBaseHelper {
     private Context context;
 
     public FireBaseHelper() {
-
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         initializeCart();
         initializeOrder();
