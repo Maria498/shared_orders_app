@@ -1,7 +1,5 @@
 package com.example.super_app.db;
 
-import static android.content.ContentValues.TAG;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,14 +9,11 @@ import android.widget.Toast;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
-import com.example.super_app.db.entity.User;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -29,7 +24,6 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +38,7 @@ public class FireBaseHelper {
     private Context context;
 
     public FireBaseHelper() {
+
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         initializeCart();
         initializeOrder();
@@ -57,14 +52,6 @@ public class FireBaseHelper {
         }
         return null;
     }
-    public static Task<DocumentSnapshot> getUserData() {
-        String userId = mAuth.getCurrentUser().getUid();
-        DocumentReference userRef = db.collection("users").document(userId);
-
-        return userRef.get();
-    }
-
-
 
     public static Cart getCart() {
         return cart;
@@ -77,7 +64,7 @@ public class FireBaseHelper {
     public void initializeCart() {
         if (cart == null) {
             cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0, null);
-            //cart.setProductsIDQuantity(new HashMap<>());
+            cart.setProductsIDQuantity(new HashMap<>());
         }
     }
     public void initializeOrder() {
@@ -89,14 +76,8 @@ public class FireBaseHelper {
 
     public void updateCartQuantity(Product product, int newQuantity) {
         if (cart != null) {
-            HashMap<Product, Integer> productsQuantity = new HashMap<>();
-            productsQuantity.put(product, newQuantity);
-            HashMap<String, Integer> productsQuantity1 = new HashMap<>();
-            productsQuantity1.put(product.getName(), newQuantity);
-
-            cart.setProductsIDQuantity(productsQuantity1);
-            cart.setProductsQuantity(productsQuantity);
-
+            cart.getProductsQuantity().put(product, newQuantity);
+            cart.getProductsIDQuantity().put(product.getId(), newQuantity);
         }
     }
 
@@ -197,7 +178,7 @@ public class FireBaseHelper {
     }
 
 
-    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart, Cart currentCart) {
+    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart) {
         String uid = mAuth.getUid();
         if (uid == null) {
             // User not logged in, show a message or handle accordingly
@@ -213,8 +194,7 @@ public class FireBaseHelper {
                     Toast.makeText(context, "You already have an open order", Toast.LENGTH_SHORT).show();
                 } else {
                     // Create a new order and add it to Firestore
-                    Date orderCreationDate = currentCart.getDate();
-                    Order newOrder = new Order(userName, phoneNum, selectedDate, address, orderCreationDate);
+                    Order newOrder = new Order(userName, phoneNum, selectedDate, address);
                     newOrder.setOpen(true);
                     db.collection("Orders").document(uid).set(newOrder)
                             .addOnSuccessListener(unused -> {
@@ -223,7 +203,7 @@ public class FireBaseHelper {
 
                                 // Check if the cart should be added
                                 if (shouldAddCart) {
-                                    addCartToOrderFirestore(context, newOrder, uid, currentCart); // Pass the current cart here
+                                    addCartToFirestore(context, newOrder, uid, cart); // Pass the current cart here
                                 }
                             })
                             .addOnFailureListener(e -> {
@@ -238,7 +218,7 @@ public class FireBaseHelper {
         });
     }
 
-    public void addCartToOrderFirestore(Context context, Order order, String orderId, Cart cart) {
+    public void addCartToFirestore(Context context, Order order, String orderId, Cart cart) {
         if (cart != null) {
             cart.setDate(Calendar.getInstance().getTime());
             Map<String, Integer> productsIDQuantityStrings = cart.getProductsIDQuantity();
@@ -273,26 +253,11 @@ public class FireBaseHelper {
                                 });
                     })
                     .addOnFailureListener(e -> {
+                        // Failed to add cart to Firestore
                         Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
                         Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
                     });
-
-
         }
-    }
-
-
-    public void addUserData (User user) {
-        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
-        String userId = firebaseAuth.getCurrentUser().getUid();
-        db.collection("users").document(userId)
-                .set(user)
-                .addOnSuccessListener(aVoid -> {
-                    Log.d(TAG, "User data added to FireStore successfully.");
-                })
-                .addOnFailureListener(e -> {
-                    Log.e(TAG, "Error adding user data to FireStore: ", e);
-                });
     }
 
 
