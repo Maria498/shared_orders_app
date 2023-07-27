@@ -1,7 +1,10 @@
 package com.example.super_app.db.entity;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Order {
@@ -12,33 +15,43 @@ public class Order {
     public static final String COLUMN_DELIVERY_DATE = "delivery_date";
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_TOTAL_PRICE = "total_price";
-    private long id;
+
     private String fullNameOwner;
     private String phoneNumberOwner;
     private String deliveryDate;
     private String address;
-    private HashMap<String, ArrayList<Product>> productsOfNeigh;
+    private String id;
+   // private HashMap<String, ArrayList<Product>> productsOfNeigh;
     private HashMap<String, String> cartsOfNeigh = new HashMap<>();
     private double totalPrice;
     private boolean isOpen;
+    //private Map<String, String> productsOfNeigh;
 
 
     public Order() {}
 
-    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, String> cartsOfNeigh, double totalPrice) {
-        this.fullNameOwner = fullNameOwner;
-        this.phoneNumberOwner = phoneNumberOwner;
-        this.deliveryDate = deliveryDate;
-        this.address = address;
-        this.cartsOfNeigh = cartsOfNeigh;
-        this.totalPrice = totalPrice;
-    }
+//    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, String> cartsOfNeigh, double totalPrice) {
+//        this.fullNameOwner = fullNameOwner;
+//        this.phoneNumberOwner = phoneNumberOwner;
+//        this.deliveryDate = deliveryDate;
+//        this.address = address;
+//        this.cartsOfNeigh = cartsOfNeigh;
+//        this.totalPrice = totalPrice;
+//    }
 
     public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address) {
         this.fullNameOwner = fullNameOwner;
         this.phoneNumberOwner = phoneNumberOwner;
         this.deliveryDate = deliveryDate;
         this.address = address;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getId() {
+        return id;
     }
 
     public void setOpen(boolean open) {
@@ -89,13 +102,6 @@ public class Order {
         this.address = address;
     }
 
-    public HashMap<String, ArrayList<Product>> getProductsOfNeigh() {
-        return productsOfNeigh;
-    }
-
-    public void setProductsOfNeigh(HashMap<String, ArrayList<Product>> productsOfNeigh) {
-        this.productsOfNeigh = productsOfNeigh;
-    }
 
     public double getTotalPrice() {
         return totalPrice;
@@ -105,24 +111,25 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Order order = (Order) o;
-        return Double.compare(order.totalPrice, totalPrice) == 0 && Objects.equals(fullNameOwner, order.fullNameOwner) && Objects.equals(phoneNumberOwner, order.phoneNumberOwner) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(address, order.address) && Objects.equals(productsOfNeigh, order.productsOfNeigh);
+        return Double.compare(order.totalPrice, totalPrice) == 0 && Objects.equals(fullNameOwner, order.fullNameOwner) && Objects.equals(phoneNumberOwner, order.phoneNumberOwner) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(address, order.address);
+    }
+    public static Order fromSnapshot(DocumentSnapshot documentSnapshot) {
+        Order order = documentSnapshot.toObject(Order.class);
+        if (order != null) {
+            // Set the 'id' field manually using the document ID from Firestore
+            order.setId(documentSnapshot.getId());
+        }
+        return order;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fullNameOwner, phoneNumberOwner, deliveryDate, address, productsOfNeigh, totalPrice);
+        return Objects.hash(fullNameOwner, phoneNumberOwner, deliveryDate, address, totalPrice);
     }
 }

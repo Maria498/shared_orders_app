@@ -275,6 +275,48 @@ public class FireBaseHelper {
                     Log.e(TAG, "Error adding user data to FireStore: ", e);
                 });
     }
+    // Inside the fetchOrdersFromFirestore method
+    public void fetchOrdersFromFirestore(FirestoreFetchListener listener) {
+        CollectionReference ordersRef = db.collection("Orders");
 
+        // Fetch all orders
+        ordersRef.get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    List<Order> orders = new ArrayList<>();
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Order order = new Order();
+
+                        // Check if the 'id' field is of type String or Long and convert accordingly
+                        Object idValue = documentSnapshot.get("id");
+                        if (idValue instanceof String) {
+                            order.setId((String) idValue);
+                        } else if (idValue instanceof Long) {
+                            order.setId(String.valueOf((Long) idValue));
+                        } else {
+                            // Handle the case where 'id' is neither String nor Long
+                            // For example, throw an error, skip the order, or set a default value
+                        }
+
+                        // Set other fields as before
+                        order.setAddress(documentSnapshot.getString("address"));
+                        order.setDeliveryDate(documentSnapshot.getString("deliveryDate"));
+                        // Set other fields as needed...
+
+                        orders.add(order);
+                    }
+                    // Notify the listener with the fetched orders
+                    listener.onOrderFetch(orders);
+                })
+                .addOnFailureListener(e -> {
+                    // Notify the listener about the failure to fetch orders
+                    listener.onFailure("Failed to fetch orders: " + e.getMessage());
+                });
+    }
+
+
+    public interface FirestoreFetchListener {
+        void onOrderFetch(List<Order> orders);
+        void onFailure(String errorMessage);
+    }
 
 }
