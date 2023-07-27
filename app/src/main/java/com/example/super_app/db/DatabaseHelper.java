@@ -133,7 +133,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             values.put(Order.COLUMN_ADDRESS, order.getAddress());
             values.put(Order.COLUMN_TOTAL_PRICE, order.getTotalPrice());
             db.close();
-            long id = db.insert(TABLE_ORDER, null, values);
+            String id = String.valueOf(db.insert(TABLE_ORDER, null, values));
             order.setId(id);
             Log.d("id", String.valueOf(id));
         }
