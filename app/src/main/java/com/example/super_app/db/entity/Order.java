@@ -18,15 +18,14 @@ public class Order {
     private String deliveryDate;
     private String address;
     private HashMap<String, ArrayList<Product>> productsOfNeigh;
-    private HashMap<String, ArrayList<Cart>> cartsOfNeigh;
-
+    private HashMap<String, String> cartsOfNeigh = new HashMap<>();
     private double totalPrice;
     private boolean isOpen;
 
 
     public Order() {}
 
-    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, ArrayList<Cart>> cartsOfNeigh, double totalPrice) {
+    public Order(String fullNameOwner, String phoneNumberOwner, String deliveryDate, String address, HashMap<String, String> cartsOfNeigh, double totalPrice) {
         this.fullNameOwner = fullNameOwner;
         this.phoneNumberOwner = phoneNumberOwner;
         this.deliveryDate = deliveryDate;
@@ -54,11 +53,11 @@ public class Order {
         return fullNameOwner;
     }
 
-    public void setCartsOfNeigh(HashMap<String, ArrayList<Cart>> cartsOfNeigh) {
+    public void setCartsOfNeigh(HashMap<String, String> cartsOfNeigh) {
         this.cartsOfNeigh = cartsOfNeigh;
     }
 
-    public HashMap<String, ArrayList<Cart>> getCartsOfNeigh() {
+    public HashMap<String, String> getCartsOfNeigh() {
         return cartsOfNeigh;
     }
 

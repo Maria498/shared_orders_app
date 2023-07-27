@@ -220,27 +220,29 @@ public class FireBaseHelper {
 
     public void addCartToFirestore(Context context, Order order, String orderId, Cart cart) {
         if (cart != null) {
-            cart.setCartId(orderId);
             cart.setDate(Calendar.getInstance().getTime());
+            Map<String, Integer> productsIDQuantityStrings = cart.getProductsIDQuantity();
 
-            // Convert the keys of productsIDQuantity to strings
-            HashMap<String, Integer> productsIDQuantityStrings = new HashMap<>();
-            for (Map.Entry<String, Integer> entry : cart.getProductsIDQuantity().entrySet()) {
-                String productId = entry.getKey();
-                int quantity = entry.getValue();
-                productsIDQuantityStrings.put(productId, quantity);
-            }
-            cart.setProductsIDQuantity(productsIDQuantityStrings);
+            Cart updatedCart = new Cart(cart.getCartId(), cart.getDate(), cart.getTotal(), cart.getDiscount(), cart.getOrderId());
+            updatedCart.setProductsIDQuantity((HashMap<String, Integer>) productsIDQuantityStrings);
 
-            // Add the cart to Firestore
-            db.collection("Carts").document(orderId).set(cart)
-                    .addOnSuccessListener(unused -> {
+            // Adding updated cart to Firestore using the toMap method
+            db.collection("Carts").add(updatedCart.toMap())
+                    .addOnSuccessListener(documentReference -> {
+                        // Get the generated cartId from the documentReference
+                        String cartId = documentReference.getId();
+                        updatedCart.setCartId(cartId); // Set the cartId in the updatedCart object
+
                         // Cart added successfully to Firestore
                         Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
 
+                        // Update the orderId in the Cart object
+                        updatedCart.setOrderId(cartId);
+
                         // Update the Order document with the new "cartsOfNeigh" HashMap
+                        order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
                         db.collection("Orders").document(orderId).set(order)
-                                .addOnSuccessListener(unused1 -> {
+                                .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information
                                     Toast.makeText(context, "Order updated with the cart information", Toast.LENGTH_SHORT).show();
                                 })
@@ -257,7 +259,6 @@ public class FireBaseHelper {
                     });
         }
     }
-
 
 
 
