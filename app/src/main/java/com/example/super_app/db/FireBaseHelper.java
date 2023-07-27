@@ -240,27 +240,37 @@ public class FireBaseHelper {
 
     public void addCartToOrderFirestore(Context context, Order order, String orderId, Cart cart) {
         if (cart != null) {
-            cart.setOrderId(orderId);
             cart.setDate(Calendar.getInstance().getTime());
+            Map<String, Integer> productsIDQuantityStrings = cart.getProductsIDQuantity();
 
-            // Convert the keys of productsIDQuantity to strings
-            HashMap<String, Integer> productsIDQuantityStrings = new HashMap<>();
-            for (Map.Entry<Product, Integer> entry : cart.getProductsQuantity().entrySet()) {
-                Product product = entry.getKey();
-                String productName = product.getName(); // Assuming getName() returns the unique identifier of the product
-                int quantity = entry.getValue();
-                productsIDQuantityStrings.put(productName, quantity);
-            }
-            cart.setProductsIDQuantity(productsIDQuantityStrings);
-            order.setProductsIDQuantity(productsIDQuantityStrings);
-            order.setTotalPrice(cart.getTotal());
+            Cart updatedCart = new Cart(cart.getCartId(), cart.getDate(), cart.getTotal(), cart.getDiscount(), cart.getOrderId());
+            updatedCart.setProductsIDQuantity((HashMap<String, Integer>) productsIDQuantityStrings);
 
+            // Adding updated cart to Firestore using the toMap method
+            db.collection("Carts").add(updatedCart.toMap())
+                    .addOnSuccessListener(documentReference -> {
+                        // Get the generated cartId from the documentReference
+                        String cartId = documentReference.getId();
+                        updatedCart.setCartId(cartId); // Set the cartId in the updatedCart object
 
-            // Add the cart to Firestore
-            db.collection("Orders").document(orderId)
-                    .set(order) // Set the cart object directly to Firestore
-                    .addOnSuccessListener(aVoid -> {
+                        // Cart added successfully to Firestore
                         Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
+
+                        // Update the orderId in the Cart object
+                        updatedCart.setOrderId(cartId);
+
+                        // Update the Order document with the new "cartsOfNeigh" HashMap
+                        order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
+                        db.collection("Orders").document(orderId).set(order)
+                                .addOnSuccessListener(unused -> {
+                                    // Order updated successfully with the cart information
+                                    Toast.makeText(context, "Order updated with the cart information", Toast.LENGTH_SHORT).show();
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Failed to update Order with the cart information
+                                    Toast.makeText(context, "Failed to update Order with the cart information", Toast.LENGTH_SHORT).show();
+                                    Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
+                                });
                     })
                     .addOnFailureListener(e -> {
                         Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
@@ -284,7 +294,6 @@ public class FireBaseHelper {
                     Log.e(TAG, "Error adding user data to FireStore: ", e);
                 });
     }
-
 
 
 

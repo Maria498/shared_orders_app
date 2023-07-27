@@ -129,4 +129,15 @@ public class Cart implements Serializable {
                 ", productsIDQuantity=" + productsIDQuantity +
                 '}';
     }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(COLUMN_CART_DATE, date);
+        map.put(COLUMN_CART_TOTAL, total);
+        map.put(COLUMN_CART_DISCOUNT, discount);
+        map.put("orderId", orderId);
+        map.put("items", productsIDQuantity);
+        return map;
+    }
+
 }
