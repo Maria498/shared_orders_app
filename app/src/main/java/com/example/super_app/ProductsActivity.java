@@ -26,7 +26,6 @@ import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
@@ -126,7 +125,6 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         }
         // Inside showProductDialog method after adding the product to the cart
         addToCartButton.setOnClickListener(v -> {
-            HashMap<Product, Integer> productsQuantity = new HashMap<>();
             String quantityString = quantityEditText.getText().toString().trim();
 
             if (!quantityString.isEmpty()) {
@@ -139,19 +137,10 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
                 if (cart.getProductsQuantity().containsKey(product)) {
                     // If the product already exists in the cart, update the quantity
                     int existingQuantity = cart.getProductsQuantity().get(product);
-
-                    productsQuantity.put(product, existingQuantity + quantity);
-                    cart.setProductsQuantity(productsQuantity);
-                    HashMap<String, Integer> productsIDQuantity =new HashMap<>();
-                    productsIDQuantity.put(product.getName(),  existingQuantity + quantity);
-                    cart.setProductsIDQuantity(productsIDQuantity);
+                    cart.getProductsQuantity().put(product, existingQuantity + quantity);
                 } else {
                     // If the product is not in the cart, add it with the given quantity
-                    productsQuantity.put(product, quantity);
-                    cart.setProductsQuantity(productsQuantity);
-                    HashMap<String, Integer> productsIDQuantity =new HashMap<>();
-                    productsIDQuantity.put(product.getName(), quantity);
-                    cart.setProductsIDQuantity(productsIDQuantity);
+                    cart.getProductsQuantity().put(product, quantity);
                 }
                 // Calculate the updated total price of the cart
                 double updatedTotal = cart.getTotal() + (product.getPrice() * quantity);

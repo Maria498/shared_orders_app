@@ -1,5 +1,7 @@
 package com.example.super_app.db;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -9,6 +11,7 @@ import android.widget.Toast;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
+import com.example.super_app.db.entity.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -260,7 +263,18 @@ public class FireBaseHelper {
         }
     }
 
-
+    public void addUserData (User user) {
+        FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        db.collection("users").document(userId)
+                .set(user)
+                .addOnSuccessListener(aVoid -> {
+                    Log.d(TAG, "User data added to FireStore successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error adding user data to FireStore: ", e);
+                });
+    }
 
 
 }
