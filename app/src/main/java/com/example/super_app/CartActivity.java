@@ -28,13 +28,15 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
     private Button backBtn;
     private Button checkout;
     private HashMap<String, ArrayList<Product>> productsInOrder = new HashMap<>();
-    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private FireBaseHelper fireBaseHelper;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cart);
-        DatabaseHelper dbHelper = new DatabaseHelper(getApplicationContext());
+        DatabaseHelper dbHelper = new DatabaseHelper(this);
         SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
+
+        fireBaseHelper = new FireBaseHelper(this);
         fireBaseHelper.initializeCart();
 
         backBtn = findViewById(R.id.backBtn);

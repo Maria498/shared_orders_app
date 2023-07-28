@@ -36,7 +36,7 @@ import java.util.Map;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "ShoppingApp4.db";
+    private static final String DATABASE_NAME = "ShoppingApp5.db";
 
 
     public DatabaseHelper(Context context){
@@ -160,10 +160,50 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public List<Order> getAllOrders() {
+        List<Order> orderList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] allColumns = {
+                Order.COLUMN_ID,
+                Order.COLUMN_FULL_NAME,
+                Order.COLUMN_PHONE_NUMBER,
+                Order.COLUMN_DELIVERY_DATE,
+                Order.COLUMN_ADDRESS,
+                Order.COLUMN_TOTAL_PRICE
+        };
+
+        Cursor cursor = db.query(Order.TABLE_ORDER, allColumns, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") long orderId = cursor.getLong(cursor.getColumnIndex(Order.COLUMN_ID));
+                @SuppressLint("Range") String fullName = cursor.getString(cursor.getColumnIndex(Order.COLUMN_FULL_NAME));
+                @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(Order.COLUMN_PHONE_NUMBER));
+                @SuppressLint("Range") String deliveryDate = cursor.getString(cursor.getColumnIndex(Order.COLUMN_DELIVERY_DATE));
+                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(Order.COLUMN_ADDRESS));
+                @SuppressLint("Range") double totalPrice = cursor.getDouble(cursor.getColumnIndex(Order.COLUMN_TOTAL_PRICE));
+
+                Order order = new Order();
+                order.setId(String.valueOf(orderId));
+                order.setFullNameOwner(fullName);
+                order.setPhoneNumberOwner(phoneNumber);
+                order.setDeliveryDate(deliveryDate);
+                order.setAddress(address);
+                order.setTotalPrice(totalPrice);
+
+                orderList.add(order);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return orderList;
+    }
+
+
+
     //------------ORDER-----------------------------
-
-
-
+    //**********************************************************************************************
     //----------CART--------------------------------
     public void addCart(Cart cart) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -336,7 +376,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         cursor.close();
     }
+    // Method to update the product quantity in the cart
+    public void updateCartItemQuantity(String cartId, String productName, int newQuantity) {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_PRODUCT_QUANTITY, newQuantity);
+
+        String whereClause = COLUMN_CART_ID + " = ? AND " + COLUMN_PRODUCT_NAME + " = ?";
+        String[] whereArgs = {String.valueOf(cartId), productName};
+
+        db.update(TABLE_CART_ITEM, values, whereClause, whereArgs);
+        db.close();
+    }
+
     //----------CART--------------------------------
+    //********************************************************************************************************************************
     //-----------PRODUCT----------------------------
     public long insertProductToProductDB(Product product) {
         if (isProductExist(product)) {
@@ -410,18 +465,88 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
     }
+
+    public List<Product> getAllProducts() {
+        List<Product> productList = new ArrayList<>();
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String[] allColumns = {
+                Product.COLUMN_ID,
+                Product.COLUMN_PRODUCT_NAME,
+                Product.COLUMN_PRODUCT_PRICE,
+                Product.COLUMN_PRODUCT_IMAGE,
+                Product.COLUMN_PRODUCT_CATEGORY,
+                Product.COLUMN_PRODUCT_DISCOUNT,
+                Product.COLUMN_ORDER_ID,
+                Product.COLUMN_PRODUCT_QUANTITY
+        };
+
+        Cursor cursor = db.query(Product.TABLE_PRODUCT, allColumns, null, null, null, null, null);
+
+        if (cursor.moveToFirst()) {
+            do {
+                @SuppressLint("Range") String productId = String.valueOf(cursor.getLong(cursor.getColumnIndex(Product.COLUMN_ID)));
+                @SuppressLint("Range") String productName = cursor.getString(cursor.getColumnIndex(Product.COLUMN_PRODUCT_NAME));
+                @SuppressLint("Range") double productPrice = cursor.getDouble(cursor.getColumnIndex(Product.COLUMN_PRODUCT_PRICE));
+                //@SuppressLint("Range") String productImage = cursor.getString(cursor.getColumnIndex(Product.COLUMN_PRODUCT_IMAGE));
+                @SuppressLint("Range") String productCategory = cursor.getString(cursor.getColumnIndex(Product.COLUMN_PRODUCT_CATEGORY));
+                @SuppressLint("Range") int productDiscount = cursor.getInt(cursor.getColumnIndex(Product.COLUMN_PRODUCT_DISCOUNT));
+                @SuppressLint("Range") String orderId = String.valueOf(cursor.getLong(cursor.getColumnIndex(Product.COLUMN_ORDER_ID)));
+//                @SuppressLint("Range") int productQuantity = cursor.getInt(cursor.getColumnIndex(Product.COLUMN_PRODUCT_QUANTITY));
+
+                Product product = new Product();
+                product.setId(productId);
+                product.setName(productName);
+                product.setPrice(productPrice);
+//                product.setImage(productImage);
+                product.setCategory(productCategory);
+                product.setDiscount(productDiscount);
+                product.setId(orderId);
+//                product.setProductQuantity(productQuantity);
+
+                productList.add(product);
+            } while (cursor.moveToNext());
+        }
+
+        cursor.close();
+        return productList;
+    }
+
     //-----------PRODUCT----------------------------
+    //**********************************************************************************************
     //-----------PRODUCT&ORDER----------------------
+    // todo get all orders
+    // todo get all products
     // Method to insert a product into an order in the OrderProduct table
-    public long insertProductToOrder(Cart cart, Product product) {
+    public String insertCartToOrder(Cart cart) {
         SQLiteDatabase db = this.getWritableDatabase();
 
-        ContentValues values = new ContentValues();
-        values.put(OrderProduct.COLUMN_ORDER_ID, cart.getId());
-        values.put(OrderProduct.COLUMN_PRODUCT_ID, product.getId());
+        ContentValues orderValues = new ContentValues();
+        orderValues.put(COLUMN_CART_DATE, cart.getDate().getTime());
+        orderValues.put(COLUMN_CART_TOTAL, cart.getTotal());
+        orderValues.put(COLUMN_CART_DISCOUNT, cart.getDiscount());
 
-        return db.insert(OrderProduct.TABLE_ORDER_PRODUCT, null, values);
+        String orderId = String.valueOf(db.insert(TABLE_CART, null, orderValues));
+
+        if (orderId != "-1") {
+            ContentValues cartItemValues = new ContentValues();
+            for (Map.Entry<Product, Integer> entry : cart.getProductsQuantity().entrySet()) {
+                Product product = entry.getKey();
+                int quantity = entry.getValue();
+
+                cartItemValues.put(COLUMN_CART_ID, orderId);
+                cartItemValues.put(COLUMN_PRODUCT_NAME, product.getName());
+                cartItemValues.put(COLUMN_PRODUCT_QUANTITY, quantity);
+
+                db.insert(TABLE_CART_ITEM, null, cartItemValues);
+            }
+        }
+
+        db.close();
+        return orderId;
     }
+
+
 
     // Method to delete a product from an order in the OrderProduct table
     public int deleteProductFromOrder(Cart cart, Product product) {
@@ -445,181 +570,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return db.update(OrderProduct.TABLE_ORDER_PRODUCT, values, selection, selectionArgs);
     }
     //-----------PRODUCT&ORDER----------------------
-
-
-
-
-
-    // Method to edit the quantity of a product in the cart in the CartItem table
-
-
-    // Insert Data into Database
-    //-------------------USER-----------------------
-    //todo - change next ite to firebase auth
-//    public long insertUser(String name, String email,String password, String address,String date){
-//        User currentUser = new User(name, email, password, address,date);
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        ContentValues values = new ContentValues();
-//
-//
-//        values.put(User.COLUMN_NAME, name);
-//        values.put(User.COLUMN_EMAIL, email);
-//        values.put(User.COLUMN_PASSWORD,currentUser.getUserPassword());
-//        values.put(User.COLUMN_ADDRESS,currentUser.getUserPassword());
-//
-//        try {
-//            long id = db.insert(User.TABLE_NAME, null, values);
-//            db.close();
-//            return id;
-//        } catch (SQLiteConstraintException e) {
-//            db.close();
-//            return -1;
-//        }
-//    }
-
-
-
-
-    // Getting Contact from DataBase
-//    public User getUser(long id){
-//
-//        SQLiteDatabase db = this.getReadableDatabase();
-//        Cursor cursor = db.query(User.TABLE_NAME,
-//                new String[]{
-//                        User.COLUMN_ID,
-//                        User.COLUMN_NAME,
-//                        User.COLUMN_EMAIL, User.COLUMN_PASSWORD, User.COLUMN_ADDRESS},
-//                User.COLUMN_ID + "=?",
-//                new String[]{
-//                        String.valueOf(id)
-//                },
-//                null,
-//                null,
-//                null,
-//                null);
-//
-//        if (cursor !=null)
-//            cursor.moveToFirst();
-//        User contact=null;
-
-//        User contact = new User(
-//                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)),
-//                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)),
-//                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)),
-//                cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
-
-//        cursor.close();
-//        return contact;
-//
-//    }
-
-    //todo - change to firebase auth
-//    public ArrayList<User> getAllUsers(){
-//        ArrayList<User> users = new ArrayList<>();
-//
-//
-//        String selectQuery = "SELECT * FROM " +User.TABLE_NAME + " ORDER BY "+
-//                User.COLUMN_ID + " DESC";
-//        //String selectQuery = "SELECT " + User.COLUMN_EMAIL + ", " + User.COLUMN_NAME + " FROM " + User.TABLE_NAME + " ORDER BY " + User.COLUMN_ID + " DESC";
-//
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(selectQuery, null);
-//
-//        if (cursor.moveToFirst()){
-//            do{
-//                User user = new User();
-//                user.setUserName(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_NAME)));
-//                user.setUserEmail(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_EMAIL)));
-//                user.setUserAdd(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_ADDRESS)));
-//                user.setUserPassword(cursor.getString(cursor.getColumnIndexOrThrow(User.COLUMN_PASSWORD)));
-//
-//                users.add(user);
-//
-//            }while(cursor.moveToNext());
-//        }
-//
-//        db.close();
-//
-//        return users;
-//    }
-
-
-
-
-//    @SuppressLint("Range")
-//    public long getUserIdByEmail(String userEmail) {
-//        long userId = -1;
-//
-//        // Define the query to search for users by email
-//        String query = "SELECT " + User.COLUMN_ID +
-//                " FROM " + User.TABLE_NAME +
-//                " WHERE " + User.COLUMN_EMAIL + " = ?";
-//
-//        // Execute the query
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
-//
-//        if (cursor.moveToFirst()) {
-//            // Extract the user ID from the cursor
-//            userId = cursor.getLong(cursor.getColumnIndex(User.COLUMN_ID));
-//        }
-//
-//        // Close the cursor
-//        cursor.close();
-//
-//        return userId;
-//    }
-//
-//
-//    @SuppressLint("Range")
-//    public String getPasswordByEmail(String userEmail) {
-//        String password = null;
-//
-//        // Define the query to search for users by email
-//        String query = "SELECT " + User.COLUMN_PASSWORD +
-//                " FROM " + User.TABLE_NAME +
-//                " WHERE " + User.COLUMN_EMAIL + " = ?";
-//
-//        // Execute the query
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(query, new String[]{userEmail});
-//
-//        if (cursor.moveToFirst()) {
-//            // Extract the password from the cursor
-//            password = cursor.getString(cursor.getColumnIndex(User.COLUMN_PASSWORD));
-//        }
-//
-//        // Close the cursor
-//        cursor.close();
-//
-//        return password;
-//    }
-
-//    @SuppressLint("Range")
-//    public String getUserNameById(int userId) {
-//        String userName = null;
-//
-//        // Define the query to search for a user by ID
-//        String query = "SELECT " + User.COLUMN_NAME +
-//                " FROM " + User.TABLE_NAME +
-//                " WHERE " + User.COLUMN_ID + " = ?";
-//
-//        // Execute the query
-//        SQLiteDatabase db = this.getWritableDatabase();
-//        Cursor cursor = db.rawQuery(query, new String[]{String.valueOf(userId)});
-//
-//        if (cursor.moveToFirst()) {
-//            // Extract the user name from the cursor
-//            userName = cursor.getString(cursor.getColumnIndex(User.COLUMN_NAME));
-//        }
-//
-//        // Close the cursor
-//        cursor.close();
-//
-//        return userName;
-//    }
-
-    //-------------------USER-----------------------
 
 
 

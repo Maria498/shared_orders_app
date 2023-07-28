@@ -3,6 +3,7 @@ package com.example.super_app.db;
 import static android.content.ContentValues.TAG;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
@@ -39,9 +40,10 @@ public class FireBaseHelper {
     private static  Cart cart;
     private static Order order;
     private Context context;
+    private DatabaseHelper dbHelper;
+
 
     public FireBaseHelper() {
-
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         initializeCart();
         initializeOrder();
@@ -68,6 +70,7 @@ public class FireBaseHelper {
         if (cart == null) {
             cart = new Cart("my_first_cart", Calendar.getInstance().getTime(), 0, 0, null);
             cart.setProductsIDQuantity(new HashMap<>());
+            //dbHelper.addCart(cart);
         }
     }
     public void initializeOrder() {
@@ -81,6 +84,7 @@ public class FireBaseHelper {
         if (cart != null) {
             cart.getProductsQuantity().put(product, newQuantity);
             cart.getProductsIDQuantity().put(product.getId(), newQuantity);
+            dbHelper.updateCartItemQuantity("my_first_cart", product.getName(), newQuantity);
         }
     }
 
@@ -92,11 +96,17 @@ public class FireBaseHelper {
     public FireBaseHelper(Context context) {
         this.context = context;
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
+        sqlitePer(context);
+    }
+    private void sqlitePer (Context context){
+        dbHelper = new DatabaseHelper(context);
+        SQLiteDatabase dbSqlite = dbHelper.getWritableDatabase();
     }
 
     public void handleProductToFirestore(String name, String category, double price, int discount,
                                          boolean healthy_tag, String imageUrl, String selectedImageName) {
         Product product = new Product(name, price, imageUrl, category, discount, healthy_tag);
+        dbHelper.insertProductToProductDB(product);
         if (imageUrl.startsWith("drawable://")) {
             // Extract the resource ID from the URL
             int resourceId = Integer.parseInt(imageUrl.replace("drawable://", ""));
@@ -198,6 +208,7 @@ public class FireBaseHelper {
                 } else {
                     // Create a new order and add it to Firestore
                     Order newOrder = new Order(userName, phoneNum, selectedDate, address);
+                    dbHelper.insertOrder(newOrder);
                     newOrder.setOpen(true);
                     db.collection("Orders").document(uid).set(newOrder)
                             .addOnSuccessListener(unused -> {
@@ -235,6 +246,8 @@ public class FireBaseHelper {
                         // Get the generated cartId from the documentReference
                         String cartId = documentReference.getId();
                         updatedCart.setCartId(cartId); // Set the cartId in the updatedCart object
+                        dbHelper.addCart(cart);
+                        dbHelper.insertCartToOrder(cart);
 
                         // Cart added successfully to Firestore
                         Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
@@ -318,5 +331,33 @@ public class FireBaseHelper {
         void onOrderFetch(List<Order> orders);
         void onFailure(String errorMessage);
     }
+    // todo fix method
+    public void fetchAllProductsFromFireBase(allProductsFetchListener listener) {
+        List<Product> productList = new ArrayList<>();
+        CollectionReference productsRef = db.collection("Products");
+        // Query for products in the specified category
+        productsRef
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    // Loop through the query results and create ProductModel objects
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        Product product = documentSnapshot.toObject(Product.class);
+                        product.setId(documentSnapshot.getId());
+                        productList.add(product);
+                    }
+                    // Call the listener's onProductFetch method with the list of products
+                    listener.onProduct(productList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch products: " + e.getMessage());
+                });
 
+
+    }
+
+    public interface allProductsFetchListener {
+        void onProduct(List<Product> productList);
+        void onFailure(String errorMessage);
+    }
 }

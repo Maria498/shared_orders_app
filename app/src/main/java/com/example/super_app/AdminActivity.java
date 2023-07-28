@@ -19,8 +19,11 @@ import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Product;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class AdminActivity extends Activity {
-    FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    FireBaseHelper fireBaseHelper;
     private static final int REQUEST_IMAGE_SELECT = 1;
     private EditText productNameEditText;
     private EditText productPriceEditText;
@@ -38,6 +41,7 @@ public class AdminActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
         Button backBtn = findViewById(R.id.backBtn);
+        fireBaseHelper = new FireBaseHelper(this);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         Button createProductBtn = findViewById(R.id.createProductBtn);
         createProductBtn.setOnClickListener( v -> showAddProductDialog());
@@ -84,7 +88,21 @@ public class AdminActivity extends Activity {
                 fireBaseHelper.handleProductToFirestore(name, selectedCategory, price, discount, isHealthyTag, selectedImageUrl, name);
                 //  Product(String name, String img, String category, double price, int discount, int quantity, String description)
                 product = new Product(name, selectedImageUrl, selectedCategory, price, discount, 1);
+
                 dbHelper.insertProductToProductDB(product);
+                List<Product> productListFromFB = new ArrayList<>();
+                fireBaseHelper.fetchAllProductsFromFireBase(new FireBaseHelper.allProductsFetchListener() {
+                    @Override
+                    public void onProduct(List<Product> productList) {
+                        productList.clear();
+                        productList.addAll(productListFromFB);
+                    }
+
+                    @Override
+                    public void onFailure(String errorMessage) {
+
+                    }
+                });
 
 
             } else {

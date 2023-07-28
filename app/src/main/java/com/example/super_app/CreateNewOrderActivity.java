@@ -31,7 +31,7 @@ public class CreateNewOrderActivity extends AppCompatActivity {
     private EditText apartmentNum;
     private String userStreet, userApart, selectedDate, userName, phoneNum;
     boolean isOpen=false;
-    FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    FireBaseHelper fireBaseHelper;
 
 
     @SuppressLint("NonConstantResourceId")
@@ -40,6 +40,7 @@ public class CreateNewOrderActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shared_order);
         CheckBox addCartCheckBox = findViewById(R.id.addCartCheckBox);
+        fireBaseHelper = new FireBaseHelper(this);
         dateCal = findViewById(R.id.dateCal);
         fullName = findViewById(R.id.fullName);
         phoneNumber = findViewById(R.id.phoneNumber);

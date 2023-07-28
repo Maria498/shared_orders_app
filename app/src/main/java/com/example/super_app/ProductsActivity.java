@@ -34,19 +34,22 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
     private String selectedCategory;
     private ArrayList<Product> productList = new ArrayList<>();
     private ProductAdapter productAdapter;
-    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private FireBaseHelper fireBaseHelper;
     private DatabaseHelper dbHelper;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
         setContentView(R.layout.activity_products);
         Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
-
+        fireBaseHelper = new FireBaseHelper(this);
         fireBaseHelper.initializeCart();
         cart = fireBaseHelper.getCart();
+        dbHelper.printAllProducts();
         Intent intent = getIntent();
         TextView categoryName = findViewById(R.id.categoryName);
         RecyclerView recyclerView = findViewById(R.id.recyclerViewProducts);
@@ -60,8 +63,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
 
         //sqlite
 
-        dbHelper = new DatabaseHelper(getApplicationContext());
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
 
         if (intent.hasExtra("msg")) {
             String category = intent.getStringExtra("msg");
