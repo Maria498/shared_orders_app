@@ -25,10 +25,8 @@ import java.util.Map;
 
 public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener {
     private List<Product> cartProductsList = new ArrayList<>();
-    private Button backBtn;
-    private Button checkout;
     private HashMap<String, ArrayList<Product>> productsInOrder = new HashMap<>();
-    private FireBaseHelper fireBaseHelper;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +34,11 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
 
-        fireBaseHelper = new FireBaseHelper(this);
+        FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
         fireBaseHelper.initializeCart();
 
-        backBtn = findViewById(R.id.backBtn);
-        checkout = findViewById(R.id.Checkout);
+        Button backBtn = findViewById(R.id.backBtn);
+        Button checkout = findViewById(R.id.Checkout);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         Context context = getApplicationContext();
 
@@ -65,7 +63,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
             // Calculate and display the total price
             double totalPrice = calculateTotalPrice(cart.getProductsQuantity());
             cartTotalPrice.setText(String.format("$%.2f", totalPrice));
-
+            cart.setTotal(totalPrice);
             // Update the RecyclerView with the cartProductsList
             cartAdapter.updateCartProductsList(cartProductsList);
         }

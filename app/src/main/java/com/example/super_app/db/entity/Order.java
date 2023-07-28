@@ -119,14 +119,6 @@ public class Order {
         Order order = (Order) o;
         return Double.compare(order.totalPrice, totalPrice) == 0 && Objects.equals(fullNameOwner, order.fullNameOwner) && Objects.equals(phoneNumberOwner, order.phoneNumberOwner) && Objects.equals(deliveryDate, order.deliveryDate) && Objects.equals(address, order.address);
     }
-    public static Order fromSnapshot(DocumentSnapshot documentSnapshot) {
-        Order order = documentSnapshot.toObject(Order.class);
-        if (order != null) {
-            // Set the 'id' field manually using the document ID from Firestore
-            order.setId(documentSnapshot.getId());
-        }
-        return order;
-    }
 
     @Override
     public int hashCode() {
