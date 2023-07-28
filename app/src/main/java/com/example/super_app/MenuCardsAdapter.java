@@ -55,10 +55,26 @@ public class MenuCardsAdapter extends RecyclerView.Adapter<MenuCardsAdapter.VewH
             i = new Intent(context, ProductsActivity.class);
             i.putExtra("msg", "Meat");
         }
-        else if (Objects.equals(model.getCardTitle(), "Order1")) {
-            i = new Intent(context, OrderActivity.class);
-            i.putExtra("msg", "Order1");
+        else if (Objects.equals(model.getCardTitle(), "Beverages")) {
+            i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Beverages");
         }
+        else if (Objects.equals(model.getCardTitle(), "Bakery")) {
+            i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Bakery");
+        }
+        else if (Objects.equals(model.getCardTitle(), "Electronics")) {
+            i = new Intent(context, ProductsActivity.class);
+            i.putExtra("msg", "Electronics");
+        }
+        else if (Objects.equals(model.getCardImage(), R.drawable.bag)) {
+            String address = model.getCardTitle();
+            String delivery = model.getCardText();
+            i = new Intent(context, OrderActivity.class);
+            i.putExtra("address", address);
+            i.putExtra("delivery", delivery);
+        }
+
         context.startActivity(i);
     }
 

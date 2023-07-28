@@ -257,6 +257,7 @@ public class FireBaseHelper {
 
                         // Update the Order document with the new "cartsOfNeigh" HashMap
                         order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
+                        order.setTotalPrice(order.getTotalPrice() + cart.getTotal());
                         db.collection("Orders").document(orderId).set(order)
                                 .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information
@@ -267,6 +268,7 @@ public class FireBaseHelper {
                                     Toast.makeText(context, "Failed to update Order with the cart information", Toast.LENGTH_SHORT).show();
                                     Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
                                 });
+                        cart.getProductsQuantity().clear();
                     })
                     .addOnFailureListener(e -> {
                         // Failed to add cart to Firestore
@@ -275,6 +277,8 @@ public class FireBaseHelper {
                     });
         }
     }
+
+
 
     public void addUserData (User user) {
         FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -288,7 +292,7 @@ public class FireBaseHelper {
                     Log.e(TAG, "Error adding user data to FireStore: ", e);
                 });
     }
-    // Inside the fetchOrdersFromFirestore method
+
     public void fetchOrdersFromFirestore(FirestoreFetchListener listener) {
         CollectionReference ordersRef = db.collection("Orders");
 

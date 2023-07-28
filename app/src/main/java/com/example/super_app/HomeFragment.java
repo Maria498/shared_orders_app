@@ -25,14 +25,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Order;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
 
     private Button logInBtn;
     private Button logOutBtn;
+    FireBaseHelper fireBaseHelper;
+    private ArrayList<MenuModel> cardsListOrders;
+    MenuCardsAdapter adapter;
 
     private FragmentTransaction fragmentTransaction = null;
 
@@ -46,21 +51,19 @@ public class HomeFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         DatabaseHelper dbHelper = new DatabaseHelper(this.getContext());
-
+        fireBaseHelper = new FireBaseHelper();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         dbHelper.createShopping(db);
 
         RecyclerView recyclerViewAddresses = view.findViewById(R.id.recyclerViewAddresses);
         RecyclerView recyclerViewCategories = view.findViewById(R.id.recyclerViewCategories);
         RecyclerView recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
-        ImageButton shoppingCart = view.findViewById(R.id.shoppingCartIcon);
-        FrameLayout fragmentContainer = view.findViewById(R.id.fragmentContainer);
         logOutBtn = view.findViewById(R.id.logOutBtn);
 
         ArrayList<MenuModel> cardsList = new ArrayList<>();
         cardsList.add(new MenuModel("Home address", "Namal str. 6", R.drawable.map_small));
         cardsList.add(new MenuModel("Recently used","Herzel str. 4", R.drawable.map_small));
-        MenuCardsAdapter adapter = new MenuCardsAdapter(this.getContext(), cardsList);
+        adapter = new MenuCardsAdapter(this.getContext(), cardsList);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewAddresses.setLayoutManager(layoutManager);
         recyclerViewAddresses.setAdapter(adapter);
@@ -77,13 +80,13 @@ public class HomeFragment extends Fragment {
         recyclerViewCategories.setLayoutManager(layoutManager1);
         recyclerViewCategories.setAdapter(adapter);
 
-        ArrayList<MenuModel> cardsListOrders = new ArrayList<>();
-        cardsListOrders.add(new MenuModel("Order1", "Total: 800", R.drawable.bag));
-        cardsListOrders.add(new MenuModel("Order2", "Total: 559", R.drawable.bag));
+        cardsListOrders = new ArrayList<>();
+
         adapter = new MenuCardsAdapter(this.getContext(), cardsListOrders);
         RecyclerView.LayoutManager layoutManagerOrder = new LinearLayoutManager(this.getContext(), LinearLayoutManager.HORIZONTAL, false);
         recyclerViewOrders.setLayoutManager(layoutManagerOrder);
         recyclerViewOrders.setAdapter(adapter);
+        fetchOrdersFromFirestore();
 
         logInBtn = view.findViewById(R.id.logInBtn);
         logInBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
@@ -182,9 +185,39 @@ public class HomeFragment extends Fragment {
             i.putExtra("USER_NAME", userName);
             //startActivity(i);
         }
+
+
     }
 
+    private void fetchOrdersFromFirestore() {
+        fireBaseHelper.fetchOrdersFromFirestore(new FireBaseHelper.FirestoreFetchListener() {
+            @Override
+            public void onOrderFetch(List<Order> orders) {
+                // Clear the current list and add all fetched orders
+                cardsListOrders.clear();
+                for (Order order : orders) {
+                    // Extract the relevant information from the Order object
+                    String address = order.getAddress();
+                    String deliveryDate = order.getDeliveryDate();
+                    double totalPrice = order.getTotalPrice();
 
+                    // Create a MenuModel object with the extracted information
+                    String orderTitle = address;
+                    String orderDescription = deliveryDate;
+                    // Replace R.drawable.your_order_image_resource with the appropriate drawable resource ID
+                    MenuModel menuModel = new MenuModel(orderTitle, orderDescription, R.drawable.bag);
+                    cardsListOrders.add(menuModel);
+                }
+                // Notify the adapter that the data has changed
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle the failure to fetch orders if needed
+            }
+        });
+    }
 
 
 }

@@ -31,7 +31,6 @@ import java.util.List;
 public class ProductsActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
     private Cart cart = FireBaseHelper.getCart();
-    private String selectedCategory;
     private ArrayList<Product> productList = new ArrayList<>();
     private ProductAdapter productAdapter;
     private FireBaseHelper fireBaseHelper;

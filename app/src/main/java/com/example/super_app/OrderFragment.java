@@ -31,9 +31,8 @@ public class OrderFragment extends Fragment {
         Button buttonUpdateOrder = view.findViewById(R.id.buttonUpdateOrder);
         Button buttonCreateOrder = view.findViewById(R.id.buttonCreateOrder);
 
-        fireBaseHelper = new FireBaseHelper(); // Initialize the FireBaseHelper
-
-        backBtn.setOnClickListener(v -> moveToActivity(LoginActivity.class));
+        fireBaseHelper = new FireBaseHelper();
+        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         buttonCreateOrder.setOnClickListener(v -> moveToActivity(CreateNewOrderActivity.class));
 
         RecyclerView recyclerViewOrders = view.findViewById(R.id.recyclerViewOrders);
@@ -65,8 +64,8 @@ public class OrderFragment extends Fragment {
                     double totalPrice = order.getTotalPrice();
 
                     // Create a MenuModel object with the extracted information
-                    String orderTitle = "Order " + order.getId();
-                    String orderDescription = "Address: " + address + ", Delivery Date: " + deliveryDate + ", Total Price: " + totalPrice;
+                    String orderTitle = address;
+                    String orderDescription = deliveryDate;
                     // Replace R.drawable.your_order_image_resource with the appropriate drawable resource ID
                     MenuModel menuModel = new MenuModel(orderTitle, orderDescription, R.drawable.bag);
                     cardsListOrders.add(menuModel);
