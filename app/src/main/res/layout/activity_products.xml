@@ -44,4 +44,13 @@
         tools:layout_editor_absoluteX="0dp"
         tools:listitem="@layout/item_product" />
 
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/menu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu"
+        tools:layout_editor_absoluteX="64dp" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

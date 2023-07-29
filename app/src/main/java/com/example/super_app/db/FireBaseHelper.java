@@ -234,6 +234,7 @@ public class FireBaseHelper {
     }
 
     public void addCartToFirestore(Context context, Order order, String orderId, Cart cart) {
+        sqlitePer(context);
         if (cart != null) {
             cart.setDate(Calendar.getInstance().getTime());
             Map<String, Integer> productsIDQuantityStrings = cart.getProductsIDQuantity();

@@ -1,10 +1,13 @@
 package com.example.super_app;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,9 +15,10 @@ import android.widget.Toast;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class OrderActivity extends AppCompatActivity {
+public class OrderActivity extends AppCompatActivity implements BottomNavigationView.OnItemSelectedListener{
 
     FireBaseHelper fireBaseHelper;
     Order currentOrder;
@@ -25,6 +29,8 @@ public class OrderActivity extends AppCompatActivity {
         setContentView(R.layout.activity_order);
         fireBaseHelper = new FireBaseHelper();
         mAuth = FirebaseAuth.getInstance();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.new_order);
         TextView orderAddressTextView = findViewById(R.id.orderAddressTextView);
         TextView orderDeliveryDateTextView = findViewById(R.id.orderDeliveryDateTextView);
         Button joinButton = findViewById(R.id.joinButton);
@@ -86,5 +92,28 @@ public class OrderActivity extends AppCompatActivity {
         Intent i = new Intent(getApplicationContext(), cls);
         i.putExtra("msg", "msg");
         startActivity(i);
+    }
+
+    @SuppressLint("NonConstantResourceId")
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_order:
+            case R.id.home:
+            case R.id.profile:
+                startActivity(new Intent(OrderActivity.this, MainActivity.class));
+                finish();
+                return true;
+            case R.id.search:
+                // Navigate to another activity (not a fragment)
+                startActivity(new Intent(OrderActivity.this, AdminActivity.class));
+                finish();
+                return true;
+            case R.id.cart:
+                // Navigate to another activity (not a fragment)
+                startActivity(new Intent(OrderActivity.this, CartActivity.class));
+                finish();
+                return true;
+        }
+        return false;
     }
 }
