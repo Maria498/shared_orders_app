@@ -8,6 +8,12 @@ import static com.example.super_app.db.entity.Cart.COLUMN_PRODUCT_NAME;
 import static com.example.super_app.db.entity.Cart.COLUMN_PRODUCT_QUANTITY;
 import static com.example.super_app.db.entity.Cart.TABLE_CART;
 import static com.example.super_app.db.entity.Cart.TABLE_CART_ITEM;
+import static com.example.super_app.db.entity.Order.COLUMN_ADDRESS;
+import static com.example.super_app.db.entity.Order.COLUMN_DELIVERY_DATE;
+import static com.example.super_app.db.entity.Order.COLUMN_FULL_NAME;
+import static com.example.super_app.db.entity.Order.COLUMN_ID;
+import static com.example.super_app.db.entity.Order.COLUMN_PHONE_NUMBER;
+import static com.example.super_app.db.entity.Order.COLUMN_TOTAL_PRICE;
 import static com.example.super_app.db.entity.Order.TABLE_ORDER;
 import static com.example.super_app.db.entity.Product.COLUMN_PRODUCT_PRICE;
 import static com.example.super_app.db.entity.Product.TABLE_PRODUCT;
@@ -48,12 +54,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         //create order table
         String CREATE_ORDER_TABLE = "CREATE TABLE " + Order.TABLE_ORDER + "("
-                + Order.COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                + Order.COLUMN_FULL_NAME + " TEXT,"
-                + Order.COLUMN_PHONE_NUMBER + " TEXT,"
-                + Order.COLUMN_DELIVERY_DATE + " TEXT,"
-                + Order.COLUMN_ADDRESS + " TEXT,"
-                + Order.COLUMN_TOTAL_PRICE + " REAL"
+                + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
+                + COLUMN_FULL_NAME + " TEXT,"
+                + COLUMN_PHONE_NUMBER + " TEXT,"
+                + COLUMN_DELIVERY_DATE + " TEXT,"
+                + COLUMN_ADDRESS + " TEXT,"
+                + COLUMN_TOTAL_PRICE + " REAL"
                 + ")";
         sqLiteDatabase.execSQL(CREATE_ORDER_TABLE);
         //create product table
@@ -74,7 +80,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + OrderProduct.COLUMN_ORDER_ID + " INTEGER,"
                 + OrderProduct.COLUMN_PRODUCT_ID + " INTEGER,"
                 + "PRIMARY KEY (" + OrderProduct.COLUMN_ORDER_ID + ", " + OrderProduct.COLUMN_PRODUCT_ID + "),"
-                + "FOREIGN KEY(" + OrderProduct.COLUMN_ORDER_ID + ") REFERENCES " + Order.TABLE_ORDER + "(" + Order.COLUMN_ID + "),"
+                + "FOREIGN KEY(" + OrderProduct.COLUMN_ORDER_ID + ") REFERENCES " + Order.TABLE_ORDER + "(" + COLUMN_ID + "),"
                 + "FOREIGN KEY(" + OrderProduct.COLUMN_PRODUCT_ID + ") REFERENCES " + Product.TABLE_PRODUCT + "(" + Product.COLUMN_ID + ")"
                 + ")";
 
@@ -122,16 +128,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void insertOrder(Order order) {
         SQLiteDatabase db = this.getWritableDatabase();
         // Check if the user already has an order
-        String query = "SELECT * FROM " + TABLE_ORDER + " WHERE " + Order.COLUMN_PHONE_NUMBER + " = ?";
+        String query = "SELECT * FROM " + TABLE_ORDER + " WHERE " + COLUMN_PHONE_NUMBER + " = ?";
         Cursor cursor = db.rawQuery(query, new String[]{order.getPhoneNumberOwner()});
         if (cursor.getCount() < 0) {
             // Insert the new order
             ContentValues values = new ContentValues();
-            values.put(Order.COLUMN_FULL_NAME, order.getFullNameOwner());
-            values.put(Order.COLUMN_PHONE_NUMBER, order.getPhoneNumberOwner());
-            values.put(Order.COLUMN_DELIVERY_DATE, order.getDeliveryDate());
-            values.put(Order.COLUMN_ADDRESS, order.getAddress());
-            values.put(Order.COLUMN_TOTAL_PRICE, order.getTotalPrice());
+            values.put(COLUMN_FULL_NAME, order.getFullNameOwner());
+            values.put(COLUMN_PHONE_NUMBER, order.getPhoneNumberOwner());
+            values.put(COLUMN_DELIVERY_DATE, order.getDeliveryDate());
+            values.put(COLUMN_ADDRESS, order.getAddress());
+            values.put(COLUMN_TOTAL_PRICE, order.getTotalPrice());
             db.close();
             String id = String.valueOf(db.insert(TABLE_ORDER, null, values));
             order.setId(id);
@@ -142,7 +148,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public void deleteOrder(Order order) {
         SQLiteDatabase db = this.getWritableDatabase();
-        db.delete(TABLE_ORDER, Order.COLUMN_ID + " = ?",
+        db.delete(TABLE_ORDER, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(order.getId())});
         db.close();
     }
@@ -150,54 +156,132 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void editOrder(Order order) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
-        values.put(Order.COLUMN_FULL_NAME, order.getFullNameOwner());
-        values.put(Order.COLUMN_PHONE_NUMBER, order.getPhoneNumberOwner());
-        values.put(Order.COLUMN_DELIVERY_DATE, order.getDeliveryDate());
-        values.put(Order.COLUMN_ADDRESS, order.getAddress());
-        values.put(Order.COLUMN_TOTAL_PRICE, order.getTotalPrice());
-        db.update(TABLE_ORDER, values, Order.COLUMN_ID + " = ?",
+        values.put(COLUMN_FULL_NAME, order.getFullNameOwner());
+        values.put(COLUMN_PHONE_NUMBER, order.getPhoneNumberOwner());
+        values.put(COLUMN_DELIVERY_DATE, order.getDeliveryDate());
+        values.put(COLUMN_ADDRESS, order.getAddress());
+        values.put(COLUMN_TOTAL_PRICE, order.getTotalPrice());
+        db.update(TABLE_ORDER, values, COLUMN_ID + " = ?",
                 new String[]{String.valueOf(order.getId())});
         db.close();
     }
 
-    public List<Order> getAllOrders() {
-        List<Order> orderList = new ArrayList<>();
-        SQLiteDatabase db = this.getReadableDatabase();
 
-        String[] allColumns = {
-                Order.COLUMN_ID,
-                Order.COLUMN_FULL_NAME,
-                Order.COLUMN_PHONE_NUMBER,
-                Order.COLUMN_DELIVERY_DATE,
-                Order.COLUMN_ADDRESS,
-                Order.COLUMN_TOTAL_PRICE
-        };
+    //for admin
+    public void printAllOrders() {
+        SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(Order.TABLE_ORDER, allColumns, null, null, null, null, null);
+        // Query to fetch all orders from the "orders" table
+        String query = "SELECT * FROM " + TABLE_ORDER;
 
-        if (cursor.moveToFirst()) {
+        // Execute the query and get the result as a Cursor
+        Cursor cursor = db.rawQuery(query, null);
+
+        // Check if the cursor contains any data
+        if (cursor != null && cursor.moveToFirst()) {
             do {
-                @SuppressLint("Range") long orderId = cursor.getLong(cursor.getColumnIndex(Order.COLUMN_ID));
-                @SuppressLint("Range") String fullName = cursor.getString(cursor.getColumnIndex(Order.COLUMN_FULL_NAME));
-                @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(Order.COLUMN_PHONE_NUMBER));
-                @SuppressLint("Range") String deliveryDate = cursor.getString(cursor.getColumnIndex(Order.COLUMN_DELIVERY_DATE));
-                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(Order.COLUMN_ADDRESS));
-                @SuppressLint("Range") double totalPrice = cursor.getDouble(cursor.getColumnIndex(Order.COLUMN_TOTAL_PRICE));
+                // Extract order details from the cursor
+                @SuppressLint("Range") String orderId = String.valueOf(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                @SuppressLint("Range") String fullName = cursor.getString(cursor.getColumnIndex(COLUMN_FULL_NAME));
+                @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_NUMBER));
+                @SuppressLint("Range") String deliveryDate = cursor.getString(cursor.getColumnIndex(COLUMN_DELIVERY_DATE));
+                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS));
+                @SuppressLint("Range") double totalPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_PRICE));
 
-                Order order = new Order();
-                order.setId(String.valueOf(orderId));
-                order.setFullNameOwner(fullName);
-                order.setPhoneNumberOwner(phoneNumber);
-                order.setDeliveryDate(deliveryDate);
-                order.setAddress(address);
-                order.setTotalPrice(totalPrice);
-
-                orderList.add(order);
+                // Print order details
+                System.out.println("Order ID: " + orderId);
+                System.out.println("Full Name: " + fullName);
+                System.out.println("Phone Number: " + phoneNumber);
+                System.out.println("Delivery Date: " + deliveryDate);
+                System.out.println("Address: " + address);
+                System.out.println("Total Price: " + totalPrice);
+                System.out.println("------------------------------------");
             } while (cursor.moveToNext());
         }
 
-        cursor.close();
-        return orderList;
+        // Close the cursor and database
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+    }
+    //for user
+    public void saveOrdersInSameStreet(String userStreet) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        // Query to fetch orders from the "orders" table that match the specified street
+        String query = "SELECT * FROM " + TABLE_ORDER + " WHERE " + COLUMN_ADDRESS + "=?";
+
+        // Execute the query with the street parameter and get the result as a Cursor
+        Cursor cursor = db.rawQuery(query, new String[]{userStreet});
+
+        // Check if the cursor contains any data
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // Extract order details from the cursor
+                @SuppressLint("Range") String orderId = String.valueOf(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                @SuppressLint("Range") String fullName = cursor.getString(cursor.getColumnIndex(COLUMN_FULL_NAME));
+                @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_NUMBER));
+                @SuppressLint("Range") String deliveryDate = cursor.getString(cursor.getColumnIndex(COLUMN_DELIVERY_DATE));
+                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS));
+                @SuppressLint("Range") double totalPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_PRICE));
+
+                // Save the order to the "user_orders" table in SQLite
+                ContentValues values = new ContentValues();
+                values.put(COLUMN_ID, orderId);
+                values.put(COLUMN_FULL_NAME, fullName);
+                values.put(COLUMN_PHONE_NUMBER, phoneNumber);
+                values.put(COLUMN_DELIVERY_DATE, deliveryDate);
+                values.put(COLUMN_ADDRESS, address);
+                values.put(COLUMN_TOTAL_PRICE, totalPrice);
+
+                db.insert("user_orders", null, values);
+            } while (cursor.moveToNext());
+        }
+
+        // Close the cursor and database
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
+    }
+
+    public void printOrdersInSameStreet(String userStreet) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        // Query to fetch orders from the "orders" table that match the specified street
+        String query = "SELECT * FROM " + TABLE_ORDER + " WHERE " + COLUMN_ADDRESS + "=?";
+
+        // Execute the query with the street parameter and get the result as a Cursor
+        Cursor cursor = db.rawQuery(query, new String[]{userStreet});
+
+        // Check if the cursor contains any data
+        if (cursor != null && cursor.moveToFirst()) {
+            do {
+                // Extract order details from the cursor
+                @SuppressLint("Range") String orderId = String.valueOf(cursor.getInt(cursor.getColumnIndex(COLUMN_ID)));
+                @SuppressLint("Range") String fullName = cursor.getString(cursor.getColumnIndex(COLUMN_FULL_NAME));
+                @SuppressLint("Range") String phoneNumber = cursor.getString(cursor.getColumnIndex(COLUMN_PHONE_NUMBER));
+                @SuppressLint("Range") String deliveryDate = cursor.getString(cursor.getColumnIndex(COLUMN_DELIVERY_DATE));
+                @SuppressLint("Range") String address = cursor.getString(cursor.getColumnIndex(COLUMN_ADDRESS));
+                @SuppressLint("Range") double totalPrice = cursor.getDouble(cursor.getColumnIndex(COLUMN_TOTAL_PRICE));
+
+                // Print order details
+                System.out.println("Order ID: " + orderId);
+                System.out.println("Full Name: " + fullName);
+                System.out.println("Phone Number: " + phoneNumber);
+                System.out.println("Delivery Date: " + deliveryDate);
+                System.out.println("Address: " + address);
+                System.out.println("Total Price: " + totalPrice);
+                System.out.println("------------------------------------");
+            } while (cursor.moveToNext());
+        }
+
+        // Close the cursor and database
+        if (cursor != null) {
+            cursor.close();
+        }
+        db.close();
     }
 
 

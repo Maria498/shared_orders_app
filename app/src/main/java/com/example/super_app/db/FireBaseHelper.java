@@ -358,4 +358,55 @@ public class FireBaseHelper {
         void onFailure(String errorMessage);
     }
 
+    public void fetchAllOrdersFromFireBase(AllOrdersFetchListener listener) {
+        List<Order> orderList = new ArrayList<>();
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Query for orders
+        ordersRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Order objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        orderList.add(order);
+                    }
+                    // Call the listener's onOrdersFetch method with the list of orders
+                    listener.onOrdersFetch(orderList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch orders: " + e.getMessage());
+                });
+    }
+
+    public void fetchOrdersInSameStreetFromFireBase(String userStreet, AllOrdersFetchListener listener) {
+        List<Order> orderList = new ArrayList<>();
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Query for orders in the same street as the user
+        ordersRef.whereEqualTo("street", userStreet)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Order objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        orderList.add(order);
+                    }
+                    // Call the listener's onOrdersFetch method with the list of orders
+                    listener.onOrdersFetch(orderList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch orders: " + e.getMessage());
+                });
+    }
+
+
+    public interface AllOrdersFetchListener {
+        void onOrdersFetch(List<Order> orderList);
+        void onFailure(String errorMessage);
+    }
+
+
 }

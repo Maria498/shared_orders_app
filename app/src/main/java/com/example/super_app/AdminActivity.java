@@ -17,6 +17,7 @@ import android.widget.Spinner;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
@@ -47,8 +48,10 @@ public class AdminActivity extends Activity {
         createProductBtn.setOnClickListener( v -> showAddProductDialog());
         dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        //fetch data from firebase to sqlite
         fetchAllProductsFromFireBase();
-        dbHelper.printAllProducts();
+        fetchAllOrdersFromFireBase();
+        //dbHelper.printAllProducts();
     }
 
     private void showAddProductDialog() {
@@ -156,6 +159,31 @@ public class AdminActivity extends Activity {
 
         // Call the fetchAllProductsFromFireBase method with the listener
         fireBaseHelper.fetchAllProductsFromFireBase(listener);
+    }
+    //get all orders of all users
+    public void fetchAllOrdersFromFireBase() {
+        // Create an instance of the listener to handle the fetched orders or errors
+        List<Order> orderListFromFB = new ArrayList<>();
+        FireBaseHelper.AllOrdersFetchListener listener = new FireBaseHelper.AllOrdersFetchListener() {
+            @Override
+            public void onOrdersFetch(List<Order> orderList) {
+                orderListFromFB.clear();
+                orderListFromFB.addAll(orderList);
+                System.out.println("Fetched orders: " + orderList);
+                for (Order o : orderListFromFB) {
+                    dbHelper.insertOrder(o);
+                }
+                dbHelper.printAllOrders();
+            }
+            @Override
+            public void onFailure(String errorMessage) {
+
+                System.err.println("Error fetching orders: " + errorMessage);
+            }
+        };
+
+        // Call the fetchAllOrdersFromFireBase method with the listener
+        fireBaseHelper.fetchAllOrdersFromFireBase(listener);
     }
 
 
