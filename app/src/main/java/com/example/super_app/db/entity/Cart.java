@@ -25,6 +25,7 @@ public class Cart implements Serializable {
     private String orderId;
     private HashMap<String, Integer> productsIDQuantity;
 
+
     public Cart(String cartId, Date date, double price, int discount, String orderId) {
         this.cartId = cartId;
         this.date = date;

@@ -49,6 +49,7 @@ public class Order {
         return id;
     }
 
+
     public void setOpen(boolean open) {
         isOpen = open;
     }

@@ -1,13 +1,13 @@
 package com.example.super_app;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
@@ -44,6 +44,7 @@ public class OrderActivity extends AppCompatActivity {
                     Log.w("+++++++ORDER",order.getId()+", "+ currentOrder.getCartsOfNeigh());
 
                 }
+
 
                 @Override
                 public void onFailure(String errorMessage) {
