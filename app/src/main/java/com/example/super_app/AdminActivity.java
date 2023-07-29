@@ -184,7 +184,6 @@ public class AdminActivity extends Activity {
             // Call the edit dialog for the selected product
             showEditProductDialog(selectedProduct);
         });
-
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
         AlertDialog dialog = builder.create();
         dialog.show();
