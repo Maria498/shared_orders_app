@@ -18,6 +18,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -450,6 +451,54 @@ public class FireBaseHelper {
                     }
                 });
     }
+    public void updateProductInFireBase(Product updatedProduct) {
+        if (updatedProduct == null || updatedProduct.getId() == null) {
+            // Invalid product or product ID, return early
+            return;
+        }
 
+        DocumentReference productRef = db.collection("Products").document(updatedProduct.getId());
+
+        // Create a map with the updated fields to update the Firestore document
+        Map<String, Object> updatedFields = new HashMap<>();
+        updatedFields.put("name", updatedProduct.getName());
+        updatedFields.put("category", updatedProduct.getCategory());
+        updatedFields.put("price", updatedProduct.getPrice());
+        updatedFields.put("discount", updatedProduct.getDiscount());
+        updatedFields.put("isHealthyTag", updatedProduct.isHealthyTag());
+
+        // Perform the update
+        productRef
+                .update(updatedFields)
+                .addOnSuccessListener(aVoid -> {
+                    // Success
+                    Toast.makeText(context, "Product updated successfully in Firebase", Toast.LENGTH_SHORT).show();
+                    Log.d("FireBaseHelper", "Product updated successfully in Firebase");
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Error updating product in FireBase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    // Error handling
+                    Log.e("FireBaseHelper", "Error updating product in FireBase: " + e.getMessage());
+                });
+    }
+
+    public void deleteProductFromFireBase(Product product) {
+        if (product == null || product.getId() == null) {
+            // Invalid product or product ID, return early
+            return;
+        }
+        DocumentReference productRef = db.collection("Products").document(product.getId());
+        // Perform the delete operation
+        productRef.delete().addOnSuccessListener(aVoid -> {
+                    // Success
+                    Toast.makeText(context, "Product deleted successfully in Firebase", Toast.LENGTH_SHORT).show();
+                    Log.d("FireBaseHelper", "Product deleted successfully from Firebase");
+                })
+                .addOnFailureListener(e -> {
+                    // Error handling
+                    Toast.makeText(context, "Error deleting product from Firebase", Toast.LENGTH_SHORT).show();
+                    Log.e("FireBaseHelper", "Error deleting product from Firebase: " + e.getMessage());
+                });
+    }
 
 }
