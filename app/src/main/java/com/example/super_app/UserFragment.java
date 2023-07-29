@@ -22,16 +22,16 @@ public class UserFragment extends Fragment {
         Button buttonOrderHistory = view.findViewById(R.id.buttonOrderHistory);
         Button buttonUpdateUserData = view.findViewById(R.id.buttonUpdateUserData);
         //todo - change navigation
-        buttonOrderHistory.setOnClickListener(v -> moveToActivity(MainActivity.class));
-        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        buttonOrderHistory.setOnClickListener(v -> moveToActivity(OrderHistoryActivity.class));
+        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(ProfileActivity.class));
         Button backBtn = view.findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 
-        buttonOrderHistory.setOnClickListener(v -> {
-            // Handle button click for order history
-            // Add your code here
-        });
-        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(ProfileActivity.class));
+//        buttonOrderHistory.setOnClickListener(v -> {
+//            // Handle button click for order history
+//            // Add your code here
+//        });
+//        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(ProfileActivity.class));
         DisplaySavedText();
 
         return view;

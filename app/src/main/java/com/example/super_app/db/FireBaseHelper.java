@@ -215,6 +215,7 @@ public class FireBaseHelper {
                     Order newOrder = new Order(userName, phoneNum, selectedDate, address);
                     dbHelper.insertOrder(newOrder);
                     newOrder.setOpen(true);
+
                     db.collection("Orders").document(uid).set(newOrder)
                             .addOnSuccessListener(unused -> {
                                 // New order added successfully
@@ -223,6 +224,7 @@ public class FireBaseHelper {
                                 // Check if the cart should be added
                                 if (shouldAddCart) {
                                     addCartToFirestore(context, newOrder, uid, cart); // Pass the current cart here
+
                                 }
                             })
                             .addOnFailureListener(e -> {
@@ -268,6 +270,7 @@ public class FireBaseHelper {
                                 .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information
                                     Toast.makeText(context, "Order updated with the cart information", Toast.LENGTH_SHORT).show();
+                                    saveOrderToOrderHistory(order);
                                 })
                                 .addOnFailureListener(e -> {
                                     // Failed to update Order with the cart information
@@ -275,12 +278,15 @@ public class FireBaseHelper {
                                     Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
                                 });
                         cart.getProductsQuantity().clear();
+
+
                     })
                     .addOnFailureListener(e -> {
                         // Failed to add cart to Firestore
                         Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
                         Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
                     });
+
         }
     }
 
@@ -607,10 +613,40 @@ public class FireBaseHelper {
 
     }
 
+
+
     public interface UserOrdersFetchListener {
         void onUserOrdersFetch(List<Order> userOrdersList);
         void onFailure(String errorMessage);
     }
+
+    public void fetchOrdersHistoryOfCurrentUserFromFirebase(UserOrdersHFetchListener listener) {
+        List<Order> userOrdersHList = new ArrayList<>();
+        // Get the "Orders" sub-collection under the user's document in the "OrderHistory" collection
+        db.collection("OrderHistory").document(mAuth.getUid()).collection("Orders")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    // Loop through the query results and create Order objects
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        userOrdersHList.add(order);
+                    }
+
+                    // Call the listener's onUserOrdersFetch method with the list of user's orders
+                    listener.onUserOrdersFetch(userOrdersHList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch user's orders: " + e.getMessage());
+                });
+    }
+
+    public interface UserOrdersHFetchListener {
+        void onUserOrdersFetch(List<Order> userOrdersHList);
+        void onFailure(String errorMessage);
+    }
+
 
     public void deleteOrderFromFirebase(String orderId) {
         CollectionReference ordersRef = db.collection("Orders");
@@ -674,6 +710,24 @@ public class FireBaseHelper {
         void onUserFetch(User user);
         void onFailure(String errorMessage);
     }
+
+
+    public void saveOrderToOrderHistory(Order order) {
+        // Add the order to the "OrderHistory" collection with the user's ID as the document ID
+        db.collection("OrderHistory").document(mAuth.getUid()).collection("Orders").add(order)
+                .addOnSuccessListener(documentReference -> {
+                    // Successfully saved the order to the order history
+                    Toast.makeText(context, "Order saved to order history " , Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Order saved to order history with ID: ");
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to save the order to the order history
+                    Toast.makeText(context, "Error saving order to order history: "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.e(TAG, "Error saving order to order history: " + e.getMessage());
+                });
+    }
+
+
 
 
 

@@ -138,7 +138,6 @@
     <string name="Ordersyouown">Orders you own</string>
     <string name="CreatorName">Full name of owner</string>
     <string name="DeliveryAddress">Delivery\'s Address</string>
-    <string name="DeliveryDate">Delivery Date</string>
     <string name="join">Join</string>
     <string name="phone">Phone number\n</string>
     <string name="noOrderText">you have no orders in this section</string>
@@ -217,4 +216,11 @@
     <string name="order_price">Order Price</string>
     <string name="order_products">Products In Order</string>
     <string name="product_quantity">Product quantity</string>
+    <string name="No_order_history">No order history found.</string>
+    <string name="OrderName">Order Name</string>
+    <string name="OrderPrice">Order Price</string>
+    <string name="Address">Address</string>
+    <string name="OrderStatus">OrderStatus</string>
+    <string name="DeliveryDate" tools:ignore="DuplicateDefinition">Delivery Date</string>
+
 </resources>

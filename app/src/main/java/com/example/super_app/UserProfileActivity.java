@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -25,8 +24,8 @@ public class UserProfileActivity extends AppCompatActivity {
         buttonOrderHistory = findViewById(R.id.buttonOrderHistory);
         buttonUpdateUserData = findViewById(R.id.buttonUpdateUserData);
         //todo - change navigation
-        buttonOrderHistory.setOnClickListener(v -> moveToActivity(MainActivity.class));
-        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(MainActivity.class));
+        buttonOrderHistory.setOnClickListener(v -> moveToActivity(OrderHistoryActivity.class));
+        buttonUpdateUserData.setOnClickListener(v -> moveToActivity(ProfileActivity.class));
         Button backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
 

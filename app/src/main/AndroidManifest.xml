@@ -6,7 +6,6 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -17,6 +16,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Super_app"
         tools:targetApi="31">
+        <activity
+            android:name=".OrderHistoryActivity"
+            android:exported="false" />
         <activity
             android:name=".CreateNewOrderActivity"
             android:exported="false" />
@@ -47,6 +49,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -55,16 +58,16 @@
 
             <meta-data
                 android:name="com.bumptech.glide.integration.firebase.FirebaseGlideModule"
-                android:value="com.example.super_app.FirebaseStorageImageLoader"
- />
+                android:value="com.example.super_app.FirebaseStorageImageLoader" />
         </activity>
         <activity
             android:name=".SigninActivity"
             android:exported="false" />
         <activity
             android:name=".ImageSelectionActivity"
-            android:label="Image Selection Activity">
-        </activity>
-    </application>
+            android:label="Image Selection Activity"></activity>
+
+
+</application>
 
 </manifest>
