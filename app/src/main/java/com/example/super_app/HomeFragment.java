@@ -199,7 +199,7 @@ public class HomeFragment extends Fragment {
                     // Extract the relevant information from the Order object
                     String address = order.getAddress();
                     String deliveryDate = order.getDeliveryDate();
-                    double totalPrice = order.getTotalPrice();
+                    String orderId = order.getId();
 
                     // Create a MenuModel object with the extracted information
                     String orderTitle = address;
