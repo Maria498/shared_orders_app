@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -11,15 +12,23 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.super_app.db.DatabaseHelper;
+import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.FirebaseApp;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
     private HomeFragment home = new HomeFragment();
     private OrderFragment newOrder = new OrderFragment();
     private UserFragment profile = new UserFragment();
+    private FireBaseHelper fireBaseHelper;
+    private DatabaseHelper dbHelper;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +39,12 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this);
         bottomNavigationView.setSelectedItemId(R.id.home);
+        fireBaseHelper = new FireBaseHelper(this);
+        dbHelper = new DatabaseHelper(getApplicationContext());
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        //load all products from firebase to sqlite
+        fetchAllProductsFromFireBase();
+
 
 
     }
@@ -97,6 +112,36 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         String defaultText = sharedPref.getString("userName", "Log In");
         //logInBtn.setEnabled(true);
 //        logInBtn.setText(defaultText);
+    }
+
+    public void fetchAllProductsFromFireBase() {
+        // Create an instance of the listener to handle the fetched products or errors
+        List<Product> productListFromFB = new ArrayList<>();
+        FireBaseHelper.AllProductsFetchListener listener = new FireBaseHelper.AllProductsFetchListener() {
+            @Override
+            public void onProductFetch(List<Product> productList) {
+                // Process the fetched products here
+                // For example, you can update the UI with the products or do any other processing
+                // productList contains the list of fetched products
+                productListFromFB.clear();
+                productListFromFB.addAll(productList);
+                System.out.println("Fetched products: " + productList);
+                for(Product p: productListFromFB){
+                    dbHelper.insertProductToProductDB(p);
+                }
+                dbHelper.printAllProducts();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle the failure here
+                // For example, show an error message to the user
+                System.err.println("Error fetching products: " + errorMessage);
+            }
+        };
+
+        // Call the fetchAllProductsFromFireBase method with the listener
+        fireBaseHelper.fetchAllProductsFromFireBase(listener);
     }
 
 

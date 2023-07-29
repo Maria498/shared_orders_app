@@ -332,32 +332,30 @@ public class FireBaseHelper {
         void onFailure(String errorMessage);
     }
     // todo fix method
-    public void fetchAllProductsFromFireBase(allProductsFetchListener listener) {
+    public void fetchAllProductsFromFireBase(AllProductsFetchListener listener) {
         List<Product> productList = new ArrayList<>();
         CollectionReference productsRef = db.collection("Products");
+
         // Query for products in the specified category
-        productsRef
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    // Loop through the query results and create ProductModel objects
-                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+        productsRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Product objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         Product product = documentSnapshot.toObject(Product.class);
                         product.setId(documentSnapshot.getId());
                         productList.add(product);
                     }
                     // Call the listener's onProductFetch method with the list of products
-                    listener.onProduct(productList);
+                    listener.onProductFetch(productList);
                 })
                 .addOnFailureListener(e -> {
                     // Call the listener's onFailure method with the error message
                     listener.onFailure("Failed to fetch products: " + e.getMessage());
                 });
-
-
     }
 
-    public interface allProductsFetchListener {
-        void onProduct(List<Product> productList);
+    public interface AllProductsFetchListener {
+        void onProductFetch(List<Product> productList);
         void onFailure(String errorMessage);
     }
+
 }

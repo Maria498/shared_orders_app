@@ -460,7 +460,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 // ... and so on for other columns
 
                 // Print the data to the console or logcat
-                Log.d("ProductData", "ID: " + id + ", Name: " + name + ", Price: " + price);
+                Log.d("ProductData from sqlite", "ID: " + id + ", Name: " + name + ", Price: " + price);
             } while (cursor.moveToNext());
         }
         cursor.close();

@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class ProfileActivity extends AppCompatActivity {
-    private ImageView userImg;
+   // private ImageView userImg;
     private ImageView iconEdit;
     private TextView allOrderMessage;
     private TextView ownOrderMessage;
@@ -53,11 +53,6 @@ public class ProfileActivity extends AppCompatActivity {
     private String birthdateField, emailField, birthdateField1, emailField1;
     private List<Order> orderSameAddress;
     private List<Order> yourOrders;
-
-    boolean addcreate = false;
-
-
-
 
     @SuppressLint("LongLogTag")
     @Override
@@ -101,27 +96,27 @@ public class ProfileActivity extends AppCompatActivity {
         orderSameAddress = new ArrayList<>();
         yourOrders = new ArrayList<>();
 
-        menu.setOnItemSelectedListener(item -> {
-            switch (item.getItemId()) {
-                case R.id.cart:
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                    finish(); // Optional: Close the current activity
-                    return true;
-                case R.id.profile:
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                    finish(); // Optional: Close the current activity
-                    return true;
-                case R.id.search:
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                    finish(); // Optional: Close the current activity
-                    return true;
-                case R.id.home:
-                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
-                    finish(); // Optional: Close the current activity
-                    return true;
-            }
-            return false;
-        });
+//        menu.setOnItemSelectedListener(item -> {
+//            switch (item.getItemId()) {
+//                case R.id.cart:
+//                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//                    finish(); // Optional: Close the current activity
+//                    return true;
+//                case R.id.profile:
+//                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//                    finish(); // Optional: Close the current activity
+//                    return true;
+//                case R.id.search:
+//                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//                    finish(); // Optional: Close the current activity
+//                    return true;
+//                case R.id.home:
+//                    startActivity(new Intent(ProfileActivity.this, MainActivity.class));
+//                    finish(); // Optional: Close the current activity
+//                    return true;
+//            }
+//            return false;
+//        });
         db.collection("Orders").get().addOnCompleteListener(task -> {
             if (task.isSuccessful()) {
                 orderSameAddress.clear();

@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdminActivity extends Activity {
-    FireBaseHelper fireBaseHelper;
+    private FireBaseHelper fireBaseHelper;
     private static final int REQUEST_IMAGE_SELECT = 1;
     private EditText productNameEditText;
     private EditText productPriceEditText;
@@ -47,6 +47,7 @@ public class AdminActivity extends Activity {
         createProductBtn.setOnClickListener( v -> showAddProductDialog());
         dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
+        fetchAllProductsFromFireBase();
         dbHelper.printAllProducts();
     }
 
@@ -90,19 +91,7 @@ public class AdminActivity extends Activity {
                 product = new Product(name, selectedImageUrl, selectedCategory, price, discount, 1);
 
                 dbHelper.insertProductToProductDB(product);
-                List<Product> productListFromFB = new ArrayList<>();
-                fireBaseHelper.fetchAllProductsFromFireBase(new FireBaseHelper.allProductsFetchListener() {
-                    @Override
-                    public void onProduct(List<Product> productList) {
-                        productList.clear();
-                        productList.addAll(productListFromFB);
-                    }
 
-                    @Override
-                    public void onFailure(String errorMessage) {
-
-                    }
-                });
 
 
             } else {
@@ -139,4 +128,35 @@ public class AdminActivity extends Activity {
         i.putExtra("msg", "msg");
         startActivity(i);
     }
+
+    public void fetchAllProductsFromFireBase() {
+        // Create an instance of the listener to handle the fetched products or errors
+        List<Product> productListFromFB = new ArrayList<>();
+        FireBaseHelper.AllProductsFetchListener listener = new FireBaseHelper.AllProductsFetchListener() {
+            @Override
+            public void onProductFetch(List<Product> productList) {
+                // Process the fetched products here
+                // For example, you can update the UI with the products or do any other processing
+                // productList contains the list of fetched products
+                productListFromFB.clear();
+                productListFromFB.addAll(productList);
+                System.out.println("Fetched products: " + productList);
+                for(Product p: productListFromFB){
+                    dbHelper.insertProductToProductDB(p);
+                }
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle the failure here
+                // For example, show an error message to the user
+                System.err.println("Error fetching products: " + errorMessage);
+            }
+        };
+
+        // Call the fetchAllProductsFromFireBase method with the listener
+        fireBaseHelper.fetchAllProductsFromFireBase(listener);
+    }
+
+
 }
