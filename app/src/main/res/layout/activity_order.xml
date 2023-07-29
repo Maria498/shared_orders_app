@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:text="Order Address"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ordersName" />
@@ -49,7 +50,7 @@
         android:id="@+id/orderDeliveryDateTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
+        android:textSize="18sp"
         android:layout_marginTop="76dp"
         android:text="Order Delivery Date"
         app:layout_constraintEnd_toEndOf="parent"
