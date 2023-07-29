@@ -21,6 +21,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -335,33 +336,120 @@ public class FireBaseHelper {
         void onOrderFetch(List<Order> orders);
         void onFailure(String errorMessage);
     }
-    // todo fix method
-    public void fetchAllProductsFromFireBase(allProductsFetchListener listener) {
+
+    public void fetchAllProductsFromFireBase(AllProductsFetchListener listener) {
         List<Product> productList = new ArrayList<>();
         CollectionReference productsRef = db.collection("Products");
+
         // Query for products in the specified category
-        productsRef
-                .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    // Loop through the query results and create ProductModel objects
-                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+        productsRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Product objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
                         Product product = documentSnapshot.toObject(Product.class);
                         product.setId(documentSnapshot.getId());
                         productList.add(product);
                     }
                     // Call the listener's onProductFetch method with the list of products
-                    listener.onProduct(productList);
+                    listener.onProductFetch(productList);
                 })
                 .addOnFailureListener(e -> {
                     // Call the listener's onFailure method with the error message
                     listener.onFailure("Failed to fetch products: " + e.getMessage());
                 });
-
-
     }
 
-    public interface allProductsFetchListener {
-        void onProduct(List<Product> productList);
+    public interface AllProductsFetchListener {
+        void onProductFetch(List<Product> productList);
         void onFailure(String errorMessage);
     }
+
+    public void fetchAllOrdersFromFireBase(AllOrdersFetchListener listener) {
+        List<Order> orderList = new ArrayList<>();
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Query for orders
+        ordersRef.get().addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Order objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        orderList.add(order);
+                    }
+                    // Call the listener's onOrdersFetch method with the list of orders
+                    listener.onOrdersFetch(orderList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch orders: " + e.getMessage());
+                });
+    }
+
+    public void fetchOrdersInSameStreetFromFireBase(String userStreet, AllOrdersFetchListener listener) {
+        List<Order> orderList = new ArrayList<>();
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Query for orders in the same street as the user
+        ordersRef.whereEqualTo("street", userStreet)
+                .get()
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    // Loop through the query results and create Order objects
+                    for (QueryDocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        orderList.add(order);
+                    }
+                    // Call the listener's onOrdersFetch method with the list of orders
+                    listener.onOrdersFetch(orderList);
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch orders: " + e.getMessage());
+                });
+    }
+
+
+    public interface AllOrdersFetchListener {
+        void onOrdersFetch(List<Order> orderList);
+        void onFailure(String errorMessage);
+    }
+
+    public interface FetchOrderCallback {
+        void onOrderFetched(Order order);
+        void onFailure(String errorMessage);
+    }
+    public void fetchOrderByAddressAndDate(String address, String deliveryDate, FetchOrderCallback callback) {
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Query for orders with the given address and delivery date
+        ordersRef.whereEqualTo("address", address)
+                .whereEqualTo("deliveryDate", deliveryDate)
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        QuerySnapshot querySnapshot = task.getResult();
+                        List<Order> orders = new ArrayList<>();
+                        for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                            Order order = documentSnapshot.toObject(Order.class);
+                            order.setId(documentSnapshot.getId());
+                            orders.add(order);
+                        }
+
+                        if (!orders.isEmpty()) {
+                            // If orders with the given address and delivery date are found, return the first order (you can modify as per your requirement)
+                            Order foundOrder = orders.get(0);
+                            // Now you can use the foundOrder object or perform any other operations with it.
+                            // For example, you can update the UI with the order details.
+                            callback.onOrderFetched(foundOrder);
+                        } else {
+                            // No matching order found
+                            callback.onFailure("No order found with the given address and delivery date");
+                        }
+                    } else {
+                        // Failed to fetch orders, handle the error here
+                        callback.onFailure("Failed to fetch orders: " + task.getException().getMessage());
+                    }
+                });
+    }
+
+
 }
