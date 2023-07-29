@@ -5,10 +5,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,13 +19,15 @@ import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener {
+public class CartActivity extends AppCompatActivity implements CartAdapter.OnItemClickListener, BottomNavigationView.OnItemSelectedListener {
     private List<Product> cartProductsList = new ArrayList<>();
     private HashMap<String, ArrayList<Product>> productsInOrder = new HashMap<>();
 
@@ -33,7 +37,9 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         setContentView(R.layout.activity_cart);
         DatabaseHelper dbHelper = new DatabaseHelper(this);
         SQLiteDatabase dbSQLite = dbHelper.getWritableDatabase();
-
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setOnItemSelectedListener(this);
+        bottomNavigationView.setSelectedItemId(R.id.cart);
         FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
         fireBaseHelper.initializeCart();
 
@@ -110,4 +116,23 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
         i.putExtra("msg", "msg");
         startActivity(i);
     }
+
+
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_order:
+            case R.id.home:
+            case R.id.profile:
+                startActivity(new Intent(CartActivity.this, MainActivity.class));
+                finish();
+                return true;
+            case R.id.search:
+                // Navigate to another activity (not a fragment)
+                startActivity(new Intent(CartActivity.this, AdminActivity.class));
+                finish();
+                return true;
+        }
+        return false;
+    }
+
 }

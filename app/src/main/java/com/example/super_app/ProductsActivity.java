@@ -24,6 +24,7 @@ import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Product;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         setContentView(R.layout.activity_products);
         Button backBtn = findViewById(R.id.backBtn);
+        BottomNavigationView menu = findViewById(R.id.menu);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         fireBaseHelper = new FireBaseHelper(this);
         fireBaseHelper.initializeCart();
@@ -169,5 +171,7 @@ public class ProductsActivity extends AppCompatActivity implements ProductAdapte
         i.putExtra("msg", "msg");
         startActivity(i);
     }
+
+
 
 }
