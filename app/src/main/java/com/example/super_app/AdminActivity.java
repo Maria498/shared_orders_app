@@ -13,15 +13,21 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
+import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AdminActivity extends Activity {
     private FireBaseHelper fireBaseHelper;
@@ -38,9 +44,13 @@ public class AdminActivity extends Activity {
     private Button createProductBtn;
     private Button backBtn;
     private Button deleteProductBtn;
+    private Button editOrderBtn;
+    private Button deleteOrderBtn;
+    private Button deleteUserBtn;
+    private List<Order> orderListFromFB;
+    private Cart cart;
 
-    //todo - add deletion logic
-    //todo - add edit logic
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,10 +61,12 @@ public class AdminActivity extends Activity {
         dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         productListFromFB = new ArrayList<>();
+        orderListFromFB = new ArrayList<>();
 
         //fetch data from firebase to sqlite
         fetchAllProductsFromFireBase();
         fetchAllOrdersFromFireBase();
+
 
         backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
@@ -66,6 +78,13 @@ public class AdminActivity extends Activity {
 
         deleteProductBtn = findViewById(R.id.deleteProductBtn);
         deleteProductBtn.setOnClickListener(v->showAllProductsDelete());
+
+        editOrderBtn = findViewById(R.id.editOrderBtn);
+        editOrderBtn.setOnClickListener(v->showAllOrdersEdit());
+
+        deleteOrderBtn = findViewById(R.id.deleteOrderBtn);
+        deleteUserBtn = findViewById(R.id.deleteUserBtn);
+
         //dbHelper.printAllProducts();
     }
     protected void onResume() {
@@ -73,6 +92,7 @@ public class AdminActivity extends Activity {
         // Fetch the updated data from Firebase
         fetchAllProductsFromFireBase();
         fetchAllOrdersFromFireBase();
+//        fetchAllCartsFromFireBase();
     }
 
     private void showAddProductDialog() {
@@ -281,6 +301,98 @@ public class AdminActivity extends Activity {
         dialog.show();
     }
 
+    private void showAllOrdersEdit() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("All Orders");
+
+        // Create a list of order names to display in the dialog
+        List<String> orderNames = new ArrayList<>();
+        for (Order order : orderListFromFB) {
+            orderNames.add(order.getFullNameOwner() + " - " + order.getPhoneNumberOwner());
+        }
+
+        // Convert the list of order names to an array for the dialog
+        final String[] orderNamesArray = orderNames.toArray(new String[0]);
+
+        builder.setItems(orderNamesArray, (dialog, which) -> {
+            // Get the selected order based on the index
+            Order selectedOrder = orderListFromFB.get(which);
+            // Call the edit dialog for the selected order
+            showEditOrderDialog(selectedOrder);
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+// todo - fix this
+    private void showEditOrderDialog(Order order) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_order, null);
+        builder.setView(dialogView);
+        builder.setTitle("Edit Order");
+
+        // Find and initialize the views for editing the order details
+        EditText orderNameEditText = dialogView.findViewById(R.id.orderNameEditText);
+        EditText orderPriceEditText = dialogView.findViewById(R.id.order_price);
+        ListView orderProductsListView = dialogView.findViewById(R.id.orderProductsListView);
+        TextView orderTotalPriceTextView = dialogView.findViewById(R.id.orderTotalPriceTextView);
+
+        // Set the current order details in the EditTexts
+        orderNameEditText.setText(order.getFullNameOwner());
+        orderPriceEditText.setText(String.valueOf(order.getTotalPrice()));
+        fetchAllCartsFromFireBase(order.getId());
+        // Get the products and quantities from the order (Assuming you have a HashMap of products and quantities in the Order class)
+        HashMap<String, Integer> productsIDQuantity = cart.getProductsIDQuantity();
+        List<String> productsInOrder = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : productsIDQuantity.entrySet()) {
+            String product = entry.getKey();
+            int quantity = entry.getValue();
+            String productWithQuantity = product + " - Quantity: " + quantity;
+            productsInOrder.add(productWithQuantity);
+        }
+
+        // Set up the adapter to display the products and quantities in the ListView
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productsInOrder);
+        orderProductsListView.setAdapter(adapter);
+
+        // Display the total price of the order
+        orderTotalPriceTextView.setText("Total Price: " + order.getTotalPrice());
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            // Get the updated values from the views
+            String newName = orderNameEditText.getText().toString().trim();
+            String newPriceStr = orderPriceEditText.getText().toString().trim();
+
+            if (!newName.isEmpty() && !newPriceStr.isEmpty()) {
+                // Update the order details
+                double newPrice = Double.parseDouble(newPriceStr);
+                order.setFullNameOwner(newName);
+                order.setTotalPrice(newPrice);
+
+                // Perform other updates or actions if needed
+
+                // Update the order in the database (Firebase or SQLite) based on your implementation
+
+                // Show a toast or perform any other actions to indicate successful update
+                Toast.makeText(this, "Order updated successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                // Handle case when any of the fields are empty
+                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
+
+
 
 
 
@@ -320,7 +432,7 @@ public class AdminActivity extends Activity {
     //get all orders of all users
     public void fetchAllOrdersFromFireBase() {
         // Create an instance of the listener to handle the fetched orders or errors
-        List<Order> orderListFromFB = new ArrayList<>();
+
         FireBaseHelper.AllOrdersFetchListener listener = new FireBaseHelper.AllOrdersFetchListener() {
             @Override
             public void onOrdersFetch(List<Order> orderList) {
@@ -342,6 +454,24 @@ public class AdminActivity extends Activity {
         // Call the fetchAllOrdersFromFireBase method with the listener
         fireBaseHelper.fetchAllOrdersFromFireBase(listener);
     }
+
+    public void fetchAllCartsFromFireBase(String orderID) {
+        // Create an instance of the listener to handle the fetched orders or errors
+        FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
+            @Override
+            public void onCartFetch(Cart cart1) {
+                cart = cart1;
+                dbHelper.addCart(cart);
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                System.err.println("Error fetching cart: " + errorMessage);
+            }
+        };
+        fireBaseHelper.fetchCartsForOrder(orderID, cartsFetchListener);
+    }
+
 
 
 }

@@ -39,7 +39,7 @@
         android:id="@+id/createProductBtn"
         android:layout_width="290dp"
         android:layout_height="42dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="36dp"
         android:layout_marginEnd="16dp"
         android:text="Add product"
         android:textSize="18sp"
@@ -50,12 +50,13 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/adminMenu" />
 
+
     <Button
         android:id="@+id/updateProductBtn"
         android:layout_width="290dp"
         android:layout_height="42dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="16dp"
         android:text="Update Product"
         android:textSize="18sp"
         app:backgroundTint="@color/gray"
@@ -69,7 +70,7 @@
         android:id="@+id/deleteProductBtn"
         android:layout_width="290dp"
         android:layout_height="42dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
         android:text="Delete product"
         android:textSize="18sp"
@@ -80,7 +81,49 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/updateProductBtn" />
 
+    <Button
+        android:id="@+id/editOrderBtn"
+        android:layout_width="290dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Edit Order"
+        android:textSize="18sp"
+        app:backgroundTint="@color/gray"
+        app:cornerRadius="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteProductBtn"/>
 
+    <Button
+        android:id="@+id/deleteOrderBtn"
+        android:layout_width="290dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Delete Order"
+        android:textSize="18sp"
+        app:backgroundTint="@color/gray"
+        app:cornerRadius="35dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editOrderBtn"/>
+
+    <Button
+        android:id="@+id/deleteUserBtn"
+        android:layout_width="290dp"
+        android:layout_height="42dp"
+        android:layout_gravity="center_horizontal"
+        android:text="Delete User"
+        android:textSize="18sp"
+        app:backgroundTint="@color/gray"
+        app:cornerRadius="35dp"
+        tools:layout_editor_absoluteX="60dp"
+        tools:layout_editor_absoluteY="507dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.571"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteOrderBtn"/>
 
     <TextView
         android:id="@+id/adminMenu"

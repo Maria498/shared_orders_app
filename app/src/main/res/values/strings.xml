@@ -212,4 +212,8 @@
     <string name="product_price">Product Price</string>
     <string name="product_category">Product Category</string>
     <string name="product_description">Product Description</string>
+    <string name="order_name">Costumer Name</string>
+    <string name="order_price">Order Price</string>
+    <string name="order_products">Products In Order</string>
+    <string name="product_quantity">Product quantity</string>
 </resources>

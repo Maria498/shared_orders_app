@@ -501,4 +501,83 @@ public class FireBaseHelper {
                 });
     }
 
+    public void updateOrderInFireBase(Order order) {
+        CollectionReference ordersRef = db.collection("Orders");
+        DocumentReference orderDocRef = ordersRef.document(order.getId());
+
+        // Create a Map to represent the updated data
+        Map<String, Object> updatedData = new HashMap<>();
+        updatedData.put("fullNameOwner", order.getFullNameOwner());
+        updatedData.put("phoneNumberOwner", order.getPhoneNumberOwner());
+        updatedData.put("deliveryDate", order.getDeliveryDate());
+        updatedData.put("address", order.getAddress());
+        updatedData.put("totalPrice", order.getTotalPrice());
+
+        // Update the order document with the new data
+        orderDocRef.update(updatedData)
+                .addOnSuccessListener(aVoid -> {
+                    // Update successful
+                    Toast.makeText(context, "Order updated successfully.", Toast.LENGTH_SHORT).show();
+                    Log.d("FireBaseHelper", "Order updated successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    // Update failed
+                    Toast.makeText(context, "Failed to update order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Log.d("FireBaseHelper", "Failed to update order: " + e.getMessage());
+                });
+    }
+
+    public void fetchCartsForOrder(String orderId, CartsFetchListener listener) {
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Get the specific order based on the orderId
+        ordersRef.document(orderId).get().addOnSuccessListener(orderSnapshot -> {
+            if (orderSnapshot.exists()) {
+                Order order = orderSnapshot.toObject(Order.class);
+                order.setId(orderSnapshot.getId());
+                //order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
+                //order.getCartsOfNeigh().get(orderId)
+                String cartId = order.getCartsOfNeigh().get(orderId);
+                if (cartId != null) {
+                    // Fetch the cart using the cart ID from the "cart" collection
+                    CollectionReference cartsRef = db.collection("cart");
+                    cartsRef.document(cartId).get().addOnSuccessListener(cartSnapshot -> {
+                        if (cartSnapshot.exists()) {
+                            Cart cart = cartSnapshot.toObject(Cart.class);
+                            // Notify the listener with the fetched cart
+                            listener.onCartFetch(cart);
+                        } else {
+                            // Handle the case when the cart does not exist
+                            listener.onFailure("Cart not found for the specified order.");
+                        }
+                    }).addOnFailureListener(e -> {
+                        // Handle the failure to fetch the cart if needed
+                        listener.onFailure("Failed to fetch cart: " + e.getMessage());
+                    });
+                } else {
+                    // Handle the case when the order does not have a cart ID
+                    listener.onFailure("Cart ID not found for the specified order.");
+                }
+            } else {
+                // Handle the case when the order does not exist
+                listener.onFailure("Order not found with the specified ID.");
+            }
+        }).addOnFailureListener(e -> {
+            // Handle the failure to fetch the order if needed
+            listener.onFailure("Failed to fetch order: " + e.getMessage());
+        });
+    }
+
+    public interface CartsFetchListener {
+        void onCartFetch(Cart cart);
+        void onFailure(String errorMessage);
+    }
+
+
+
+
+
+
+
+
 }
