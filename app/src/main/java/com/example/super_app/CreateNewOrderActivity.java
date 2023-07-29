@@ -14,9 +14,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.super_app.db.FireBaseHelper;
-import com.example.super_app.db.entity.Cart;
-import com.example.super_app.db.entity.Order;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -32,8 +31,9 @@ public class CreateNewOrderActivity extends AppCompatActivity {
     private EditText street;
     private EditText apartmentNum;
     private String userStreet, userApart, selectedDate, userName, phoneNum;
-    boolean isOpen=false;
-    FireBaseHelper fireBaseHelper;
+
+    private FireBaseHelper fireBaseHelper;
+    private static final FirebaseAuth mAuth = FirebaseAuth.getInstance();
 
 
     @SuppressLint("NonConstantResourceId")
@@ -122,9 +122,10 @@ public class CreateNewOrderActivity extends AppCompatActivity {
             } else {
                 String address = spinnerCity.getSelectedItem().toString() + ", " + userStreet + ", " + userApart;
                 boolean shouldAddCart = addCartCheckBox.isChecked();
+                String userID = mAuth.getUid();
 
                 // Add the new order to Firebase
-                fireBaseHelper.addNewOrderToFirebase(CreateNewOrderActivity.this, userName, phoneNum, selectedDate, address, shouldAddCart);
+                fireBaseHelper.addNewOrderToFirebase(CreateNewOrderActivity.this, userName, phoneNum, selectedDate, address, shouldAddCart, userID);
             }
 
 

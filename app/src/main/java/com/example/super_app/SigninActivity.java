@@ -18,7 +18,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.super_app.db.DatabaseHelper;
 import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -26,10 +25,8 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -46,22 +43,22 @@ public class SigninActivity extends AppCompatActivity {
     private EditText apartmentNum;
     private Spinner city;
     private Context context;
-    private ArrayList<User> usersFromDB;
-    private DatabaseHelper db;
+
     private FirebaseAuth mAuth;
-    private FirebaseFirestore firestore;
+
     private String userName1;
     private String date ;
-    private User user;
+
     private HashMap<String, Object> userMap = new HashMap<>();
     private SharedPreferences sharedPref;
-    private FireBaseHelper fireBaseHelper = new FireBaseHelper(this);
+    private FireBaseHelper fireBaseHelper;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
         mAuth = FirebaseAuth.getInstance();
         context = getApplicationContext();
+        fireBaseHelper = new FireBaseHelper(this);
 
         Button signInBtn = findViewById(R.id.signInBtn);
         ImageView backBtn = findViewById(R.id.backBtn);
@@ -159,13 +156,14 @@ public class SigninActivity extends AppCompatActivity {
         }
         if(!checkDate())
         {
-            dateCal.setError("Invalid Date");
+            dateCal.setError("Sorry, you must be 18 years or older to register");
             dateCal.requestFocus();
             return;
         }
 
         String userAdd = city.getSelectedItem().toString() + "," + userStreet + "," + userApart;
-        User user2 = new User(userName1, userAdd,date);
+        //(String userName, String userEmail, String userAdd, String birthdate)
+        User user2 = new User(userName1,userEmail, userAdd,date);
 //        userMap.put("userName", userName1);
 //        userMap.put("userEmail", userEmail);
 //        userMap.put("userPassword", userPassword);
@@ -231,14 +229,27 @@ public class SigninActivity extends AppCompatActivity {
         return date;
 
     }
-
+    //check if the age is above 18
     public boolean checkDate() {
         String[] splitDate = date.split("/");
-        String year = splitDate[2];
-        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-        if (currentYear - Integer.parseInt(year) < 18 && currentYear - Integer.parseInt(year) > 120) {
-            return false;
+        int day = Integer.parseInt(splitDate[0]);
+        int month = Integer.parseInt(splitDate[1]);
+        int year = Integer.parseInt(splitDate[2]);
+
+        Calendar currentDate = Calendar.getInstance();
+        Calendar birthDate = Calendar.getInstance();
+        birthDate.set(year, month - 1, day); // Month is 0-based in Calendar
+
+        int age = currentDate.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
+
+        // Check if the birthdate has already occurred this year
+        if (currentDate.get(Calendar.MONTH) < birthDate.get(Calendar.MONTH) ||
+                (currentDate.get(Calendar.MONTH) == birthDate.get(Calendar.MONTH) &&
+                        currentDate.get(Calendar.DAY_OF_MONTH) < birthDate.get(Calendar.DAY_OF_MONTH))) {
+            age--;
         }
-        return true;
+        // Check if the age is at least 18
+        return age >= 18;
     }
+
 }

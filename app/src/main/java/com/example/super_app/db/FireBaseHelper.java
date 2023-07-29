@@ -30,6 +30,7 @@ import com.google.firebase.storage.UploadTask;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,6 +44,7 @@ public class FireBaseHelper {
     private static Order order;
     private Context context;
     private DatabaseHelper dbHelper;
+
 
 
     public FireBaseHelper() {
@@ -99,6 +101,7 @@ public class FireBaseHelper {
         this.context = context;
         this.mDatabase = FirebaseDatabase.getInstance().getReference();
         sqlitePer(context);
+
     }
     private void sqlitePer (Context context){
         dbHelper = new DatabaseHelper(context);
@@ -193,7 +196,7 @@ public class FireBaseHelper {
     }
 
 
-    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart) {
+    public void addNewOrderToFirebase(Context context, String userName, String phoneNum, String selectedDate, String address, boolean shouldAddCart, String userID) {
         String uid = mAuth.getUid();
         if (uid == null) {
             // User not logged in, show a message or handle accordingly
@@ -528,7 +531,7 @@ public class FireBaseHelper {
                 });
     }
 
-
+//fatch cat fron order
     public void fetchCartsForOrder(String orderId, CartsFetchListener listener) {
         CollectionReference ordersRef = db.collection("Orders");
 
@@ -574,6 +577,109 @@ public class FireBaseHelper {
         void onCartFetch(Cart cart);
         void onFailure(String errorMessage);
     }
+
+    public void fetchOrdersOfCurrentUserFromFirebase(UserOrdersFetchListener listener) {
+        List<Order> userOrdersList = new ArrayList<>();
+//        String uid = mAuth.getCurrentUser().getUid();
+
+    // Get the document by user's UID
+        db.collection("Orders").document(mAuth.getUid())
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // If the document exists, create an Order object and add it to the list
+                        Order order = documentSnapshot.toObject(Order.class);
+                        order.setId(documentSnapshot.getId());
+                        userOrdersList.add(order);
+
+                        // Call the listener's onUserOrdersFetch method with the list of user's orders
+                        listener.onUserOrdersFetch(userOrdersList);
+                    } else {
+                        // Document with the user's UID does not exist (no orders)
+                        // Call the listener's onUserOrdersFetch method with an empty list
+                        listener.onUserOrdersFetch(Collections.emptyList());
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // Call the listener's onFailure method with the error message
+                    listener.onFailure("Failed to fetch user's orders: " + e.getMessage());
+                });
+
+    }
+
+    public interface UserOrdersFetchListener {
+        void onUserOrdersFetch(List<Order> userOrdersList);
+        void onFailure(String errorMessage);
+    }
+
+    public void deleteOrderFromFirebase(String orderId) {
+        CollectionReference ordersRef = db.collection("Orders");
+        DocumentReference orderDocRef = ordersRef.document(orderId);
+
+        // Perform the delete operation
+        orderDocRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Order deleted successfully
+                    Toast.makeText(context, "Order deleted successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to delete order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+    public void updateUserInFirebase(User user) {
+        // Get a reference to the "Users" collection in Firebase
+        CollectionReference usersRef = db.collection("Users");
+
+        // Use the user ID to identify the document (user) you want to update
+        String uid = mAuth.getCurrentUser().getUid();
+        DocumentReference userDocRef = usersRef.document(uid);
+
+        // Perform the update operation using the user object
+        userDocRef.set(user)
+                .addOnSuccessListener(aVoid -> {
+                    Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show();
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(context, "Failed to update user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    public void getUserFromFirebase(String userId, UserFetchListener listener) {
+        // Get a reference to the "Users" collection in Firebase
+        CollectionReference usersRef = db.collection("Users");
+
+        // Use the user ID to identify the document (user) you want to retrieve
+        DocumentReference userDocRef = usersRef.document(userId);
+
+        // Perform the get operation to fetch the user data
+        userDocRef.get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        // User document exists, retrieve the data and convert it to a User object
+                        User user = documentSnapshot.toObject(User.class);
+                        listener.onUserFetch(user);
+                    } else {
+                        // User document does not exist or is not found
+                        listener.onUserFetch(null);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    // An error occurred while trying to fetch the user data
+                    // Handle the error here, if needed
+                    listener.onFailure("Failed to fetch user data: " + e.getMessage());
+                });
+    }
+
+    public interface UserFetchListener {
+        void onUserFetch(User user);
+        void onFailure(String errorMessage);
+    }
+
+
+
+
+
+
 
 
 

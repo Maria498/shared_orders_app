@@ -6,17 +6,33 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".ProfileActivity">
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="36dp"
+        android:layout_marginEnd="40dp"
+        android:text="@string/back"
+        android:textColor="@color/text"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerViewCart"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.08" />
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="72dp"
             android:gravity="center|top">
+
 
             <ImageView
                 android:id="@+id/backgroundImageView"
@@ -84,18 +100,7 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
-                        android:orientation="vertical">
-                        <Button
-                            android:id="@+id/btnOpenOrder"
-                            android:layout_width="wrap_content"
-                            android:layout_height="48dp"
-                            android:layout_gravity="right"
-                            android:layout_marginRight="16dp"
-                            android:backgroundTint="#404040"
-                            android:drawableLeft="@drawable/baseline_add_circle_24"
-                            android:text="@string/openOrder"
-                            android:textColor="@color/white" />
-                    </LinearLayout>
+                        android:orientation="vertical"/>
 
                 </LinearLayout>
 
@@ -154,15 +159,7 @@
                     android:text="@string/AllordersToYourAddress"
                     android:textAppearance="@style/personal_de"
                     android:textSize="18dp" />
-                <TextView
-                    android:id="@+id/allOrderDefualtText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
-                    android:text="@string/noOrderText"/>
+
 
 
                 <androidx.recyclerview.widget.RecyclerView

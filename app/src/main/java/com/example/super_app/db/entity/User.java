@@ -35,6 +35,13 @@ public class User {
         this.birthdate = birthdate;
     }
 
+    public User(String userName, String userEmail, String userAdd, String birthdate) {
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userAdd = userAdd;
+        this.birthdate = birthdate;
+    }
+
     public String getUserName() {
         return userName;
     }
