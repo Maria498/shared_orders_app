@@ -331,7 +331,7 @@ public class FireBaseHelper {
         void onOrderFetch(List<Order> orders);
         void onFailure(String errorMessage);
     }
-    // todo fix method
+
     public void fetchAllProductsFromFireBase(AllProductsFetchListener listener) {
         List<Product> productList = new ArrayList<>();
         CollectionReference productsRef = db.collection("Products");
