@@ -1,0 +1,51 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".AdminActivity">
+
+    <EditText
+        android:id="@+id/orderNameEditText"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/order_name" />
+
+    <EditText
+        android:id="@+id/order_price"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/order_price"
+        android:inputType="numberDecimal" />
+
+    <!-- A TextView to display the products in the order -->
+    <TextView
+        android:id="@+id/orderProductsTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Order Products"
+        android:textSize="18sp" />
+
+    <!-- A ListView to display the products and their quantities in the order -->
+    <ListView
+        android:id="@+id/orderProductsListView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- A TextView to display the total price of the order -->
+    <TextView
+        android:id="@+id/orderTotalPriceTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total Price"
+        android:textSize="18sp" />
+
+    <EditText
+        android:id="@+id/product_quantity"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:hint="@string/product_quantity"
+        android:inputType="numberDecimal" />
+
+</LinearLayout>

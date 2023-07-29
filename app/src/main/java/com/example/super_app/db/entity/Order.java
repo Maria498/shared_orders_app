@@ -1,10 +1,6 @@
 package com.example.super_app.db.entity;
 
-import com.google.firebase.firestore.DocumentSnapshot;
-
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 public class Order {
@@ -15,7 +11,6 @@ public class Order {
     public static final String COLUMN_DELIVERY_DATE = "delivery_date";
     public static final String COLUMN_ADDRESS = "address";
     public static final String COLUMN_TOTAL_PRICE = "total_price";
-
     private String fullNameOwner;
     private String phoneNumberOwner;
     private String deliveryDate;
@@ -123,5 +118,19 @@ public class Order {
     @Override
     public int hashCode() {
         return Objects.hash(fullNameOwner, phoneNumberOwner, deliveryDate, address, totalPrice);
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "fullNameOwner='" + fullNameOwner + '\'' +
+                ", phoneNumberOwner='" + phoneNumberOwner + '\'' +
+                ", deliveryDate='" + deliveryDate + '\'' +
+                ", address='" + address + '\'' +
+                ", id='" + id + '\'' +
+                ", cartsOfNeigh=" + cartsOfNeigh +
+                ", totalPrice=" + totalPrice +
+                ", isOpen=" + isOpen +
+                '}';
     }
 }
