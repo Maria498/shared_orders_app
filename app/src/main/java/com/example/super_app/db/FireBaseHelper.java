@@ -581,8 +581,9 @@ public class FireBaseHelper {
                             cart.setCartId(cartId);
                             // Get the product names and quantities from the fetched cart
                             //Map<String, Long> itemsMap = cartSnapshot.getLong("items");
-                            HashMap<String, Integer> productsIDQuantity = (HashMap<String, Integer>) cartSnapshot.get("items");
-                            cart.setProductsIDQuantity(productsIDQuantity);
+                            HashMap<String, Object> productsIDQuantity = (HashMap<String, Object>) cartSnapshot.get("items");
+                            HashMap<String, Integer> productsIDQuantityForCart = (HashMap<String, Integer>) cartSnapshot.get("items");
+                            cart.setProductsIDQuantity(productsIDQuantityForCart);
 //                            List<String> productsInOrder = new ArrayList<>();
 //
 //                            for (Map.Entry<String, Integer> entry : productsIDQuantity.entrySet()) {
@@ -627,7 +628,7 @@ public class FireBaseHelper {
 
 
     public interface CartsFetchListener {
-        void onCartFetch(HashMap<String, Integer> productsIDQuantity);
+        void onCartFetch(HashMap<String, Object> productsIDQuantity);
         void onFailure(String errorMessage);
     }
 

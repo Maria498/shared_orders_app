@@ -325,7 +325,6 @@ public class AdminActivity extends Activity {
         dialog.show();
     }
     // todo - fix this
-    // Show the edit order dialog and fetch the cart data for the order
     private void showEditOrderDialog(Order order) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -344,17 +343,10 @@ public class AdminActivity extends Activity {
         orderPriceEditText.setText(String.valueOf(order.getTotalPrice()));
 
         // Initialize an empty list of products for now
-//        List<String> productsInOrder = new ArrayList<>();
         HashMap<String, Integer> productsIDQuantity = new HashMap<>();
-        List<String> productsInOrderList = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : productsIDQuantity.entrySet()) {
-            String product = entry.getKey();
-            int quantity = entry.getValue();
-            String productWithQuantity = product + " - Quantity: " + quantity;
-            productsInOrderList.add(productWithQuantity);
-        }
+
         // Set up the adapter to display the products and quantities in the ListView
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productsInOrderList);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
         orderProductsListView.setAdapter(adapter);
 
         // Display the total price of the order
@@ -363,13 +355,31 @@ public class AdminActivity extends Activity {
         // Create an instance of the listener to handle the fetched cart data
         FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
 
-
             @Override
-            public void onCartFetch(HashMap<String, Integer> productsIDQuantity1) {
-                productsIDQuantity.clear();
-                productsIDQuantity.putAll(productsIDQuantity1);
+            public void onCartFetch(HashMap<String, Object> items) {
+                // Initialize the List to hold the product names and quantities
+                List<String> productsInOrderList = new ArrayList<>();
+
+                // Iterate over the items HashMap and extract the product names and quantities
+                for (Map.Entry<String, Object> entry : items.entrySet()) {
+                    String product = entry.getKey();
+                    Object value = entry.getValue();
+
+                    // Check if the value is a valid Long
+                    if (value instanceof Long) {
+                        Long longValue = (Long) value;
+                        int quantity = longValue.intValue();
+                        String productWithQuantity = product + " - Quantity: " + quantity;
+                        productsInOrderList.add(productWithQuantity);
+                    }
+                }
+
+                // Update the ArrayAdapter with the new data
+                adapter.clear();
+                adapter.addAll(productsInOrderList);
                 adapter.notifyDataSetChanged();
             }
+
 
             @Override
             public void onFailure(String errorMessage) {
@@ -381,7 +391,6 @@ public class AdminActivity extends Activity {
         // Fetch the cart data from Firebase using the order ID
         fireBaseHelper.fetchCartsForOrder(order.getId(), cartsFetchListener);
 
-
         builder.setPositiveButton("Save", (dialog, which) -> {
             // fireBaseHelper.updateOrderInFireBase();
         });
@@ -391,6 +400,7 @@ public class AdminActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
 
 
 
