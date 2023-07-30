@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class Cart implements Serializable {
     private String cartId;
-    private static Cart instance;
+
     private Date date;
     private double total;
     private int discount;
@@ -25,6 +25,9 @@ public class Cart implements Serializable {
     private String orderId;
     private HashMap<String, Integer> productsIDQuantity;
 
+    public Cart() {
+
+    }
 
     public Cart(String cartId, Date date, double price, int discount, String orderId) {
         this.cartId = cartId;

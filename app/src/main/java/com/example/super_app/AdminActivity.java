@@ -324,7 +324,8 @@ public class AdminActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-// todo - fix this
+    // todo - fix this
+    // Show the edit order dialog and fetch the cart data for the order
     private void showEditOrderDialog(Order order) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -341,45 +342,48 @@ public class AdminActivity extends Activity {
         // Set the current order details in the EditTexts
         orderNameEditText.setText(order.getFullNameOwner());
         orderPriceEditText.setText(String.valueOf(order.getTotalPrice()));
-        fetchAllCartsFromFireBase(order.getId());
-        // Get the products and quantities from the order (Assuming you have a HashMap of products and quantities in the Order class)
-        HashMap<String, Integer> productsIDQuantity = cart.getProductsIDQuantity();
-        List<String> productsInOrder = new ArrayList<>();
+
+        // Initialize an empty list of products for now
+//        List<String> productsInOrder = new ArrayList<>();
+        HashMap<String, Integer> productsIDQuantity = new HashMap<>();
+        List<String> productsInOrderList = new ArrayList<>();
         for (Map.Entry<String, Integer> entry : productsIDQuantity.entrySet()) {
             String product = entry.getKey();
             int quantity = entry.getValue();
             String productWithQuantity = product + " - Quantity: " + quantity;
-            productsInOrder.add(productWithQuantity);
+            productsInOrderList.add(productWithQuantity);
         }
-
         // Set up the adapter to display the products and quantities in the ListView
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productsInOrder);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productsInOrderList);
         orderProductsListView.setAdapter(adapter);
 
         // Display the total price of the order
         orderTotalPriceTextView.setText("Total Price: " + order.getTotalPrice());
 
-        builder.setPositiveButton("Save", (dialog, which) -> {
-            // Get the updated values from the views
-            String newName = orderNameEditText.getText().toString().trim();
-            String newPriceStr = orderPriceEditText.getText().toString().trim();
+        // Create an instance of the listener to handle the fetched cart data
+        FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
 
-            if (!newName.isEmpty() && !newPriceStr.isEmpty()) {
-                // Update the order details
-                double newPrice = Double.parseDouble(newPriceStr);
-                order.setFullNameOwner(newName);
-                order.setTotalPrice(newPrice);
 
-                // Perform other updates or actions if needed
-
-                // Update the order in the database (Firebase or SQLite) based on your implementation
-
-                // Show a toast or perform any other actions to indicate successful update
-                Toast.makeText(this, "Order updated successfully", Toast.LENGTH_SHORT).show();
-            } else {
-                // Handle case when any of the fields are empty
-                Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onCartFetch(HashMap<String, Integer> productsIDQuantity1) {
+                productsIDQuantity.clear();
+                productsIDQuantity.putAll(productsIDQuantity1);
+                adapter.notifyDataSetChanged();
             }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                // Handle the failure to fetch the cart if needed
+                Toast.makeText(AdminActivity.this, "Error fetching cart: " + errorMessage, Toast.LENGTH_SHORT).show();
+            }
+        };
+
+        // Fetch the cart data from Firebase using the order ID
+        fireBaseHelper.fetchCartsForOrder(order.getId(), cartsFetchListener);
+
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            // fireBaseHelper.updateOrderInFireBase();
         });
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
@@ -387,6 +391,8 @@ public class AdminActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+
 
 
 
@@ -454,21 +460,27 @@ public class AdminActivity extends Activity {
         fireBaseHelper.fetchAllOrdersFromFireBase(listener);
     }
 
-    public void fetchAllCartsFromFireBase(String orderID) {
+    public void fetchAllCartsFromFireBase(String orderID, FireBaseHelper.CartsFetchListener listener) {
         // Create an instance of the listener to handle the fetched orders or errors
-        FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
-            @Override
-            public void onCartFetch(Cart cart1) {
-                cart = cart1;
-                dbHelper.addCart(cart);
-            }
-
-            @Override
-            public void onFailure(String errorMessage) {
-                System.err.println("Error fetching cart: " + errorMessage);
-            }
-        };
-        fireBaseHelper.fetchCartsForOrder(orderID, cartsFetchListener);
+//        FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
+//            @Override
+//            public void onCartFetch(Cart cart1) {
+//                if (cart1 != null) {
+//                    cart =cart1;
+//                    dbHelper.addCart(cart);
+//                } else {
+//                    // Handle the case when the cart is null
+//                    Log.e("FetchAllCarts", "No cart found for orderID: " + orderID);
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(String errorMessage) {
+//                Log.e("FetchAllCarts", "Error fetching cart: " + errorMessage);
+//                // Handle failure, if needed (e.g., show an error message to the user)
+//            }
+//        };
+        fireBaseHelper.fetchCartsForOrder(orderID, listener);
     }
 
 

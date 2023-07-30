@@ -90,7 +90,10 @@ public class FireBaseHelper {
     public void updateCartQuantity(Product product, int newQuantity) {
         if (cart != null) {
             cart.getProductsQuantity().put(product, newQuantity);
-            cart.getProductsIDQuantity().put(product.getId(), newQuantity);
+            HashMap<String, Integer> productsIDQuantity = new HashMap<>();
+            productsIDQuantity.put(product.getName(), newQuantity);
+            cart.setProductsIDQuantity(productsIDQuantity);
+            //cart.getProductsIDQuantity().put(product.getId(), newQuantity);
             dbHelper.updateCartItemQuantity("my_first_cart", product.getName(), newQuantity);
         }
     }
@@ -256,7 +259,7 @@ public class FireBaseHelper {
 
             Cart updatedCart = new Cart(cart.getCartId(), cart.getDate(), cart.getTotal(), cart.getDiscount(), cart.getOrderId());
             updatedCart.setProductsIDQuantity((HashMap<String, Integer>) productsIDQuantityStrings);
-
+            updatedCart.setOrderId(orderId);
             // Adding updated cart to Firestore using the toMap method
             db.collection("Carts").add(updatedCart.toMap())
                     .addOnSuccessListener(documentReference -> {
@@ -274,7 +277,9 @@ public class FireBaseHelper {
                         updatedCart.setOrderId(cartId);
 
                         // Update the Order document with the new "cartsOfNeigh" HashMap
-                        order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
+                        HashMap<String, String> cartsOfNeigh =new HashMap<>();
+                        cartsOfNeigh.put(mAuth.getUid(), cartId);
+                        order.setCartsOfNeigh(cartsOfNeigh);
                         order.setTotalPrice(order.getTotalPrice() + cart.getTotal());
                         db.collection("Orders").document(orderId).set(order)
                                 .addOnSuccessListener(unused -> {
@@ -556,38 +561,58 @@ public class FireBaseHelper {
                 });
     }
 
-//fatch cat fron order
+    //fetch cat from order
     public void fetchCartsForOrder(String orderId, CartsFetchListener listener) {
-        CollectionReference ordersRef = db.collection("Orders");
+        // Get a reference to the Firestore "Orders" collection
 
-        // Get the specific order based on the orderId
-        ordersRef.document(orderId).get().addOnSuccessListener(orderSnapshot -> {
+
+        db.collection("Orders").document(mAuth.getUid()).get().addOnSuccessListener(orderSnapshot -> {
             if (orderSnapshot.exists()) {
                 Order order = orderSnapshot.toObject(Order.class);
-                order.setId(orderSnapshot.getId());
-                //order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
-                //order.getCartsOfNeigh().get(orderId)
+
+                // Get the cart ID from the order's cartsOfNeigh map
                 String cartId = order.getCartsOfNeigh().get(orderId);
                 if (cartId != null) {
-                    // Fetch the cart using the cart ID from the "cart" collection
-                    CollectionReference cartsRef = db.collection("cart");
-                    cartsRef.document(cartId).get().addOnSuccessListener(cartSnapshot -> {
+                    Log.d("FireBaseHelper", "Fetching cart with ID: " + cartId);
+                    // Fetch the cart using the cart ID from the "carts" collection
+                    db.collection("Carts").document(cartId).get().addOnSuccessListener(cartSnapshot -> {
                         if (cartSnapshot.exists()) {
                             Cart cart = cartSnapshot.toObject(Cart.class);
-                            // Notify the listener with the fetched cart
-                            listener.onCartFetch(cart);
+                            cart.setCartId(cartId);
+                            // Get the product names and quantities from the fetched cart
+                            //Map<String, Long> itemsMap = cartSnapshot.getLong("items");
+                            HashMap<String, Integer> productsIDQuantity = (HashMap<String, Integer>) cartSnapshot.get("items");
+                            cart.setProductsIDQuantity(productsIDQuantity);
+//                            List<String> productsInOrder = new ArrayList<>();
+//
+//                            for (Map.Entry<String, Integer> entry : productsIDQuantity.entrySet()) {
+//                                String productId = entry.getKey();
+//                                int quantity = entry.getValue();
+//                                productsInOrder.add(productId + " - Quantity: " + quantity);
+//                            }
+
+                            // Notify the listener with the fetched products and quantities
+                            listener.onCartFetch(productsIDQuantity);
                         } else {
                             // Handle the case when the cart does not exist
+                            Log.d("FireBaseHelper", "Cart not found for the specified order.");
                             listener.onFailure("Cart not found for the specified order.");
                         }
                     }).addOnFailureListener(e -> {
                         // Handle the failure to fetch the cart if needed
+                        Log.d("FireBaseHelper", "Failed to fetch cart: " + e.getMessage());
                         listener.onFailure("Failed to fetch cart: " + e.getMessage());
                     });
                 } else {
                     // Handle the case when the order does not have a cart ID
+                    Log.d("FireBaseHelper", "Cart ID not found for the specified order.");
                     listener.onFailure("Cart ID not found for the specified order.");
                 }
+//
+//               else {
+//                    // Handle the case when the order does not have a cart ID
+//                    listener.onFailure("Cart ID not found for the specified order.");
+//                }
             } else {
                 // Handle the case when the order does not exist
                 listener.onFailure("Order not found with the specified ID.");
@@ -598,8 +623,11 @@ public class FireBaseHelper {
         });
     }
 
+
+
+
     public interface CartsFetchListener {
-        void onCartFetch(Cart cart);
+        void onCartFetch(HashMap<String, Integer> productsIDQuantity);
         void onFailure(String errorMessage);
     }
 
@@ -768,6 +796,8 @@ public class FireBaseHelper {
             }
         }
     }
+
+
 
 
 
