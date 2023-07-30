@@ -19,12 +19,29 @@
         app:title="Order History" />
 
     <!-- RecyclerView to display the user's order history -->
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:text="@string/back"
+        android:textColor="@color/text"
+        android:textStyle="bold"
+        app:backgroundTint="@color/white"
+        app:cornerRadius="35dp"
+        app:layout_constraintBottom_toTopOf="@+id/recyclerOrderHistory"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerOrderHistory"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_width="411dp"
+        android:layout_height="534dp"
         android:padding="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         tools:listitem="@layout/order_item" />
 

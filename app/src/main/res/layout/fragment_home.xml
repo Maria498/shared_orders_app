@@ -32,15 +32,6 @@
         app:backgroundTint="@color/white"
         app:cornerRadius="35dp" />
 
-    <ImageButton
-        android:id="@+id/shoppingCartIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="30dp"
-        android:src="@drawable/outline_shopping_bag_24"
-        />
-
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"

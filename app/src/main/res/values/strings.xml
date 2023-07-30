@@ -222,5 +222,11 @@
     <string name="Address">Address</string>
     <string name="OrderStatus">OrderStatus</string>
     <string name="DeliveryDate" tools:ignore="DuplicateDefinition">Delivery Date</string>
+    <string name="until_now_you_saved">Until now you saved:</string>
+    <string name="total">Total:</string>
+    <string name="order_delivery_date">Order Delivery Date</string>
+    <string name="order_address">Order Address</string>
+    <string name="order">Order</string>
+    <string name="joining_this_order_you_can_save">Joining this order you can save:</string>
 
 </resources>

@@ -230,7 +230,7 @@ public class FireBaseHelper {
                                 showSnackbar("New order has been opened by you");
                                 // Check if the cart should be added
                                 if (shouldAddCart) {
-                                    addCartToFirestore(context, newOrder, uid, cart); // Pass the current cart here
+                                    addCartToFirestore(context, newOrder, uid, cart, 0); // Pass the current cart here
 
                                 }
                             })
@@ -248,7 +248,7 @@ public class FireBaseHelper {
         });
     }
 
-    public void addCartToFirestore(Context context, Order order, String orderId, Cart cart) {
+    public void addCartToFirestore(Context context, Order order, String orderId, Cart cart, double saving) {
         sqlitePer(context);
         if (cart != null) {
             cart.setDate(Calendar.getInstance().getTime());
@@ -275,7 +275,7 @@ public class FireBaseHelper {
 
                         // Update the Order document with the new "cartsOfNeigh" HashMap
                         order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
-                        order.setTotalPrice(order.getTotalPrice() + cart.getTotal());
+                        order.setTotalPrice((order.getTotalPrice() + cart.getTotal()) * (1 - saving));
                         db.collection("Orders").document(orderId).set(order)
                                 .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information

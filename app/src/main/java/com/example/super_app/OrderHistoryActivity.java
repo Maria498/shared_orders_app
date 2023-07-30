@@ -1,7 +1,9 @@
 package com.example.super_app;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,7 +30,8 @@ public class OrderHistoryActivity extends AppCompatActivity {
         setContentView(R.layout.activity_order_history);
         fireBaseHelper = new FireBaseHelper(this);
         userOrderHistory = new ArrayList<>();
-
+        Button backBtn = findViewById(R.id.backBtn);
+        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
         recyclerOrderHistory = findViewById(R.id.recyclerOrderHistory);
         emptyOrderHistoryTextView = findViewById(R.id.emptyOrderHistoryTextView);
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true); // Enable back button on the toolbar
@@ -71,5 +74,11 @@ public class OrderHistoryActivity extends AppCompatActivity {
             }
         };
         fireBaseHelper.fetchOrdersHistoryOfCurrentUserFromFirebase(listener);
+    }
+
+    private void moveToActivity (Class<?> cls) {
+        Intent i = new Intent(getApplicationContext(),  cls);
+        i.putExtra("msg", "msg");
+        startActivity(i);
     }
 }
