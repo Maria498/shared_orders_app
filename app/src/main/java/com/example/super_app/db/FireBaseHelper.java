@@ -798,6 +798,58 @@ public class FireBaseHelper {
         }
     }
 
+    public void updateCartAndOrder(Context context, Order order, String orderId, Cart cart) {
+        sqlitePer(context);
+
+        if (cart != null) {
+            cart.setDate(Calendar.getInstance().getTime());
+            Map<String, Integer> productsIDQuantityStrings = cart.getProductsIDQuantity();
+
+            Cart updatedCart = new Cart(cart.getCartId(), cart.getDate(), cart.getTotal(), cart.getDiscount(), orderId);
+            updatedCart.setProductsIDQuantity((HashMap<String, Integer>) productsIDQuantityStrings);
+
+            // Adding updated cart to Firestore using the toMap method
+            db.collection("Carts").document(cart.getCartId())
+                    .set(updatedCart.toMap())
+                    .addOnSuccessListener(aVoid -> {
+                        dbHelper.addCart(cart);
+                        dbHelper.insertCartToOrder(cart);
+
+                        // Cart added successfully to Firestore
+                        showSnackbar("Cart added to Firebase");
+
+                        // Update the orderId in the Cart object
+                        updatedCart.setOrderId(orderId);
+
+                        // Update the Order document with the new "cartsOfNeigh" HashMap
+                        HashMap<String, String> cartsOfNeigh = new HashMap<>();
+                        cartsOfNeigh.put(mAuth.getUid(), cart.getCartId());
+                        order.setCartsOfNeigh(cartsOfNeigh);
+                        order.setTotalPrice(order.getTotalPrice() + cart.getTotal());
+
+                        // Update the Order document in Firestore
+                        db.collection("Orders").document(orderId)
+                                .set(order.toMap()) // Assuming you have a toMap() method in your Order class
+                                .addOnSuccessListener(aVoid1 -> {
+                                    // Order updated successfully with the cart information
+                                    showSnackbar("Order updated with the cart information");
+                                    saveOrderToOrderHistory(order);
+                                })
+                                .addOnFailureListener(e -> {
+                                    // Failed to update Order with the cart information
+                                    showSnackbar("Failed to update Order with the cart information");
+                                    Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        // Failed to add cart to Firebase
+                        showSnackbar("Failed to add cart to Firestore");
+                        Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
+                    });
+        }
+    }
+
+
 
 
 

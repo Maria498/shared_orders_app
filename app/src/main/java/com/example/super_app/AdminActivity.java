@@ -2,6 +2,7 @@ package com.example.super_app;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import com.example.super_app.db.FireBaseHelper;
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,6 +51,7 @@ public class AdminActivity extends Activity {
     private Button deleteUserBtn;
     private List<Order> orderListFromFB;
     private Cart cart;
+    private Context context;
 
 
 
@@ -62,6 +65,8 @@ public class AdminActivity extends Activity {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         productListFromFB = new ArrayList<>();
         orderListFromFB = new ArrayList<>();
+
+        context = getApplicationContext();
 
         //fetch data from firebase to sqlite
         fetchAllProductsFromFireBase();
@@ -392,8 +397,51 @@ public class AdminActivity extends Activity {
         fireBaseHelper.fetchCartsForOrder(order.getId(), cartsFetchListener);
 
         builder.setPositiveButton("Save", (dialog, which) -> {
-            // fireBaseHelper.updateOrderInFireBase();
+            // Get the updated values from the views
+            String newName = orderNameEditText.getText().toString().trim();
+            String newPriceStr = orderPriceEditText.getText().toString().trim();
+
+            // Validate the new data (you may add more validation checks as needed)
+            if (!newName.isEmpty() && !newPriceStr.isEmpty()) {
+                // Convert the new price to double
+                double newPrice = Double.parseDouble(newPriceStr);
+
+                // Update the order details
+                order.setFullNameOwner(newName);
+                order.setTotalPrice(newPrice);
+
+                // Get the updated product names and quantities
+                HashMap<String, Integer> updatedProductsIDQuantity = new HashMap<>();
+                for (int i = 0; i < orderProductsListView.getCount(); i++) {
+                    String item = orderProductsListView.getItemAtPosition(i).toString();
+                    String[] parts = item.split(" - Quantity: ");
+                    if (parts.length == 2) {
+                        String product = parts[0];
+                        int quantity = Integer.parseInt(parts[1]);
+                        updatedProductsIDQuantity.put(product, quantity);
+                    }
+                }
+
+                // Update the products and quantities in the Order object
+                //cart.setProductsIDQuantity(updatedProductsIDQuantity);
+
+                // Perform other updates or actions if needed
+
+                // Update the order in the database (Firebase or SQLite) based on your implementation
+                fireBaseHelper.updateOrderInFireBase(order);
+                //dbHelper.editCart(cart);
+                dbHelper.editOrder(order);
+
+                // Show a toast or perform any other actions to indicate successful update
+                showSnackbar(this, "Order updated successfully");
+                //Toast.makeText(this, "Order updated successfully", Toast.LENGTH_SHORT).show();
+            } else {
+                // Handle case when any of the fields are empty
+                showSnackbar(this,"Please fill in all fields");
+                //Toast.makeText(this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
+            }
         });
+
 
         builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
 
@@ -469,28 +517,21 @@ public class AdminActivity extends Activity {
         // Call the fetchAllOrdersFromFireBase method with the listener
         fireBaseHelper.fetchAllOrdersFromFireBase(listener);
     }
-
-    public void fetchAllCartsFromFireBase(String orderID, FireBaseHelper.CartsFetchListener listener) {
-        // Create an instance of the listener to handle the fetched orders or errors
-//        FireBaseHelper.CartsFetchListener cartsFetchListener = new FireBaseHelper.CartsFetchListener() {
-//            @Override
-//            public void onCartFetch(Cart cart1) {
-//                if (cart1 != null) {
-//                    cart =cart1;
-//                    dbHelper.addCart(cart);
-//                } else {
-//                    // Handle the case when the cart is null
-//                    Log.e("FetchAllCarts", "No cart found for orderID: " + orderID);
-//                }
-//            }
-//
-//            @Override
-//            public void onFailure(String errorMessage) {
-//                Log.e("FetchAllCarts", "Error fetching cart: " + errorMessage);
-//                // Handle failure, if needed (e.g., show an error message to the user)
-//            }
-//        };
-        fireBaseHelper.fetchCartsForOrder(orderID, listener);
+    private void showSnackbar(Activity activity, String message) {
+        // Make sure the activity is not null before showing the Snackbar
+        if (activity != null) {
+            View rootView = activity.getWindow().getDecorView().findViewById(android.R.id.content);
+            if (rootView != null) {
+                Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
+                snackbar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
+            }
+        }
     }
 
 

@@ -1,6 +1,7 @@
 package com.example.super_app.db.entity;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 public class Order {
@@ -133,5 +134,24 @@ public class Order {
                 ", totalPrice=" + totalPrice +
                 ", isOpen=" + isOpen +
                 '}';
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put(COLUMN_FULL_NAME, fullNameOwner);
+        map.put(COLUMN_PHONE_NUMBER, phoneNumberOwner);
+        map.put(COLUMN_DELIVERY_DATE, deliveryDate);
+        map.put(COLUMN_ADDRESS, address);
+        map.put(COLUMN_TOTAL_PRICE, totalPrice);
+        map.put("isOpen", isOpen);
+
+        // Convert cartsOfNeigh to HashMap<String, Object>
+        HashMap<String, Object> cartsMap = new HashMap<>();
+        for (Map.Entry<String, String> entry : cartsOfNeigh.entrySet()) {
+            cartsMap.put(entry.getKey(), entry.getValue());
+        }
+        map.put("cartsOfNeigh", cartsMap);
+
+        return map;
     }
 }
