@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -42,17 +43,9 @@ public class AdminActivity extends Activity {
     private Product product;
     private DatabaseHelper dbHelper;
     private List<Product> productListFromFB;
-    private Button updateProductBtn;
-    private Button createProductBtn;
-    private Button backBtn;
-    private Button deleteProductBtn;
-    private Button editOrderBtn;
-    private Button deleteOrderBtn;
 
     private List<Order> orderListFromFB;
     private Cart cart;
-    private Context context;
-
 
 
     @Override
@@ -66,30 +59,49 @@ public class AdminActivity extends Activity {
         productListFromFB = new ArrayList<>();
         orderListFromFB = new ArrayList<>();
 
-        context = getApplicationContext();
+        Context context = getApplicationContext();
 
         //fetch data from firebase to sqlite
         fetchAllProductsFromFireBase();
         fetchAllOrdersFromFireBase();
 
 
-        backBtn = findViewById(R.id.backBtn);
-        backBtn.setOnClickListener(v -> moveToActivity(MainActivity.class));
-        createProductBtn = findViewById(R.id.createProductBtn);
-        createProductBtn.setOnClickListener( v -> showAddProductDialog());
+        Button logOutBtn = findViewById(R.id.logOutBtn);
+        Button createProductBtn = findViewById(R.id.createProductBtn);
+        createProductBtn.setOnClickListener(v -> showAddProductDialog());
 
-        updateProductBtn = findViewById(R.id.updateProductBtn);
+        Button updateProductBtn = findViewById(R.id.updateProductBtn);
         updateProductBtn.setOnClickListener(v -> showAllProducts());
 
-        deleteProductBtn = findViewById(R.id.deleteProductBtn);
+        Button deleteProductBtn = findViewById(R.id.deleteProductBtn);
         deleteProductBtn.setOnClickListener(v->showAllProductsDelete());
 
-        editOrderBtn = findViewById(R.id.editOrderBtn);
+        Button editOrderBtn = findViewById(R.id.editOrderBtn);
         editOrderBtn.setOnClickListener(v->showAllOrdersEdit());
 
-        deleteOrderBtn = findViewById(R.id.deleteOrderBtn);
+        Button deleteOrderBtn = findViewById(R.id.deleteOrderBtn);
         deleteOrderBtn.setOnClickListener(v->showAllOrdersDelete());
+        SharedPreferences sharedPref = this.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        logOutBtn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Logout")
+                    .setMessage("Are you sure you want to Log Out?")
+                    .setPositiveButton("Log Out", (dialog, which) -> {
+                        // Remove user name from SharedPreferences
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.remove("userName");
+                        editor.apply();
+                        FireBaseHelper.logOutUser();
+                        logOutBtn.setVisibility(View.INVISIBLE);
+                        Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+                        startActivity(i);
+                    })
+                    .setNegativeButton("Cancel", (dialog, which) -> {
 
+                    })
+                    .setCancelable(false)
+                    .show();
+        });
 
         //dbHelper.printAllProducts();
     }

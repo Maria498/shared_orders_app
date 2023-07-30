@@ -125,7 +125,7 @@ public class CartActivity extends AppCompatActivity implements CartAdapter.OnIte
                 startActivity(new Intent(CartActivity.this, MainActivity.class));
                 finish();
                 return true;
-            case R.id.search:
+            case R.id.admin:
                 // Navigate to another activity (not a fragment)
                 startActivity(new Intent(CartActivity.this, AdminActivity.class));
                 finish();

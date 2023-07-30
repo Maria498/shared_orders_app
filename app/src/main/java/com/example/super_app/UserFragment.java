@@ -10,15 +10,19 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
+import com.example.super_app.db.FireBaseHelper;
+
 
 public class UserFragment extends Fragment {
     TextView textCoinBag;
     TextView coinBagValue;
+    private FireBaseHelper fireBaseHelper;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_user, container, false);
+        fireBaseHelper = new FireBaseHelper();
         TextView textViewWelcome = view.findViewById(R.id.textViewWelcome);
         textCoinBag = view.findViewById(R.id.textCoinBag);
         textCoinBag.setVisibility(View.INVISIBLE);
@@ -45,10 +49,12 @@ public class UserFragment extends Fragment {
         startActivity(i);
     }
 
-    private void displaySavings () {
+    private void displaySavings() {
         textCoinBag.setVisibility(View.VISIBLE);
-
-
-        coinBagValue.setVisibility(View.VISIBLE);
+        fireBaseHelper.getSavingFromFirestore(totalSavings -> {
+            coinBagValue.setText(String.format("%.2f", totalSavings));
+            coinBagValue.setVisibility(View.VISIBLE);
+        });
     }
+
 }

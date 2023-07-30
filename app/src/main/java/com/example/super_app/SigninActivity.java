@@ -50,7 +50,6 @@ public class SigninActivity extends AppCompatActivity {
     private String date ;
 
     private HashMap<String, Object> userMap = new HashMap<>();
-    private SharedPreferences sharedPref;
     private FireBaseHelper fireBaseHelper;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ public class SigninActivity extends AppCompatActivity {
         if (currentUser != null) {
             currentUser.reload();
         }
-        sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE);
+        SharedPreferences sharedPref = getSharedPreferences("MyPrefs", MODE_PRIVATE);
         dateCal.setOnClickListener(view -> {
             final Calendar calendar = Calendar.getInstance();
             int day = calendar.get(Calendar.DAY_OF_MONTH);
@@ -104,11 +103,8 @@ public class SigninActivity extends AppCompatActivity {
         });
 
         setDate(dateCal);
-
         signInBtn.setOnClickListener(v -> saveUserToDB());
     }
-
-
 
 
     private void saveUserToDB() {
@@ -162,14 +158,7 @@ public class SigninActivity extends AppCompatActivity {
         }
 
         String userAdd = city.getSelectedItem().toString() + "," + userStreet + "," + userApart;
-        //(String userName, String userEmail, String userAdd, String birthdate)
         User user2 = new User(userName1,userEmail, userAdd,date);
-//        userMap.put("userName", userName1);
-//        userMap.put("userEmail", userEmail);
-//        userMap.put("userPassword", userPassword);
-
-
-
         mAuth.createUserWithEmailAndPassword(userEmail, userPassword)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
@@ -178,20 +167,16 @@ public class SigninActivity extends AppCompatActivity {
                         Toast.makeText(getApplicationContext(), "createUserWithEmail:success", Toast.LENGTH_SHORT).show();
                         FirebaseUser user = mAuth.getCurrentUser();
                         //updating name of user
-                        //to-do: add welcome message
                         UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                 .setDisplayName(userName1)
                                 .build();
                         user.updateProfile(profileUpdates)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (task.isSuccessful()) {
-                                            Log.d(TAG, "User profile updated.");
+                                .addOnCompleteListener(task12 -> {
+                                    if (task12.isSuccessful()) {
+                                        Log.d(TAG, "User profile updated.");
 
-                                        } else
-                                            Log.d(TAG, "User profile update failed.");
-                                    }
+                                    } else
+                                        Log.d(TAG, "User profile update failed.");
                                 });
 
                         fireBaseHelper.addUserData(user2);
@@ -200,7 +185,6 @@ public class SigninActivity extends AppCompatActivity {
                                 .addOnCompleteListener(task1 -> {
                                     if (task1.isSuccessful()) {
                                         Log.d(TAG, "Email sent.");
-//                                                    moveToActivity(MainActivity.class);
                                         String userName = FireBaseHelper.getCurrentUser();
                                         Intent i = new Intent(getApplicationContext(), MainActivity.class);
                                         i.putExtra("USER_NAME", userName);
@@ -208,8 +192,6 @@ public class SigninActivity extends AppCompatActivity {
                                     } else
                                         Log.d(TAG, "Email not sent.");
                                 });
-
-
 
                     }
                 });

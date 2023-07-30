@@ -24,9 +24,9 @@
         android:icon="@drawable/outline_shopping_bag_24"
         />
     <item
-        android:id="@+id/search"
-        android:enabled="true"
-        android:icon="@drawable/outline_search_24"
-        android:title="Search"/>
+        android:id="@+id/admin"
+        android:enabled="false"
+        android:icon="@drawable/admin_panel_settings_24"
+        android:title="Admin"/>
 
 </menu>
