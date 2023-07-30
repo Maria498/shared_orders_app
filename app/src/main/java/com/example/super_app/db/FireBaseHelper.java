@@ -2,17 +2,20 @@ package com.example.super_app.db;
 
 import static android.content.ContentValues.TAG;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.view.View;
 import android.widget.Toast;
 
 import com.example.super_app.db.entity.Cart;
 import com.example.super_app.db.entity.Order;
 import com.example.super_app.db.entity.Product;
 import com.example.super_app.db.entity.User;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -156,10 +159,12 @@ public class FireBaseHelper {
         db.collection("Products")
                 .add(product.toMap())
                 .addOnSuccessListener(documentReference -> {
-                    showToast(product.getName() + " added successfully!");
+                    showSnackbar(product.getName() + " added successfully!");
+                    //showToast(product.getName() + " added successfully!");
                 })
                 .addOnFailureListener(e -> {
-                    showToast("Failed to add product. Please try again.");
+                    showSnackbar("Failed to add product. Please try again.");
+                    //showToast("Failed to add product. Please try again.");
                 });
     }
 
@@ -200,7 +205,8 @@ public class FireBaseHelper {
         String uid = mAuth.getUid();
         if (uid == null) {
             // User not logged in, show a message or handle accordingly
-            Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+           // Toast.makeText(context, "User not logged in", Toast.LENGTH_SHORT).show();
+            showSnackbar("User not logged in");
             return;
         }
 
@@ -209,7 +215,8 @@ public class FireBaseHelper {
                 DocumentSnapshot documentSnapshot = task.getResult();
                 if (documentSnapshot.exists()) {
                     // User already has an open order
-                    Toast.makeText(context, "You already have an open order", Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(context, "You already have an open order", Toast.LENGTH_SHORT).show();
+                    showSnackbar("You already have an open order");
                 } else {
                     // Create a new order and add it to Firestore
                     Order newOrder = new Order(userName, phoneNum, selectedDate, address);
@@ -220,7 +227,7 @@ public class FireBaseHelper {
                             .addOnSuccessListener(unused -> {
                                 // New order added successfully
                                 Toast.makeText(context, "New order has been opened by you", Toast.LENGTH_SHORT).show();
-
+                                showSnackbar("New order has been opened by you");
                                 // Check if the cart should be added
                                 if (shouldAddCart) {
                                     addCartToFirestore(context, newOrder, uid, cart); // Pass the current cart here
@@ -229,12 +236,14 @@ public class FireBaseHelper {
                             })
                             .addOnFailureListener(e -> {
                                 // Failed to add the new order
-                                Toast.makeText(context, "Failed to open a new order", Toast.LENGTH_SHORT).show();
+                                showSnackbar("Failed to open a new order");
+                                //Toast.makeText(context, "Failed to open a new order", Toast.LENGTH_SHORT).show();
                             });
                 }
             } else {
                 // Failed to fetch orders
-                Toast.makeText(context, "Failed to fetch orders", Toast.LENGTH_SHORT).show();
+                showSnackbar("Failed to fetch orders");
+                //Toast.makeText(context, "Failed to fetch orders", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -258,7 +267,8 @@ public class FireBaseHelper {
                         dbHelper.insertCartToOrder(cart);
 
                         // Cart added successfully to Firestore
-                        Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
+                        showSnackbar("Cart added to FireBase");
+                        //Toast.makeText(context, "Cart added to Firestore", Toast.LENGTH_SHORT).show();
 
                         // Update the orderId in the Cart object
                         updatedCart.setOrderId(cartId);
@@ -269,12 +279,14 @@ public class FireBaseHelper {
                         db.collection("Orders").document(orderId).set(order)
                                 .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information
-                                    Toast.makeText(context, "Order updated with the cart information", Toast.LENGTH_SHORT).show();
+                                    showSnackbar("Order updated with the cart information");
+                                    //Toast.makeText(context, "Order updated with the cart information", Toast.LENGTH_SHORT).show();
                                     saveOrderToOrderHistory(order);
                                 })
                                 .addOnFailureListener(e -> {
                                     // Failed to update Order with the cart information
-                                    Toast.makeText(context, "Failed to update Order with the cart information", Toast.LENGTH_SHORT).show();
+                                    showSnackbar("Failed to update Order with the cart information");
+                                    //Toast.makeText(context, "Failed to update Order with the cart information", Toast.LENGTH_SHORT).show();
                                     Log.e("FireBaseHelper", "Error updating Order with the cart information", e);
                                 });
                         cart.getProductsQuantity().clear();
@@ -282,9 +294,10 @@ public class FireBaseHelper {
 
                     })
                     .addOnFailureListener(e -> {
-                        // Failed to add cart to Firestore
-                        Toast.makeText(context, "Failed to add cart to Firestore", Toast.LENGTH_SHORT).show();
-                        Log.e("FireBaseHelper", "Error adding cart to Firestore", e);
+                        // Failed to add cart to Firebase
+                        showSnackbar("Failed to add cart to FireBase");
+                        //Toast.makeText(context, "Failed to add cart to FireBase", Toast.LENGTH_SHORT).show();
+                        Log.e("FireBaseHelper", "Error adding cart to FireBase", e);
                     });
 
         }
@@ -482,11 +495,13 @@ public class FireBaseHelper {
                 .update(updatedFields)
                 .addOnSuccessListener(aVoid -> {
                     // Success
-                    Toast.makeText(context, "Product updated successfully in Firebase", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Product updated successfully in Firebase");
+                   // Toast.makeText(context, "Product updated successfully in Firebase", Toast.LENGTH_SHORT).show();
                     Log.d("FireBaseHelper", "Product updated successfully in Firebase");
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Error updating product in FireBase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackbar("Error updating product in FireBase: " + e.getMessage());
+                    //Toast.makeText(context, "Error updating product in FireBase: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     // Error handling
                     Log.e("FireBaseHelper", "Error updating product in FireBase: " + e.getMessage());
                 });
@@ -501,12 +516,14 @@ public class FireBaseHelper {
         // Perform the delete operation
         productRef.delete().addOnSuccessListener(aVoid -> {
                     // Success
-                    Toast.makeText(context, "Product deleted successfully in Firebase", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Product deleted successfully in Firebase");
+                    //Toast.makeText(context, "Product deleted successfully in Firebase", Toast.LENGTH_SHORT).show();
                     Log.d("FireBaseHelper", "Product deleted successfully from Firebase");
                 })
                 .addOnFailureListener(e -> {
                     // Error handling
-                    Toast.makeText(context, "Error deleting product from Firebase", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Error deleting product from Firebase: " + e.getMessage());
+                   // Toast.makeText(context, "Error deleting product from Firebase", Toast.LENGTH_SHORT).show();
                     Log.e("FireBaseHelper", "Error deleting product from Firebase: " + e.getMessage());
                 });
     }
@@ -527,12 +544,14 @@ public class FireBaseHelper {
         orderDocRef.update(updatedData)
                 .addOnSuccessListener(aVoid -> {
                     // Update successful
-                    Toast.makeText(context, "Order updated successfully.", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Order updated successfully.");
+                    //Toast.makeText(context, "Order updated successfully.", Toast.LENGTH_SHORT).show();
                     Log.d("FireBaseHelper", "Order updated successfully.");
                 })
                 .addOnFailureListener(e -> {
                     // Update failed
-                    Toast.makeText(context, "Failed to update order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackbar("Failed to update order: " + e.getMessage());
+                   // Toast.makeText(context, "Failed to update order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.d("FireBaseHelper", "Failed to update order: " + e.getMessage());
                 });
     }
@@ -656,10 +675,12 @@ public class FireBaseHelper {
         orderDocRef.delete()
                 .addOnSuccessListener(aVoid -> {
                     // Order deleted successfully
-                    Toast.makeText(context, "Order deleted successfully", Toast.LENGTH_SHORT).show();
+                    showSnackbar("Order deleted successfully");
+                    //Toast.makeText(context, "Order deleted successfully", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Failed to delete order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackbar("Failed to delete order: " + e.getMessage());
+                    //Toast.makeText(context, "Failed to delete order: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
     public void updateUserInFirebase(User user) {
@@ -673,10 +694,12 @@ public class FireBaseHelper {
         // Perform the update operation using the user object
         userDocRef.set(user)
                 .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show();
+                    showSnackbar("User data updated successfully");
+                    //Toast.makeText(context, "User data updated successfully", Toast.LENGTH_SHORT).show();
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(context, "Failed to update user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackbar("Failed to update user data: " + e.getMessage());
+                    //Toast.makeText(context, "Failed to update user data: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -717,15 +740,35 @@ public class FireBaseHelper {
         db.collection("OrderHistory").document(mAuth.getUid()).collection("Orders").add(order)
                 .addOnSuccessListener(documentReference -> {
                     // Successfully saved the order to the order history
-                    Toast.makeText(context, "Order saved to order history " , Toast.LENGTH_SHORT).show();
+                    showSnackbar("Order saved to order history");
+                    //Toast.makeText(context, "Order saved to order history " , Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "Order saved to order history with ID: ");
                 })
                 .addOnFailureListener(e -> {
                     // Failed to save the order to the order history
-                    Toast.makeText(context, "Error saving order to order history: "+ e.getMessage(), Toast.LENGTH_SHORT).show();
+                    showSnackbar("Error saving order to order history: "+ e.getMessage());
+                   // Toast.makeText(context, "Error saving order to order history: "+ e.getMessage(), Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "Error saving order to order history: " + e.getMessage());
                 });
     }
+
+    private void showSnackbar(String message) {
+        // Make sure the context is not null before showing the Snackbar
+        if (context != null) {
+            View rootView = ((Activity) context).getWindow().getDecorView().findViewById(android.R.id.content);
+            if (rootView != null) {
+                Snackbar snackbar = Snackbar.make(rootView, message, Snackbar.LENGTH_LONG);
+                snackbar.setAction("Dismiss", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        snackbar.dismiss();
+                    }
+                });
+                snackbar.show();
+            }
+        }
+    }
+
 
 
 
