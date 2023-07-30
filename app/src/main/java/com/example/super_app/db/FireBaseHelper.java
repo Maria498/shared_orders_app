@@ -277,12 +277,13 @@ public class FireBaseHelper {
                         updatedCart.setOrderId(cartId);
 
                         // Update the Order document with the new "cartsOfNeigh" HashMap
-                        HashMap<String, String> cartsOfNeigh =new HashMap<>();
-                        cartsOfNeigh.put(mAuth.getUid(), cartId);
-                        order.setCartsOfNeigh(cartsOfNeigh);
+                        //HashMap<String, String> cartsOfNeigh =new HashMap<>();
+                        order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
+                       // order.setCartsOfNeigh(cartsOfNeigh);
                         order.setTotalPrice(order.getTotalPrice() + cart.getTotal());
                         // order.getCartsOfNeigh().put(mAuth.getUid(), cartId);
                         order.setTotalPrice((order.getTotalPrice() + cart.getTotal()) * (1 - saving));
+                        addSavingToFirestore(cart.getTotal() * saving);
                         db.collection("Orders").document(orderId).set(order)
                                 .addOnSuccessListener(unused -> {
                                     // Order updated successfully with the cart information
@@ -310,6 +311,30 @@ public class FireBaseHelper {
         }
     }
 
+    private void addSavingToFirestore(double saving) {
+        // Get the current user ID
+        String userId = mAuth.getUid();
+        if (userId == null) {
+
+            return;
+        }
+        CollectionReference savingsCollection = FirebaseFirestore.getInstance().collection("savings");
+        DocumentReference savingDocument = savingsCollection.document();
+
+        Map<String, Object> savingData = new HashMap<>();
+        savingData.put("userId", userId); // The user ID
+        savingData.put("savingAmount", saving); // The saving amount
+        // Add the saving information to Firestore
+        savingDocument.set(savingData)
+                .addOnSuccessListener(aVoid -> {
+                    // Saving added successfully
+                    showSnackbar("Saving added successfully: " + saving);
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to add saving
+                    showSnackbar("Failed to add saving: " + e.getMessage());
+                });
+    }
 
 
     public void addUserData (User user) {
