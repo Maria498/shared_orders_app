@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.storage.FirebaseStorage;
@@ -37,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class FireBaseHelper {
     private final DatabaseReference mDatabase;
@@ -334,6 +337,37 @@ public class FireBaseHelper {
                     // Failed to add saving
                     showSnackbar("Failed to add saving: " + e.getMessage());
                 });
+    }
+    public interface TotalSavingsCallback {
+        void onTotalSavingsFetched(double totalSavings);
+    }
+    public double getSavingFromFirestore(TotalSavingsCallback callback) {
+        String userId = mAuth.getUid();
+        if (userId == null) {
+            return 0.0;
+        }
+        CollectionReference savingsCollection = FirebaseFirestore.getInstance().collection("savings");
+        Query query = savingsCollection.whereEqualTo("userId", userId);
+        AtomicReference<Double> totalSavingsRef = new AtomicReference<>(0.0);
+        query.get()
+                .addOnSuccessListener(querySnapshot -> {
+                    for (QueryDocumentSnapshot documentSnapshot : querySnapshot) {
+                        Double savingAmount = documentSnapshot.getDouble("savingAmount");
+                        if (savingAmount != null) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                                totalSavingsRef.updateAndGet(v -> v + savingAmount);
+                            }
+                        }
+                    }
+                    double totalSavings = totalSavingsRef.get();
+                    callback.onTotalSavingsFetched(totalSavings);
+                    Log.d("FireBaseHelper", "Total savings for user " + userId + ": " + totalSavings);
+                })
+                .addOnFailureListener(e -> {
+
+                    Log.e("FireBaseHelper", "Failed to fetch savings: " + e.getMessage());
+                });
+        return totalSavingsRef.get();
     }
 
 

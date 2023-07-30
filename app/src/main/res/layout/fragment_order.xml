@@ -46,7 +46,7 @@
         android:layout_width="290dp"
         android:layout_height="42dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="248dp"
+        android:layout_marginBottom="196dp"
         android:text="@string/create_order"
         app:backgroundTint="@color/gray"
         app:cornerRadius="35dp"
@@ -54,38 +54,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.571"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/coin_bag"
-        android:layout_width="290dp"
-        android:layout_height="42dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="112dp"
-        android:text="@string/coinBag"
-        app:backgroundTint="@color/gray"
-        app:cornerRadius="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.571"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonUpdateOrder"
-        app:layout_constraintVertical_bias="0.647" />
-
-    <Button
-        android:id="@+id/buttonUpdateOrder"
-        android:layout_width="290dp"
-        android:layout_height="42dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Update Order"
-        app:backgroundTint="@color/gray"
-        app:cornerRadius="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.419"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/buttonCreateOrder"
-        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/backBtn"

@@ -28,7 +28,6 @@ public class OrderFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_order, container, false);
         Button backBtn = view.findViewById(R.id.backBtn);
-        Button buttonUpdateOrder = view.findViewById(R.id.buttonUpdateOrder);
         Button buttonCreateOrder = view.findViewById(R.id.buttonCreateOrder);
 
         fireBaseHelper = new FireBaseHelper();

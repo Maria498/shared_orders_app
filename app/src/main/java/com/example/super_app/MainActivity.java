@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,11 @@ import com.example.super_app.db.entity.Product;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements NavigationBarView.OnItemSelectedListener{
 
@@ -35,20 +38,22 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         FirebaseApp.initializeApp(this);
-        //todo Sql lite load - make sure all objects loaded
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnItemSelectedListener(this);
-        bottomNavigationView.setSelectedItemId(R.id.home);
-        fireBaseHelper = new FireBaseHelper(this);
+              fireBaseHelper = new FireBaseHelper(this);
+        if(Objects.equals(FireBaseHelper.getCurrentUser(), "admin")){
+            startActivity(new Intent(MainActivity.this, AdminActivity.class));
+        }
+        else{
+            bottomNavigationView.setSelectedItemId(R.id.home);
+        }
         dbHelper = new DatabaseHelper(getApplicationContext());
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         //load all products from firebase to sqlite
         fetchAllProductsFromFireBase();
-
-
-
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
@@ -67,8 +72,7 @@ public class MainActivity extends AppCompatActivity implements NavigationBarView
                 startActivity(new Intent(MainActivity.this, CartActivity.class));
                 finish();
                 return true;
-            case R.id.search:
-                // Navigate to cartActivity
+            case R.id.admin:
                 startActivity(new Intent(MainActivity.this, AdminActivity.class));
                 finish();
                 return true;

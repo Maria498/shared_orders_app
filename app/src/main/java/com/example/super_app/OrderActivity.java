@@ -50,7 +50,7 @@ public class OrderActivity extends AppCompatActivity implements BottomNavigation
                     // Display the order details in the TextViews
                     orderAddressTextView.setText(order.getAddress());
                     orderDeliveryDateTextView.setText(order.getDeliveryDate());
-                    orderTotal.setText(orderTotal.getText() + " "+ order.getTotalPrice());
+                    orderTotal.setText(orderTotal.getText() + " "+ String.format("%.2f", order.getTotalPrice()));
                     currentOrder = order;
 
                     if (cart != null && !cart.getProductsIDQuantity().isEmpty()) {
@@ -113,7 +113,7 @@ public class OrderActivity extends AppCompatActivity implements BottomNavigation
                 startActivity(new Intent(OrderActivity.this, MainActivity.class));
                 finish();
                 return true;
-            case R.id.search:
+            case R.id.admin:
                 // Navigate to another activity (not a fragment)
                 startActivity(new Intent(OrderActivity.this, AdminActivity.class));
                 finish();
