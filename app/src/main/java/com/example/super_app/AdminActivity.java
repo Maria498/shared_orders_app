@@ -48,7 +48,7 @@ public class AdminActivity extends Activity {
     private Button deleteProductBtn;
     private Button editOrderBtn;
     private Button deleteOrderBtn;
-    private Button deleteUserBtn;
+
     private List<Order> orderListFromFB;
     private Cart cart;
     private Context context;
@@ -88,7 +88,8 @@ public class AdminActivity extends Activity {
         editOrderBtn.setOnClickListener(v->showAllOrdersEdit());
 
         deleteOrderBtn = findViewById(R.id.deleteOrderBtn);
-        deleteUserBtn = findViewById(R.id.deleteUserBtn);
+        deleteOrderBtn.setOnClickListener(v->showAllOrdersDelete());
+
 
         //dbHelper.printAllProducts();
     }
@@ -329,7 +330,7 @@ public class AdminActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
-    // todo - fix this
+
     private void showEditOrderDialog(Order order) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         LayoutInflater inflater = this.getLayoutInflater();
@@ -448,6 +449,46 @@ public class AdminActivity extends Activity {
         AlertDialog dialog = builder.create();
         dialog.show();
     }
+
+    private void showAllOrdersDelete() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("All Orders");
+
+        // Create a list of order names to display in the dialog
+        List<String> orderNames = new ArrayList<>();
+        for (Order order : orderListFromFB) {
+            orderNames.add(order.getFullNameOwner() + " - " + order.getPhoneNumberOwner());
+        }
+
+        // Convert the list of order names to an array for the dialog
+        final String[] orderNamesArray = orderNames.toArray(new String[0]);
+
+        builder.setItems(orderNamesArray, (dialog, which) -> {
+            // Get the selected order based on the index
+            Order selectedOrder = orderListFromFB.get(which);
+
+            // Show a confirmation dialog before deleting the order
+            AlertDialog.Builder confirmDeleteBuilder = new AlertDialog.Builder(this);
+            confirmDeleteBuilder.setTitle("Confirm Delete");
+            confirmDeleteBuilder.setMessage("Are you sure you want to delete this order?");
+            confirmDeleteBuilder.setPositiveButton("Delete", (confirmDialog, confirmWhich) -> {
+                // Call the method to delete the order
+                fireBaseHelper.deleteOrder(selectedOrder);
+            });
+            confirmDeleteBuilder.setNegativeButton("Cancel", (confirmDialog, confirmWhich) -> confirmDialog.dismiss());
+            AlertDialog confirmDeleteDialog = confirmDeleteBuilder.create();
+            confirmDeleteDialog.show();
+        });
+
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss());
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
+
+
+
+
 
 
 

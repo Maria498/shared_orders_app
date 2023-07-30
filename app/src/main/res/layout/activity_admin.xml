@@ -112,21 +112,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editOrderBtn" />
 
-    <Button
-        android:id="@+id/deleteUserBtn"
-        android:layout_width="290dp"
-        android:layout_height="42dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="10dp"
-        android:text="Delete User"
-        android:textSize="18sp"
-        app:backgroundTint="@color/gray"
-        app:cornerRadius="35dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/deleteOrderBtn" />
-
     <TextView
         android:id="@+id/adminMenu"
         android:layout_width="wrap_content"

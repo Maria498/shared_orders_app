@@ -851,6 +851,28 @@ public class FireBaseHelper {
         }
     }
 
+    public void deleteOrder(Order order) {
+        // Delete the order from Firebase or your data source based on your implementation
+        // For example, if using Firestore, you can do the following:
+
+        // Assuming you have a reference to the "Orders" collection
+        CollectionReference ordersRef = db.collection("Orders");
+
+        // Get the order document reference using the order ID
+        DocumentReference orderDocRef = ordersRef.document(order.getId());
+
+        // Delete the order document
+        orderDocRef.delete()
+                .addOnSuccessListener(aVoid -> {
+                    // Order deleted successfully
+                    showSnackbar("Order deleted successfully.");
+                })
+                .addOnFailureListener(e -> {
+                    // Failed to delete order
+                    showSnackbar("Failed to delete order: " + e.getMessage());
+                });
+    }
+
 
 
 
